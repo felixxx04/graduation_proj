@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 207 90% 54%;
+    --primary-glow: 207 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 153 60% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 93%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 207 90% 96%;
+    --accent-foreground: 207 90% 35%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 207 90% 54%;
+    --info-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 207 90% 54%;
+    --radius: 0.75rem;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 100% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(153 60% 45%), hsl(153 70% 55%));
+    --gradient-subtle: linear-gradient(180deg, hsl(210 40% 98%), hsl(210 40% 96%));
+    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54% / 0.1), hsl(153 60% 45% / 0.1));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px hsl(207 90% 54% / 0.1);
+    --shadow-md: 0 4px 12px hsl(207 90% 54% / 0.15);
+    --shadow-lg: 0 10px 40px hsl(207 90% 54% / 0.2);
+    --shadow-xl: 0 20px 60px hsl(207 90% 54% / 0.25);
+    --shadow-glow: 0 0 40px hsl(207 100% 60% / 0.4);
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 15%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 207 90% 54%;
+    --primary-glow: 207 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 153 60% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 207 90% 20%;
+    --accent-foreground: 207 90% 70%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 207 90% 54%;
+    --info-foreground: 0 0% 100%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 207 90% 54%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 100% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(153 60% 45%), hsl(153 70% 55%));
+    --gradient-subtle: linear-gradient(180deg, hsl(222 47% 11%), hsl(222 47% 13%));
+    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54% / 0.15), hsl(153 60% 45% / 0.15));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 10px 40px hsl(0 0% 0% / 0.5);
+    --shadow-xl: 0 20px 60px hsl(0 0% 0% / 0.6);
+    --shadow-glow: 0 0 40px hsl(207 100% 60% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container {
+      max-width: 768px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1024px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
