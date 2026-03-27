@@ -1,10 +1,10 @@
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
+﻿import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { 
-  Activity, 
-  Users, 
-  Shield, 
-  Stethoscope, 
+import {
+  Activity,
+  Users,
+  Shield,
+  Stethoscope,
   BarChart3,
   Settings,
   Menu,
@@ -12,7 +12,7 @@ import {
   LogOut,
   User as UserIcon,
   LogIn,
-  Lock
+  Lock,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/lib/authStore'
@@ -24,9 +24,16 @@ import { canAccessFeature } from '@/lib/permissions'
 
 export default function Layout() {
   const location = useLocation()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const { user, logout, login, isInitializing } = useAuth()
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [loginUsername, setLoginUsername] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [pendingPath, setPendingPath] = useState('/')
 
   const navigation = useMemo(
     () => [
@@ -40,72 +47,72 @@ export default function Layout() {
     [user?.role]
   )
 
-  const [loginModalOpen, setLoginModalOpen] = useState(false)
-  const [loginUsername, setLoginUsername] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
-  const [loginError, setLoginError] = useState<string | null>(null)
-  const [loginLoading, setLoginLoading] = useState(false)
-  const [pendingPath, setPendingPath] = useState<string>('/')
-
-  const { login } = useAuth()
-
   useEffect(() => {
-    const state = (location as any)?.state
-    if (state?.loginModal) {
-      setPendingPath(typeof state?.from === 'string' ? state.from : '/')
-      setLoginModalOpen(true)
-      // Clear the state so refresh/back doesn't re-trigger
-      navigate(location.pathname, { replace: true })
+    const state = (location as { state?: { loginModal?: boolean; from?: string } }).state
+    if (isInitializing || !state?.loginModal) {
+      return
     }
-  }, [location, navigate])
 
-  const onLogout = () => {
-    logout()
-    setMobileMenuOpen(false)
-    navigate('/', { replace: true })
-  }
+    setPendingPath(typeof state.from === 'string' ? state.from : '/')
+    setLoginModalOpen(true)
+    navigate(location.pathname, { replace: true })
+  }, [isInitializing, location, navigate])
 
   const closeModal = () => {
     setLoginModalOpen(false)
     setLoginError(null)
     setLoginLoading(false)
+    setLoginUsername('')
+    setLoginPassword('')
   }
 
-  const onSubmitLogin = (e: React.FormEvent) => {
-    e.preventDefault()
+  const openLoginModal = (path = '/') => {
+    setPendingPath(path)
+    setLoginError(null)
+    setLoginModalOpen(true)
+  }
+
+  const onLogout = () => {
+    logout()
+    setMobileMenuOpen(false)
+    closeModal()
+    navigate('/', { replace: true })
+  }
+
+  const onSubmitLogin = async (event: React.FormEvent) => {
+    event.preventDefault()
     setLoginError(null)
     setLoginLoading(true)
-    setTimeout(() => {
-      const res = login({ username: loginUsername, password: loginPassword })
-      setLoginLoading(false)
-      if (!res.ok) {
-        setLoginError(res.message)
-        return
-      }
-      setLoginModalOpen(false)
-      navigate(pendingPath || '/', { replace: true })
-    }, 350)
+
+    const result = await login({ username: loginUsername, password: loginPassword })
+    setLoginLoading(false)
+
+    if (!result.ok) {
+      setLoginError(result.message)
+      return
+    }
+
+    setLoginModalOpen(false)
+    navigate(pendingPath || '/', { replace: true })
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-950 dark:via-blue-950 dark:to-teal-950">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg">
               <Activity className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                智医荐药
+              <h1 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-xl font-bold text-transparent">
+                智慧医药
               </h1>
-              <p className="text-xs text-muted-foreground">隐私保护的智能用药推荐系统</p>
+              <p className="text-xs text-muted-foreground">差分隐私保护的个性化用药推荐系统</p>
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1 flex-1 justify-center">
+          <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = location.pathname === item.href
@@ -114,10 +121,10 @@ export default function Layout() {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                    'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary/10 to-secondary/10 text-primary shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   )}
                 >
                   <Icon className={cn('h-4 w-4', isActive && 'text-primary')} />
@@ -127,19 +134,20 @@ export default function Layout() {
             })}
           </nav>
 
-          {/* User actions */}
-          <div className="hidden md:flex items-center gap-2">
-            {user ? (
+          <div className="hidden items-center gap-2 md:flex">
+            {isInitializing ? (
+              <div className="px-3 py-2 text-sm text-muted-foreground">验证登录状态中...</div>
+            ) : user ? (
               <>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 border border-border">
+                <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2">
                   <UserIcon className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">{user.username}</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
                     {user.role === 'admin' ? '管理员' : '普通用户'}
                   </span>
                 </div>
                 <button
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
                   onClick={onLogout}
                 >
                   <LogOut className="h-4 w-4" />
@@ -147,33 +155,31 @@ export default function Layout() {
                 </button>
               </>
             ) : (
-              <Button className="gap-2" onClick={() => { setPendingPath('/'); setLoginModalOpen(true) }}>
+              <Button className="gap-2" onClick={() => openLoginModal('/')}>
                 <LogIn className="h-4 w-4" />
                 登录
               </Button>
             )}
           </div>
 
-          {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-muted"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="rounded-lg p-2 hover:bg-muted md:hidden"
+            onClick={() => setMobileMenuOpen((value) => !value)}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border p-4 space-y-2 bg-background animate-in slide-in-from-top-2">
+          <div className="animate-in slide-in-from-top-2 space-y-2 border-t border-border bg-background p-4 md:hidden">
             {user ? (
-              <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-muted/40 border border-border mb-2">
+              <div className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 p-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">{user.username}</div>
+                  <div className="truncate text-sm font-medium">{user.username}</div>
                   <div className="text-xs text-muted-foreground">{user.role === 'admin' ? '管理员' : '普通用户'}</div>
                 </div>
                 <button
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
                   onClick={onLogout}
                 >
                   <LogOut className="h-4 w-4" />
@@ -181,16 +187,15 @@ export default function Layout() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-muted/40 border border-border mb-2">
+              <div className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 p-3">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">未登录</div>
+                  <div className="truncate text-sm font-medium">未登录</div>
                   <div className="text-xs text-muted-foreground">登录后可使用完整功能</div>
                 </div>
                 <button
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
                   onClick={() => {
-                    setPendingPath('/')
-                    setLoginModalOpen(true)
+                    openLoginModal('/')
                     setMobileMenuOpen(false)
                   }}
                 >
@@ -199,6 +204,7 @@ export default function Layout() {
                 </button>
               </div>
             )}
+
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = location.pathname === item.href
@@ -207,10 +213,10 @@ export default function Layout() {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200',
+                    'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200',
                     isActive
                       ? 'bg-gradient-to-r from-primary/10 to-secondary/10 text-primary shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -223,12 +229,13 @@ export default function Layout() {
         )}
       </header>
 
-      {/* Login Modal */}
       {loginModalOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) closeModal()
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closeModal()
+            }
           }}
         >
           <div className="w-full max-w-lg">
@@ -239,7 +246,7 @@ export default function Layout() {
                   登录后继续
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  你正在访问受保护功能：<span className="font-medium text-foreground">{pendingPath}</span>
+                  你正在访问受保护页面：<span className="font-medium text-foreground">{pendingPath}</span>
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -249,8 +256,8 @@ export default function Layout() {
                     <Input
                       id="modal-username"
                       value={loginUsername}
-                      onChange={(e) => setLoginUsername(e.target.value)}
-                      placeholder="user 或 admin"
+                      onChange={(event) => setLoginUsername(event.target.value)}
+                      placeholder="请输入账号"
                       autoComplete="username"
                       required
                     />
@@ -261,21 +268,21 @@ export default function Layout() {
                       id="modal-password"
                       type="password"
                       value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="123456"
+                      onChange={(event) => setLoginPassword(event.target.value)}
+                      placeholder="请输入密码"
                       autoComplete="current-password"
                       required
                     />
                   </div>
 
                   {loginError && (
-                    <div className="p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20 text-sm">
+                    <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                       {loginError}
                     </div>
                   )}
 
                   <div className="flex gap-3">
-                    <Button type="submit" className="flex-1 gap-2" disabled={loginLoading}>
+                    <Button type="submit" className="flex-1 gap-2" disabled={loginLoading || isInitializing}>
                       <LogIn className="h-4 w-4" />
                       {loginLoading ? '登录中...' : '登录'}
                     </Button>
@@ -285,13 +292,13 @@ export default function Layout() {
                   </div>
                 </form>
 
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground mb-1">普通用户</div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-lg border border-border bg-background p-3">
+                    <div className="mb-1 text-xs text-muted-foreground">普通用户</div>
                     <div className="text-sm font-medium">user / 123456</div>
                   </div>
-                  <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground mb-1">管理员</div>
+                  <div className="rounded-lg border border-border bg-background p-3">
+                    <div className="mb-1 text-xs text-muted-foreground">管理员</div>
                     <div className="text-sm font-medium">admin / 123456</div>
                   </div>
                 </div>
@@ -301,25 +308,23 @@ export default function Layout() {
         </div>
       )}
 
-      {/* Main Content */}
       <main className="container py-8">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border/40 bg-background/50 backdrop-blur mt-auto">
+      <footer className="mt-auto border-t border-border/40 bg-background/50 backdrop-blur">
         <div className="container py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
                 <Activity className="h-4 w-4 text-white" />
               </div>
-              <span className="text-sm font-medium bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                智医荐药
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-sm font-medium text-transparent">
+                智慧医药
               </span>
             </div>
-            <p className="text-sm text-muted-foreground text-center md:text-right">
-              基于差分隐私的医疗用药推荐系统 · 保护隐私 · 精准推荐
+            <p className="text-center text-sm text-muted-foreground md:text-right">
+              基于差分隐私的 AI 个性化医疗用药推荐系统 · 保护隐私 · 精准推荐
             </p>
           </div>
         </div>
