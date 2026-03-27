@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Shield, Lock, KeyRound, LogIn } from 'lucide-react'
@@ -9,9 +9,9 @@ import { Label } from '@/components/ui/label'
 import { useAuth } from '@/lib/authStore'
 
 export default function LoginPage() {
-  const { login } = useAuth()
+  const { login, isAuthenticated, isInitializing } = useAuth()
   const navigate = useNavigate()
-  const location = useLocation() as any
+  const location = useLocation() as { state?: { from?: string } }
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -19,27 +19,34 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
 
   const from = useMemo(() => {
-    const v = location?.state?.from
-    return typeof v === 'string' && v.length ? v : '/'
-  }, [location?.state?.from])
+    const target = location.state?.from
+    return typeof target === 'string' && target.length > 0 ? target : '/'
+  }, [location.state?.from])
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  useEffect(() => {
+    if (!isInitializing && isAuthenticated) {
+      navigate(from, { replace: true })
+    }
+  }, [from, isAuthenticated, isInitializing, navigate])
+
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
     setError(null)
     setLoading(true)
-    setTimeout(() => {
-      const res = login({ username, password })
-      setLoading(false)
-      if (!res.ok) {
-        setError(res.message)
-        return
-      }
-      navigate(from, { replace: true })
-    }, 450)
+
+    const result = await login({ username, password })
+    setLoading(false)
+
+    if (!result.ok) {
+      setError(result.message)
+      return
+    }
+
+    navigate(from, { replace: true })
   }
 
   return (
-    <div className="min-h-[calc(100vh-0px)] flex items-center justify-center p-4">
+    <div className="flex min-h-[calc(100vh-0px)] items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,12 +55,12 @@ export default function LoginPage() {
         <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-2xl">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg">
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-2xl">登录智医荐药</CardTitle>
-                <CardDescription>使用前请先登录（demo：普通用户/管理员）</CardDescription>
+                <CardTitle className="text-2xl">登录智慧医药</CardTitle>
+                <CardDescription>使用后端账号登录系统（默认账号：`user` / `admin`）</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -67,8 +74,8 @@ export default function LoginPage() {
                 <Input
                   id="username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="user 或 admin"
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder="请输入账号"
                   autoComplete="username"
                   required
                 />
@@ -82,42 +89,42 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="123456"
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="请输入密码"
                   autoComplete="current-password"
                   required
                 />
               </div>
 
               {error && (
-                <div className="p-3 rounded-lg bg-destructive/10 text-destructive border border-destructive/20 text-sm">
+                <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                   {error}
                 </div>
               )}
 
-              <Button type="submit" className="w-full gap-2 shadow-lg" size="lg" disabled={loading}>
+              <Button type="submit" className="w-full gap-2 shadow-lg" size="lg" disabled={loading || isInitializing}>
                 <LogIn className="h-4 w-4" />
                 {loading ? '登录中...' : '登录'}
               </Button>
             </form>
 
-            <div className="grid md:grid-cols-2 gap-3">
-              <div className="p-3 rounded-lg bg-background border border-border">
-                <div className="text-xs text-muted-foreground mb-1">普通用户</div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-border bg-background p-3">
+                <div className="mb-1 text-xs text-muted-foreground">普通用户</div>
                 <div className="text-sm font-medium">账号：user</div>
                 <div className="text-sm font-medium">密码：123456</div>
               </div>
-              <div className="p-3 rounded-lg bg-background border border-border">
-                <div className="text-xs text-muted-foreground mb-1">管理员</div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <div className="mb-1 text-xs text-muted-foreground">管理员</div>
                 <div className="text-sm font-medium">账号：admin</div>
                 <div className="text-sm font-medium">密码：123456</div>
               </div>
             </div>
 
-            <div className="text-sm text-muted-foreground text-center">
-              登录后可进入首页与推荐系统。想先看看页面？{' '}
-              <Link to="/login" className="text-primary hover:underline">
-                刷新保持在登录页
+            <div className="text-center text-sm text-muted-foreground">
+              登录后即可进入推荐与管理功能。{' '}
+              <Link to="/" className="text-primary hover:underline">
+                返回首页
               </Link>
             </div>
           </CardContent>
@@ -126,4 +133,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

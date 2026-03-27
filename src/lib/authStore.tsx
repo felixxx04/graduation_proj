@@ -1,73 +1,126 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { api, clearAuthToken, getAuthToken, getErrorMessage, setAuthToken } from './api'
 
 export type UserRole = 'user' | 'admin'
 
 export type AuthUser = {
+  id: number
   username: string
   role: UserRole
+  status: string
 }
+
+type LoginResult = { ok: true } | { ok: false; message: string }
 
 type AuthState = {
   user: AuthUser | null
   isAuthenticated: boolean
-  login: (input: { username: string; password: string }) => { ok: true } | { ok: false; message: string }
+  isInitializing: boolean
+  login: (input: { username: string; password: string }) => Promise<LoginResult>
   logout: () => void
+  refreshUser: () => Promise<void>
 }
 
-const STORAGE_KEY = 'dp_med_demo_auth_v1'
+type BackendUser = {
+  id: number
+  username: string
+  role: string
+  status: string
+}
 
-type Persisted = {
-  user: AuthUser | null
+type LoginResponse = {
+  token: string
+  user: BackendUser
 }
 
 const AuthContext = createContext<AuthState | null>(null)
 
-function safeParse(json: string | null): Persisted | null {
-  if (!json) return null
-  try {
-    return JSON.parse(json) as Persisted
-  } catch {
-    return null
+function normalizeUser(user: BackendUser): AuthUser {
+  return {
+    id: user.id,
+    username: user.username,
+    role: user.role === 'admin' ? 'admin' : 'user',
+    status: user.status,
   }
 }
 
-// Demo users (frontend-only). Backend will replace this later.
-const DEMO_ACCOUNTS: Array<{ username: string; password: string; role: UserRole }> = [
-  { username: 'user', password: '123456', role: 'user' },
-  { username: 'admin', password: '123456', role: 'admin' },
-]
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [isInitializing, setIsInitializing] = useState(true)
 
-  useEffect(() => {
-    const persisted = safeParse(localStorage.getItem(STORAGE_KEY))
-    if (persisted?.user) setUser(persisted.user)
+  const refreshUser = useCallback(async () => {
+    const currentUser = await api.get<BackendUser>('/api/auth/me')
+    setUser(normalizeUser(currentUser))
   }, [])
 
   useEffect(() => {
-    const persisted: Persisted = { user }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted))
-  }, [user])
+    let cancelled = false
 
-  const login: AuthState['login'] = ({ username, password }) => {
-    const u = username.trim()
-    const account = DEMO_ACCOUNTS.find((a) => a.username === u && a.password === password)
-    if (!account) return { ok: false, message: '账号或密码错误（demo：user/admin，密码均为 123456）' }
-    setUser({ username: account.username, role: account.role })
-    return { ok: true }
-  }
+    const bootstrap = async () => {
+      const token = getAuthToken()
+      if (!token) {
+        setIsInitializing(false)
+        return
+      }
 
-  const logout = () => setUser(null)
+      try {
+        const currentUser = await api.get<BackendUser>('/api/auth/me')
+        if (!cancelled) {
+          setUser(normalizeUser(currentUser))
+        }
+      } catch {
+        clearAuthToken()
+        if (!cancelled) {
+          setUser(null)
+        }
+      } finally {
+        if (!cancelled) {
+          setIsInitializing(false)
+        }
+      }
+    }
+
+    void bootstrap()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const login: AuthState['login'] = useCallback(async ({ username, password }) => {
+    try {
+      const response = await api.post<LoginResponse>('/api/auth/login', {
+        username: username.trim(),
+        password,
+      })
+      setAuthToken(response.token)
+      setUser(normalizeUser(response.user))
+      return { ok: true }
+    } catch (error) {
+      clearAuthToken()
+      setUser(null)
+      return {
+        ok: false,
+        message: getErrorMessage(error, '登录失败，请检查账号和密码'),
+      }
+    }
+  }, [])
+
+  const logout = useCallback(() => {
+    clearAuthToken()
+    setUser(null)
+  }, [])
 
   const value = useMemo<AuthState>(
     () => ({
       user,
       isAuthenticated: Boolean(user),
+      isInitializing,
       login,
       logout,
+      refreshUser,
     }),
-    [user]
+    [isInitializing, login, logout, refreshUser, user]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
@@ -78,4 +131,3 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider')
   return ctx
 }
-

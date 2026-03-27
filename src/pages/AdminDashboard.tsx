@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from 'react'
+﻿import { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Shield,
@@ -7,7 +7,6 @@ import {
   Trash2,
   Brain,
   Play,
-  CheckCircle2,
   User as UserIcon,
   Lock,
   Unlock,
@@ -31,204 +30,272 @@ import {
 } from 'recharts'
 import { usePrivacyStore, formatEventType } from '@/lib/privacyStore'
 import { useAuth } from '@/lib/authStore'
-import { usePatientStore } from '@/lib/patientStore'
+import { api, getErrorMessage } from '@/lib/api'
 
-interface DemoUser {
-  id: string
+interface AdminUserItem {
+  id: number
   username: string
-  role: '管理员' | '普通用户'
-  status: 'active' | 'disabled'
-  lastLogin: string
+  role: string
+  status: 'ACTIVE' | 'DISABLED'
+  lastLoginAt: string | null
 }
 
-const DEMO_USERS: DemoUser[] = [
-  { id: 'u1', username: 'admin', role: '管理员', status: 'active', lastLogin: '2024-03-18 09:32' },
-  { id: 'u2', username: 'user', role: '普通用户', status: 'active', lastLogin: '2024-03-18 10:15' },
-]
-
-interface TrainingPoint {
-  epoch: number
+interface TrainingEpochItem {
+  epochIndex: number
   loss: number
   accuracy: number
   epsilonSpent: number
+  createdAt: string
+}
+
+interface TrainingRunItem {
+  id: number
+  status: string
+  totalEpochs: number
+  epsilonPerEpoch: number
+  startedAt: string
+  finishedAt: string | null
+  epochs: TrainingEpochItem[]
+}
+
+interface DashboardResponse {
+  patientCount: number
+  userCount: number
+  recommendationCount: number
+  eventCount: number
+  spentEpsilon: number
+  remainingBudget: number
 }
 
 type LedgerFilter = 'all' | 'recommendation_inference' | 'training_epoch'
 
 export default function AdminDashboard() {
   const { user } = useAuth()
-  const { config, events, budget, addEvent, clearEvents } = usePrivacyStore()
-  const { patients } = usePatientStore()
+  const { config, events, budget, clearEvents, refresh: refreshPrivacy } = usePrivacyStore()
 
-  // 用户管理状态
-  const [userStatuses, setUserStatuses] = useState<Record<string, 'active' | 'disabled'>>({
-    u1: 'active',
-    u2: 'active',
-  })
+  const [users, setUsers] = useState<AdminUserItem[]>([])
+  const [dashboard, setDashboard] = useState<DashboardResponse | null>(null)
+  const [trainingRuns, setTrainingRuns] = useState<TrainingRunItem[]>([])
+  const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null)
+  const [startEpochs, setStartEpochs] = useState(10)
 
-  // 模型训练状态
-  const [isTraining, setIsTraining] = useState(false)
-  const [trainingProgress, setTrainingProgress] = useState(0)
-  const [trainingHistory, setTrainingHistory] = useState<TrainingPoint[]>([])
-  const trainingRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [loadingDashboard, setLoadingDashboard] = useState(false)
+  const [loadingTraining, setLoadingTraining] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
 
-  // 账本过滤
+  const [usersError, setUsersError] = useState<string | null>(null)
+  const [dashboardError, setDashboardError] = useState<string | null>(null)
+  const [trainingError, setTrainingError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
+
   const [ledgerFilter, setLedgerFilter] = useState<LedgerFilter>('all')
 
-  // 系统概览统计
-  const overviewStats = useMemo(() => {
-    const todayInferences = events.filter(
-      (e) => e.type === 'recommendation_inference' &&
-        new Date(e.ts).toDateString() === new Date().toDateString()
-    ).length
-    const trainingEpochs = events.filter((e) => e.type === 'training_epoch').length
-    return {
-      patientCount: patients.length,
-      drugCount: 6,
-      todayInferences,
-      trainingEpochs,
-      modelAccuracy: trainingHistory.length > 0
-        ? trainingHistory[trainingHistory.length - 1].accuracy.toFixed(1)
-        : '89.7',
+  const loadUsers = useCallback(async () => {
+    setLoadingUsers(true)
+    try {
+      const data = await api.get<AdminUserItem[]>('/api/admin/users')
+      setUsers(data)
+      setUsersError(null)
+    } catch (error) {
+      setUsersError(getErrorMessage(error, '用户列表加载失败'))
+    } finally {
+      setLoadingUsers(false)
     }
-  }, [events, patients, trainingHistory])
+  }, [])
 
-  // 启动模型训练模拟
-  const handleStartTraining = () => {
-    if (isTraining) return
-    setIsTraining(true)
-    setTrainingProgress(0)
-    setTrainingHistory([])
+  const loadDashboard = useCallback(async () => {
+    setLoadingDashboard(true)
+    try {
+      const data = await api.get<DashboardResponse>('/api/dashboard/visualization')
+      setDashboard(data)
+      setDashboardError(null)
+    } catch (error) {
+      setDashboardError(getErrorMessage(error, '系统概览加载失败'))
+    } finally {
+      setLoadingDashboard(false)
+    }
+  }, [])
 
-    const totalEpochs = 10
-    let epoch = 0
-
-    const runEpoch = () => {
-      epoch++
-      // 模拟训练曲线：loss 下降，accuracy 上升
-      const t = epoch / totalEpochs
-      const loss = parseFloat((1.8 * Math.exp(-3 * t) + 0.15 + (Math.random() - 0.5) * 0.04).toFixed(4))
-      const accuracy = parseFloat((60 + 28 * (1 - Math.exp(-4 * t)) + (Math.random() - 0.5) * 1.5).toFixed(2))
-      const epsilonPerEpoch = parseFloat((config.epsilon / totalEpochs).toFixed(4))
-
-      // 消耗隐私预算
-      addEvent({
-        type: 'training_epoch',
-        epsilonSpent: Math.min(epsilonPerEpoch, Math.max(0, budget.remaining)),
-        note: `Epoch ${epoch}/${totalEpochs}，loss=${loss}，acc=${accuracy}%`,
-      })
-
-      setTrainingHistory((prev) => [
-        ...prev,
-        { epoch, loss, accuracy, epsilonSpent: epsilonPerEpoch },
-      ])
-      setTrainingProgress(Math.round((epoch / totalEpochs) * 100))
-
-      if (epoch < totalEpochs) {
-        trainingRef.current = setTimeout(runEpoch, 600)
+  const loadTraining = useCallback(async () => {
+    setLoadingTraining(true)
+    try {
+      const data = await api.get<TrainingRunItem[]>('/api/admin/training/history?limit=10')
+      setTrainingRuns(data)
+      if (data.length > 0) {
+        setSelectedTrainingId((current) => current ?? data[0].id)
       } else {
-        setIsTraining(false)
+        setSelectedTrainingId(null)
       }
+      setTrainingError(null)
+    } catch (error) {
+      setTrainingError(getErrorMessage(error, '训练历史加载失败'))
+    } finally {
+      setLoadingTraining(false)
     }
+  }, [])
 
-    trainingRef.current = setTimeout(runEpoch, 300)
-  }
+  useEffect(() => {
+    if (user?.role !== 'admin') return
 
-  // 过滤后的账本事件
+    void Promise.all([
+      loadUsers(),
+      loadDashboard(),
+      loadTraining(),
+      refreshPrivacy(),
+    ])
+  }, [loadDashboard, loadTraining, loadUsers, refreshPrivacy, user?.role])
+
+  const selectedRun = useMemo(() => {
+    if (!selectedTrainingId) return trainingRuns[0] ?? null
+    return trainingRuns.find((run) => run.id === selectedTrainingId) ?? trainingRuns[0] ?? null
+  }, [selectedTrainingId, trainingRuns])
+
+  const trainingSeries = useMemo(
+    () =>
+      (selectedRun?.epochs ?? []).map((item) => ({
+        epoch: item.epochIndex,
+        loss: item.loss,
+        accuracy: item.accuracy,
+        epsilonSpent: item.epsilonSpent,
+      })),
+    [selectedRun]
+  )
+
   const filteredEvents = useMemo(() => {
     if (ledgerFilter === 'all') return events.slice(0, 30)
-    return events.filter((e) => e.type === ledgerFilter).slice(0, 30)
+    return events.filter((item) => item.type === ledgerFilter).slice(0, 30)
   }, [events, ledgerFilter])
 
-  const toggleUserStatus = (id: string) => {
-    setUserStatuses((prev) => ({
-      ...prev,
-      [id]: prev[id] === 'active' ? 'disabled' : 'active',
-    }))
+  const todayInferences = useMemo(() => {
+    return events.filter(
+      (event) =>
+        event.type === 'recommendation_inference' &&
+        new Date(event.ts).toDateString() === new Date().toDateString()
+    ).length
+  }, [events])
+
+  const toggleUserStatus = async (target: AdminUserItem) => {
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      const nextStatus = target.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'
+      const updated = await api.patch<AdminUserItem>(`/api/admin/users/${target.id}/status`, {
+        status: nextStatus,
+      })
+      setUsers((prev) => prev.map((item) => (item.id === target.id ? updated : item)))
+    } catch (error) {
+      setActionError(getErrorMessage(error, '更新用户状态失败'))
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleStartTraining = async () => {
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      const run = await api.post<TrainingRunItem>('/api/admin/training/start', {
+        epochs: Math.max(1, Math.min(startEpochs, 50)),
+      })
+      setTrainingRuns((prev) => [run, ...prev])
+      setSelectedTrainingId(run.id)
+      await Promise.all([refreshPrivacy(), loadDashboard()])
+    } catch (error) {
+      setActionError(getErrorMessage(error, '启动训练失败'))
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleClearLedger = async () => {
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      await clearEvents()
+      await loadDashboard()
+    } catch (error) {
+      setActionError(getErrorMessage(error, '重置账本失败'))
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+        <h1 className="mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-3xl font-bold text-transparent">
           后台管理
         </h1>
-        <p className="text-muted-foreground">
-          系统监控、用户管理、模型训练模拟与隐私预算审计
-        </p>
+        <p className="text-muted-foreground">系统监控、用户管理、训练任务与隐私预算审计</p>
       </div>
 
-      {/* 管理员信息 */}
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg">
-        <CardContent className="pt-6 flex items-center justify-between gap-4 flex-wrap">
+        <CardContent className="flex flex-wrap items-center justify-between gap-4 pt-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-md">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-md">
               <UserIcon className="h-6 w-6 text-white" />
             </div>
             <div>
-              <div className="font-semibold text-lg">{user?.username}</div>
-              <div className="text-sm text-muted-foreground flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">管理员</span>
-                <span>· 已登录</span>
+              <div className="text-lg font-semibold">{user?.username ?? '管理员'}</div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">管理员</span>
+                <span>已登录</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 flex-wrap text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
-              系统运行正常
-            </div>
-            <div>隐私预算剩余：<span className="font-semibold text-secondary">{budget.remaining.toFixed(2)}</span></div>
-          </div>
+          <div className="text-sm text-muted-foreground">隐私预算剩余：<span className="font-semibold text-secondary">{budget.remaining.toFixed(2)}</span></div>
         </CardContent>
       </Card>
 
-      {/* ===== 区块 1：系统概览 ===== */}
+      {(dashboardError || usersError || trainingError || actionError) && (
+        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+          {dashboardError || usersError || trainingError || actionError}
+        </div>
+      )}
+
       <section>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
           <BarChart3 className="h-5 w-5 text-primary" />
-          系统概览
+          系统总览
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
           {[
-            { icon: Users, label: '患者总数', value: `${overviewStats.patientCount} 人`, color: 'from-blue-500 to-cyan-500' },
-            { icon: Pill, label: '药物种类', value: `${overviewStats.drugCount} 种`, color: 'from-purple-500 to-pink-500' },
-            { icon: Activity, label: '今日推荐次数', value: `${overviewStats.todayInferences} 次`, color: 'from-green-500 to-emerald-500' },
-            { icon: Brain, label: '训练轮次', value: `${overviewStats.trainingEpochs} epoch`, color: 'from-orange-500 to-red-500' },
-            { icon: TrendingUp, label: '模型准确率', value: `${overviewStats.modelAccuracy}%`, color: 'from-primary to-secondary' },
-          ].map((s, idx) => {
-            const Icon = s.icon
+            { icon: Users, label: '患者总数', value: `${dashboard?.patientCount ?? 0}`, color: 'from-blue-500 to-cyan-500' },
+            { icon: Pill, label: '系统用户', value: `${dashboard?.userCount ?? 0}`, color: 'from-purple-500 to-pink-500' },
+            { icon: Activity, label: '今日推理', value: `${todayInferences}`, color: 'from-green-500 to-emerald-500' },
+            { icon: Brain, label: '账本事件', value: `${dashboard?.eventCount ?? 0}`, color: 'from-orange-500 to-red-500' },
+            { icon: TrendingUp, label: '推荐总数', value: `${dashboard?.recommendationCount ?? 0}`, color: 'from-primary to-secondary' },
+          ].map((item, index) => {
+            const Icon = item.icon
             return (
-              <motion.div key={s.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.06 }}>
-                <Card className="border-border/40 bg-card/50 backdrop-blur hover:shadow-lg transition-all duration-300">
-                  <CardContent className="pt-5 pb-4">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${s.color} flex items-center justify-center mb-3 shadow-md`}>
+              <motion.div key={item.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
+                <Card className="border-border/40 bg-card/50 backdrop-blur">
+                  <CardContent className="pb-4 pt-5">
+                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${item.color} shadow-md`}>
                       <Icon className="h-5 w-5 text-white" />
                     </div>
-                    <div className="text-2xl font-bold mb-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                      {s.value}
-                    </div>
-                    <div className="text-xs text-muted-foreground">{s.label}</div>
+                    <div className="text-2xl font-bold">{item.value}</div>
+                    <div className="text-xs text-muted-foreground">{item.label}</div>
                   </CardContent>
                 </Card>
               </motion.div>
             )
           })}
         </div>
+        <div className="mt-3 text-sm text-muted-foreground">
+          已消耗 ε：{dashboard?.spentEpsilon.toFixed(3) ?? '0.000'} · 剩余 ε：{dashboard?.remainingBudget.toFixed(3) ?? '0.000'}
+          {(loadingDashboard || loadingUsers || loadingTraining) && <span> · 同步中...</span>}
+        </div>
       </section>
 
-      {/* ===== 区块 2：用户管理 ===== */}
       <section>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
           <Users className="h-5 w-5 text-primary" />
           用户管理
         </h2>
         <Card className="border-border/40 bg-card/50 backdrop-blur">
-          <CardHeader>
-            <CardDescription>演示用户列表（后端接入后可对接真实用户系统）</CardDescription>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <div className="overflow-x-auto rounded-lg border border-border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/60">
@@ -241,211 +308,148 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {DEMO_USERS.map((u) => {
-                    const status = userStatuses[u.id] ?? u.status
-                    return (
-                      <tr key={u.id} className="border-t border-border hover:bg-muted/20 transition-colors">
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                              <UserIcon className="h-4 w-4 text-white" />
-                            </div>
-                            <span className="font-medium">{u.username}</span>
-                          </div>
-                        </td>
-                        <td className="p-3">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            u.role === '管理员'
-                              ? 'bg-primary/10 text-primary'
-                              : 'bg-secondary/10 text-secondary'
-                          }`}>
-                            {u.role}
-                          </span>
-                        </td>
-                        <td className="p-3 text-muted-foreground">{u.lastLogin}</td>
-                        <td className="p-3">
-                          <span className={`flex items-center gap-1.5 w-fit px-2 py-1 rounded-full text-xs font-medium ${
-                            status === 'active'
-                              ? 'bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300'
-                              : 'bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400'
-                          }`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${status === 'active' ? 'bg-green-500' : 'bg-red-500'}`} />
-                            {status === 'active' ? '正常' : '已禁用'}
-                          </span>
-                        </td>
-                        <td className="p-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 gap-1.5 text-xs"
-                            onClick={() => toggleUserStatus(u.id)}
-                          >
-                            {status === 'active'
-                              ? <><Lock className="h-3.5 w-3.5" />禁用</>
-                              : <><Unlock className="h-3.5 w-3.5" />启用</>
-                            }
-                          </Button>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                  {users.map((item) => (
+                    <tr key={item.id} className="border-t border-border hover:bg-muted/20">
+                      <td className="p-3 font-medium">{item.username}</td>
+                      <td className="p-3">{item.role === 'admin' ? '管理员' : '普通用户'}</td>
+                      <td className="p-3 text-muted-foreground">
+                        {item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleString() : '暂无'}
+                      </td>
+                      <td className="p-3">
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${
+                            item.status === 'ACTIVE'
+                              ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300'
+                              : 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300'
+                          }`}
+                        >
+                          {item.status === 'ACTIVE' ? '正常' : '禁用'}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 gap-1.5"
+                          disabled={actionLoading}
+                          onClick={() => void toggleUserStatus(item)}
+                        >
+                          {item.status === 'ACTIVE' ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+                          {item.status === 'ACTIVE' ? '禁用' : '启用'}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                  {users.length === 0 && !loadingUsers && (
+                    <tr>
+                      <td className="p-4 text-center text-muted-foreground" colSpan={5}>
+                        暂无用户数据
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              注：禁用/启用为前端 demo 状态，不影响实际登录功能，后端接入后可扩展为真实权限控制。
-            </p>
           </CardContent>
         </Card>
       </section>
 
-      {/* ===== 区块 3：模型训练模拟 ===== */}
       <section>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
           <Brain className="h-5 w-5 text-primary" />
-          模型训练模拟
+          模型训练
         </h2>
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* 训练控制面板 */}
+        <div className="grid gap-6 lg:grid-cols-2">
           <Card className="border-border/40 bg-card/50 backdrop-blur">
             <CardHeader>
               <CardTitle className="text-base">训练控制</CardTitle>
-              <CardDescription>
-                模拟 DeepFM 模型在差分隐私约束下的训练过程（10 个 epoch）
-              </CardDescription>
+              <CardDescription>调用后端训练接口并记录每个 epoch 的指标和隐私预算消耗</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="p-3 rounded-lg bg-background border border-border">
-                  <div className="text-xs text-muted-foreground">当前 ε（每 epoch）</div>
-                  <div className="font-semibold text-primary">{(config.epsilon / 10).toFixed(4)}</div>
-                </div>
-                <div className="p-3 rounded-lg bg-background border border-border">
-                  <div className="text-xs text-muted-foreground">噪声机制</div>
+                <div className="rounded-lg border border-border bg-background p-3">
+                  <div className="text-xs text-muted-foreground">当前机制</div>
                   <div className="font-semibold capitalize">{config.noiseMechanism}</div>
                 </div>
-                <div className="p-3 rounded-lg bg-background border border-border">
+                <div className="rounded-lg border border-border bg-background p-3">
                   <div className="text-xs text-muted-foreground">注入阶段</div>
-                  <div className="font-semibold">{config.applicationStage === 'data' ? '数据层' : config.applicationStage === 'gradient' ? '梯度层' : '模型层'}</div>
+                  <div className="font-semibold">{config.applicationStage}</div>
                 </div>
-                <div className="p-3 rounded-lg bg-background border border-border">
-                  <div className="text-xs text-muted-foreground">剩余预算</div>
-                  <div className="font-semibold text-secondary">ε = {budget.remaining.toFixed(2)}</div>
+                <div className="rounded-lg border border-border bg-background p-3">
+                  <div className="text-xs text-muted-foreground">每轮预算(估算)</div>
+                  <div className="font-semibold text-primary">{(config.epsilon / Math.max(startEpochs, 1)).toFixed(4)}</div>
+                </div>
+                <div className="rounded-lg border border-border bg-background p-3">
+                  <div className="text-xs text-muted-foreground">预算剩余</div>
+                  <div className="font-semibold text-secondary">{budget.remaining.toFixed(2)}</div>
                 </div>
               </div>
 
-              {/* 进度条 */}
-              {(isTraining || trainingHistory.length > 0) && (
-                <div>
-                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                    <span>训练进度</span>
-                    <span>{trainingProgress}%</span>
-                  </div>
-                  <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
-                      animate={{ width: `${trainingProgress}%` }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* 最新训练状态 */}
-              {trainingHistory.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                  <div className="p-2 rounded-lg bg-primary/5 border border-primary/20">
-                    <div className="text-xs text-muted-foreground">当前 Epoch</div>
-                    <div className="font-bold text-primary">{trainingHistory[trainingHistory.length - 1].epoch}/10</div>
-                  </div>
-                  <div className="p-2 rounded-lg bg-secondary/5 border border-secondary/20">
-                    <div className="text-xs text-muted-foreground">Loss</div>
-                    <div className="font-bold text-secondary">{trainingHistory[trainingHistory.length - 1].loss.toFixed(4)}</div>
-                  </div>
-                  <div className="p-2 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
-                    <div className="text-xs text-muted-foreground">Accuracy</div>
-                    <div className="font-bold text-green-600 dark:text-green-400">{trainingHistory[trainingHistory.length - 1].accuracy.toFixed(1)}%</div>
-                  </div>
-                </div>
-              )}
-
-              {!isTraining && trainingHistory.length > 0 && (
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
-                  <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  <span className="text-sm text-green-700 dark:text-green-300">训练完成！最终准确率 {trainingHistory[trainingHistory.length - 1].accuracy.toFixed(1)}%</span>
-                </div>
-              )}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">训练轮次 (1-50)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={startEpochs}
+                  onChange={(event) => setStartEpochs(Number(event.target.value) || 1)}
+                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                />
+              </div>
 
               <div className="flex gap-3">
                 <Button
-                  onClick={handleStartTraining}
-                  disabled={isTraining || budget.remaining <= 0}
-                  className="flex-1 gap-2"
                   size="lg"
+                  className="flex-1 gap-2"
+                  disabled={actionLoading || budget.remaining <= 0}
+                  onClick={() => void handleStartTraining()}
                 >
-                  {isTraining ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 animate-spin" />
-                      训练中...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-4 w-4" />
-                      启动训练
-                    </>
-                  )}
+                  {actionLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                  启动训练
                 </Button>
-                {trainingHistory.length > 0 && !isTraining && (
-                  <Button variant="outline" onClick={() => { setTrainingHistory([]); setTrainingProgress(0) }}>
-                    清除历史
-                  </Button>
-                )}
+                <Button variant="outline" onClick={() => void loadTraining()} disabled={loadingTraining}>
+                  刷新历史
+                </Button>
               </div>
-              {budget.remaining <= 0 && (
-                <p className="text-xs text-amber-600 dark:text-amber-400">
-                  隐私预算已耗尽，无法继续训练。请在「隐私配置」中重置预算或增加总预算。
-                </p>
+
+              {trainingRuns.length > 0 && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">选择训练任务</label>
+                  <select
+                    value={selectedRun?.id ?? ''}
+                    onChange={(event) => setSelectedTrainingId(Number(event.target.value))}
+                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    {trainingRuns.map((run) => (
+                      <option key={run.id} value={run.id}>
+                        #{run.id} · {run.status} · {new Date(run.startedAt).toLocaleString()}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               )}
             </CardContent>
           </Card>
 
-          {/* 训练曲线图 */}
           <Card className="border-border/40 bg-card/50 backdrop-blur">
             <CardHeader>
               <CardTitle className="text-base">训练曲线</CardTitle>
-              <CardDescription>Loss 下降与准确率提升（DP-SGD 约束下）</CardDescription>
+              <CardDescription>展示所选训练任务的 loss 与 accuracy 变化</CardDescription>
             </CardHeader>
             <CardContent>
-              {trainingHistory.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[260px] text-muted-foreground">
-                  <Brain className="h-12 w-12 mb-3 opacity-30" />
-                  <p className="text-sm">点击「启动训练」后展示实时曲线</p>
+              {trainingSeries.length === 0 ? (
+                <div className="flex h-[260px] flex-col items-center justify-center text-muted-foreground">
+                  <Brain className="mb-3 h-12 w-12 opacity-30" />
+                  <p className="text-sm">暂无训练数据，启动训练后可查看曲线</p>
                 </div>
               ) : (
                 <div className="h-[260px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={trainingHistory}>
+                    <LineChart data={trainingSeries}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis
-                        dataKey="epoch"
-                        label={{ value: 'Epoch', position: 'insideBottom', offset: -4 }}
-                        stroke="hsl(var(--muted-foreground))"
-                        tick={{ fontSize: 11 }}
-                      />
-                      <YAxis
-                        yAxisId="left"
-                        stroke="hsl(var(--muted-foreground))"
-                        tick={{ fontSize: 11 }}
-                        label={{ value: 'Loss', angle: -90, position: 'insideLeft', fontSize: 11 }}
-                      />
-                      <YAxis
-                        yAxisId="right"
-                        orientation="right"
-                        domain={[50, 100]}
-                        stroke="hsl(var(--muted-foreground))"
-                        tick={{ fontSize: 11 }}
-                        label={{ value: 'Acc %', angle: 90, position: 'insideRight', fontSize: 11 }}
-                      />
+                      <XAxis dataKey="epoch" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 11 }} />
+                      <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 11 }} />
+                      <YAxis yAxisId="right" orientation="right" domain={[50, 100]} stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 11 }} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: 'hsl(var(--card))',
@@ -455,37 +459,10 @@ export default function AdminDashboard() {
                         }}
                       />
                       <Legend wrapperStyle={{ fontSize: '12px' }} />
-                      <Line
-                        yAxisId="left"
-                        type="monotone"
-                        dataKey="loss"
-                        name="Loss"
-                        stroke="hsl(var(--destructive))"
-                        strokeWidth={2.5}
-                        dot={{ r: 4 }}
-                        isAnimationActive={false}
-                      />
-                      <Line
-                        yAxisId="right"
-                        type="monotone"
-                        dataKey="accuracy"
-                        name="Accuracy (%)"
-                        stroke="hsl(var(--secondary))"
-                        strokeWidth={2.5}
-                        dot={{ r: 4 }}
-                        isAnimationActive={false}
-                      />
+                      <Line yAxisId="left" type="monotone" dataKey="loss" name="Loss" stroke="hsl(var(--destructive))" strokeWidth={2.5} dot={{ r: 4 }} isAnimationActive={false} />
+                      <Line yAxisId="right" type="monotone" dataKey="accuracy" name="Accuracy (%)" stroke="hsl(var(--secondary))" strokeWidth={2.5} dot={{ r: 4 }} isAnimationActive={false} />
                     </LineChart>
                   </ResponsiveContainer>
-                </div>
-              )}
-
-              {trainingHistory.length > 0 && (
-                <div className="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
-                  <p className="text-xs text-blue-700 dark:text-blue-400">
-                    本次训练共消耗隐私预算 ε = {(config.epsilon / 10 * trainingHistory.length).toFixed(4)}，
-                    基于差分隐私 SGD（DP-SGD）算法在梯度更新时注入高斯/Laplace 噪声，确保训练数据隐私安全。
-                  </p>
                 </div>
               )}
             </CardContent>
@@ -493,40 +470,36 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* ===== 区块 4：隐私预算账本 ===== */}
       <section>
-        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold">
           <Shield className="h-5 w-5 text-primary" />
           隐私预算账本
         </h2>
         <Card className="border-border/40 bg-card/50 backdrop-blur">
           <CardHeader>
-            <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <CardTitle className="text-base">账本记录（最近 30 条）</CardTitle>
-                <CardDescription>
-                  每次推荐推理或训练操作均自动记录 ε 消耗
-                </CardDescription>
+                <CardDescription>自动记录推荐与训练产生的隐私预算消耗</CardDescription>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   <Filter className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">类型：</span>
-                  {(['all', 'recommendation_inference', 'training_epoch'] as LedgerFilter[]).map((f) => (
+                  {(['all', 'recommendation_inference', 'training_epoch'] as LedgerFilter[]).map((item) => (
                     <button
-                      key={f}
-                      onClick={() => setLedgerFilter(f)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                        ledgerFilter === f
+                      key={item}
+                      onClick={() => setLedgerFilter(item)}
+                      className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                        ledgerFilter === item
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted text-muted-foreground hover:bg-muted/80'
                       }`}
                     >
-                      {f === 'all' ? '全部' : f === 'recommendation_inference' ? '推荐推理' : '训练轮次'}
+                      {item === 'all' ? '全部' : item === 'recommendation_inference' ? '推荐推理' : '训练轮次'}
                     </button>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" className="gap-2 h-8" onClick={clearEvents}>
+                <Button variant="outline" size="sm" className="h-8 gap-2" onClick={() => void handleClearLedger()} disabled={actionLoading}>
                   <Trash2 className="h-3.5 w-3.5" />
                   重置账本
                 </Button>
@@ -534,37 +507,34 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* 预算汇总 */}
             <div className="grid grid-cols-3 gap-3 text-sm">
-              <div className="p-3 rounded-lg bg-background border border-border text-center">
-                <div className="text-xs text-muted-foreground mb-1">总预算</div>
-                <div className="font-bold text-lg">{config.privacyBudget.toFixed(1)}</div>
+              <div className="rounded-lg border border-border bg-background p-3 text-center">
+                <div className="mb-1 text-xs text-muted-foreground">总预算</div>
+                <div className="text-lg font-bold">{config.privacyBudget.toFixed(1)}</div>
               </div>
-              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-center">
-                <div className="text-xs text-muted-foreground mb-1">已消耗</div>
-                <div className="font-bold text-lg text-red-600 dark:text-red-400">{budget.spent.toFixed(2)}</div>
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-center dark:border-red-800 dark:bg-red-950/30">
+                <div className="mb-1 text-xs text-muted-foreground">已消耗</div>
+                <div className="text-lg font-bold text-red-600 dark:text-red-400">{budget.spent.toFixed(2)}</div>
               </div>
-              <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-center">
-                <div className="text-xs text-muted-foreground mb-1">剩余</div>
-                <div className="font-bold text-lg text-green-600 dark:text-green-400">{budget.remaining.toFixed(2)}</div>
+              <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-center dark:border-green-800 dark:bg-green-950/30">
+                <div className="mb-1 text-xs text-muted-foreground">剩余</div>
+                <div className="text-lg font-bold text-green-600 dark:text-green-400">{budget.remaining.toFixed(2)}</div>
               </div>
             </div>
 
-            {/* 进度条 */}
             <div>
-              <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full bg-gradient-to-r from-primary to-destructive transition-all duration-500 rounded-full"
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-destructive transition-all duration-500"
                   style={{ width: `${config.privacyBudget <= 0 ? 0 : Math.min(100, (budget.spent / config.privacyBudget) * 100)}%` }}
                 />
               </div>
-              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <div className="mt-1 flex justify-between text-xs text-muted-foreground">
                 <span>已消耗 {config.privacyBudget > 0 ? ((budget.spent / config.privacyBudget) * 100).toFixed(1) : 0}%</span>
                 <span>ε_total = {config.privacyBudget.toFixed(1)}</span>
               </div>
             </div>
 
-            {/* 账本表格 */}
             <div className="overflow-x-auto rounded-lg border border-border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/60">
@@ -576,28 +546,26 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredEvents.map((e) => (
-                    <tr key={e.id} className="border-t border-border hover:bg-muted/20 transition-colors">
-                      <td className="p-3 text-muted-foreground whitespace-nowrap">
-                        {new Date(e.ts).toLocaleString()}
-                      </td>
+                  {filteredEvents.map((event) => (
+                    <tr key={event.id} className="border-t border-border hover:bg-muted/20">
+                      <td className="whitespace-nowrap p-3 text-muted-foreground">{new Date(event.ts).toLocaleString()}</td>
                       <td className="p-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          e.type === 'recommendation_inference'
+                        <span className={`rounded-full px-2 py-1 text-xs font-medium ${
+                          event.type === 'recommendation_inference'
                             ? 'bg-primary/10 text-primary'
                             : 'bg-secondary/10 text-secondary'
                         }`}>
-                          {formatEventType(e.type)}
+                          {formatEventType(event.type)}
                         </span>
                       </td>
-                      <td className="p-3 font-semibold text-primary">+ε {e.epsilonSpent.toFixed(4)}</td>
-                      <td className="p-3 text-muted-foreground text-xs max-w-[200px] truncate">{e.note ?? '—'}</td>
+                      <td className="p-3 font-semibold text-primary">+ε {event.epsilonSpent.toFixed(4)}</td>
+                      <td className="max-w-[220px] truncate p-3 text-xs text-muted-foreground">{event.note ?? '-'}</td>
                     </tr>
                   ))}
                   {filteredEvents.length === 0 && (
                     <tr>
-                      <td className="p-4 text-muted-foreground text-center" colSpan={4}>
-                        暂无记录。去「用药推荐」触发推理或在上方启动训练即可看到记录。
+                      <td className="p-4 text-center text-muted-foreground" colSpan={4}>
+                        暂无账本记录
                       </td>
                     </tr>
                   )}

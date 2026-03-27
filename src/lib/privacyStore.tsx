@@ -1,19 +1,7 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import type { PrivacyConfig, PrivacyLedgerEvent, PrivacyEventType } from './privacy'
-import { clampNumber, sumEpsilon } from './privacy'
-
-type PrivacyStoreState = {
-  config: PrivacyConfig
-  setConfig: (next: PrivacyConfig) => void
-  events: PrivacyLedgerEvent[]
-  addEvent: (e: Omit<PrivacyLedgerEvent, 'id' | 'ts'>) => PrivacyLedgerEvent
-  clearEvents: () => void
-  budget: {
-    total: number
-    spent: number
-    remaining: number
-  }
-}
+﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useAuth } from './authStore'
+import { api, getErrorMessage } from './api'
+import type { ApplicationStage, NoiseMechanism, PrivacyConfig, PrivacyEventType, PrivacyLedgerEvent } from './privacy'
 
 const DEFAULT_CONFIG: PrivacyConfig = {
   epsilon: 1.0,
@@ -24,80 +12,199 @@ const DEFAULT_CONFIG: PrivacyConfig = {
   privacyBudget: 10.0,
 }
 
-const STORAGE_KEY = 'dp_med_demo_privacy_store_v1'
+type PrivacyBudget = {
+  total: number
+  spent: number
+  remaining: number
+}
 
-type Persisted = {
+type PrivacyStoreState = {
   config: PrivacyConfig
+  setConfig: (next: PrivacyConfig) => Promise<void>
   events: PrivacyLedgerEvent[]
+  clearEvents: () => Promise<void>
+  refresh: () => Promise<void>
+  budget: PrivacyBudget
+  isLoading: boolean
+  error: string | null
 }
 
-function safeParse(json: string | null): Persisted | null {
-  if (!json) return null
-  try {
-    return JSON.parse(json) as Persisted
-  } catch {
-    return null
-  }
+type BackendConfig = {
+  id: number
+  epsilon: number
+  delta: number
+  sensitivity: number
+  noiseMechanism: string
+  applicationStage: string
+  privacyBudget: number
 }
 
-function normalizeConfig(input: PrivacyConfig): PrivacyConfig {
-  return {
-    epsilon: clampNumber(input.epsilon, 0.000001, 50),
-    delta: clampNumber(input.delta, 1e-12, 0.5),
-    sensitivity: clampNumber(input.sensitivity, 0.000001, 100),
-    noiseMechanism: input.noiseMechanism,
-    applicationStage: input.applicationStage,
-    privacyBudget: clampNumber(input.privacyBudget, 0, 1_000),
-  }
+type BackendBudget = {
+  total: number
+  spent: number
+  remaining: number
+}
+
+type BackendEvent = {
+  id: number
+  type: string
+  epsilonSpent: number
+  deltaSpent?: number | null
+  note?: string | null
+  createdAt: string
+}
+
+type BackendConfigWithBudget = {
+  config: BackendConfig
+  budget: BackendBudget
+  recentEvents: BackendEvent[]
+}
+
+const DEFAULT_BUDGET: PrivacyBudget = {
+  total: DEFAULT_CONFIG.privacyBudget,
+  spent: 0,
+  remaining: DEFAULT_CONFIG.privacyBudget,
 }
 
 const PrivacyStoreContext = createContext<PrivacyStoreState | null>(null)
 
+function normalizeNoiseMechanism(value: string): NoiseMechanism {
+  if (value === 'GAUSSIAN') return 'gaussian'
+  if (value === 'GEOMETRIC') return 'geometric'
+  return 'laplace'
+}
+
+function normalizeApplicationStage(value: string): ApplicationStage {
+  if (value === 'DATA') return 'data'
+  if (value === 'MODEL') return 'model'
+  return 'gradient'
+}
+
+function normalizeEventType(value: string): PrivacyEventType {
+  if (value === 'TRAINING_EPOCH') return 'training_epoch'
+  return 'recommendation_inference'
+}
+
+function toBackendNoiseMechanism(value: NoiseMechanism) {
+  if (value === 'gaussian') return 'GAUSSIAN'
+  if (value === 'geometric') return 'GEOMETRIC'
+  return 'LAPLACE'
+}
+
+function toBackendApplicationStage(value: ApplicationStage) {
+  if (value === 'data') return 'DATA'
+  if (value === 'model') return 'MODEL'
+  return 'GRADIENT'
+}
+
+function normalizeConfig(config: BackendConfig): PrivacyConfig {
+  return {
+    epsilon: config.epsilon,
+    delta: config.delta,
+    sensitivity: config.sensitivity,
+    noiseMechanism: normalizeNoiseMechanism(config.noiseMechanism),
+    applicationStage: normalizeApplicationStage(config.applicationStage),
+    privacyBudget: config.privacyBudget,
+  }
+}
+
+function normalizeBudget(budget: BackendBudget): PrivacyBudget {
+  return {
+    total: budget.total,
+    spent: budget.spent,
+    remaining: budget.remaining,
+  }
+}
+
+function normalizeEvent(event: BackendEvent): PrivacyLedgerEvent {
+  const parsedTime = Date.parse(event.createdAt)
+  return {
+    id: String(event.id),
+    ts: Number.isNaN(parsedTime) ? Date.now() : parsedTime,
+    type: normalizeEventType(event.type),
+    epsilonSpent: event.epsilonSpent,
+    deltaSpent: event.deltaSpent ?? undefined,
+    note: event.note ?? undefined,
+  }
+}
+
 export function PrivacyStoreProvider({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isInitializing } = useAuth()
   const [config, setConfigState] = useState<PrivacyConfig>(DEFAULT_CONFIG)
   const [events, setEvents] = useState<PrivacyLedgerEvent[]>([])
+  const [budget, setBudget] = useState<PrivacyBudget>(DEFAULT_BUDGET)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const persisted = safeParse(localStorage.getItem(STORAGE_KEY))
-    if (!persisted) return
-    if (persisted.config) setConfigState(normalizeConfig({ ...DEFAULT_CONFIG, ...persisted.config }))
-    if (Array.isArray(persisted.events)) setEvents(persisted.events)
-  }, [])
-
-  useEffect(() => {
-    const persisted: Persisted = { config, events }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted))
-  }, [config, events])
-
-  const budget = useMemo(() => {
-    const spent = sumEpsilon(events)
-    const total = Math.max(0, config.privacyBudget)
-    const remaining = Math.max(0, total - spent)
-    return { total, spent, remaining }
-  }, [config.privacyBudget, events])
-
-  const setConfig = (next: PrivacyConfig) => setConfigState(normalizeConfig(next))
-
-  const addEvent = (e: Omit<PrivacyLedgerEvent, 'id' | 'ts'>) => {
-    const evt: PrivacyLedgerEvent = {
-      id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
-      ts: Date.now(),
-      ...e,
+  const refresh = useCallback(async () => {
+    if (!isAuthenticated) {
+      setConfigState(DEFAULT_CONFIG)
+      setEvents([])
+      setBudget(DEFAULT_BUDGET)
+      setError(null)
+      setIsLoading(false)
+      return
     }
-    setEvents((prev) => [evt, ...prev].slice(0, 200))
-    return evt
-  }
 
-  const clearEvents = () => setEvents([])
+    setIsLoading(true)
+    try {
+      const [configData, eventData] = await Promise.all([
+        api.get<BackendConfigWithBudget>('/api/privacy/config'),
+        api.get<BackendEvent[]>('/api/privacy/events?limit=200'),
+      ])
 
-  const value: PrivacyStoreState = {
-    config,
-    setConfig,
-    events,
-    addEvent,
-    clearEvents,
-    budget,
-  }
+      setConfigState(normalizeConfig(configData.config))
+      setBudget(normalizeBudget(configData.budget))
+      setEvents(eventData.map(normalizeEvent))
+      setError(null)
+    } catch (err) {
+      setError(getErrorMessage(err, '隐私配置加载失败'))
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isAuthenticated])
+
+  useEffect(() => {
+    if (isInitializing) return
+    void refresh()
+  }, [isInitializing, refresh])
+
+  const setConfig = useCallback<PrivacyStoreState['setConfig']>(async (next) => {
+    await api.put<BackendConfig>('/api/privacy/config', {
+      epsilon: next.epsilon,
+      delta: next.delta,
+      sensitivity: next.sensitivity,
+      noiseMechanism: toBackendNoiseMechanism(next.noiseMechanism),
+      applicationStage: toBackendApplicationStage(next.applicationStage),
+      privacyBudget: next.privacyBudget,
+    })
+    await refresh()
+  }, [refresh])
+
+  const clearEvents = useCallback<PrivacyStoreState['clearEvents']>(async () => {
+    await api.delete<void>('/api/privacy/events')
+    setEvents([])
+    setBudget({
+      total: config.privacyBudget,
+      spent: 0,
+      remaining: config.privacyBudget,
+    })
+    setError(null)
+  }, [config.privacyBudget])
+
+  const value = useMemo<PrivacyStoreState>(
+    () => ({
+      config,
+      setConfig,
+      events,
+      clearEvents,
+      refresh,
+      budget,
+      isLoading,
+      error,
+    }),
+    [budget, clearEvents, config, error, events, isLoading, refresh, setConfig]
+  )
 
   return <PrivacyStoreContext.Provider value={value}>{children}</PrivacyStoreContext.Provider>
 }
@@ -108,9 +215,8 @@ export function usePrivacyStore() {
   return ctx
 }
 
-export function formatEventType(t: PrivacyEventType) {
-  if (t === 'recommendation_inference') return '推荐推理'
-  if (t === 'training_epoch') return '训练轮次'
-  return t
+export function formatEventType(type: PrivacyEventType) {
+  if (type === 'recommendation_inference') return '推荐推理'
+  if (type === 'training_epoch') return '训练轮次'
+  return type
 }
-
