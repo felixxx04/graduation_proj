@@ -4,6 +4,8 @@
 -- 字符集: utf8mb4
 -- =============================================
 
+SET NAMES utf8mb4;
+
 -- 创建数据库
 CREATE DATABASE IF NOT EXISTS medical_recommendation
     DEFAULT CHARACTER SET utf8mb4
