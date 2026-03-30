@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -112,6 +112,14 @@ export default function DrugRecommendation() {
     allergies: '',
     currentMedications: '',
   })
+
+  useEffect(() => {
+    const state = location.state as { prefill?: Partial<PatientData> } | null
+    if (!state?.prefill) return
+    setPatientData((prev) => ({ ...prev, ...state.prefill }))
+    window.history.replaceState({}, '')
+  }, [location.state])
+
   const [selectedPatientId, setSelectedPatientId] = useState<string>('')
   const [dpEnabled, setDpEnabled] = useState(true)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -124,13 +132,6 @@ export default function DrugRecommendation() {
   const [showResults, setShowResults] = useState(false)
   const [selectedDrug, setSelectedDrug] = useState<DrugResult | null>(null)
   const [showExplainability, setShowExplainability] = useState(false)
-
-  useEffect(() => {
-    const state = location.state as { prefill?: Partial<PatientData> } | null
-    if (!state?.prefill) return
-    setPatientData((prev) => ({ ...prev, ...state.prefill }))
-    window.history.replaceState({}, '')
-  }, [location.state])
 
   const handleSelectPatient = (id: string) => {
     setSelectedPatientId(id)
@@ -222,10 +223,10 @@ export default function DrugRecommendation() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-          鏅鸿兘鐢ㄨ嵂鎺ㄨ崘
+          智能用药推荐
         </h1>
         <p className="text-muted-foreground">
-          鍩轰簬娣卞害瀛︿範妯″瀷鐨勪釜鎬у寲鐢ㄨ嵂寤鸿锛岃瀺鍚堝樊鍒嗛殣绉佷繚鎶ゆ妧鏈?
+          基于深度学习模型的个性化用药建议，融合差分隐私保护技术
         </p>
       </div>
 
@@ -239,15 +240,15 @@ export default function DrugRecommendation() {
             <div className="flex-1">
               <h3 className="font-semibold mb-2 flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                娣卞害瀛︿範鎺ㄨ崘绠楁硶
+                深度学习推荐算法
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                鏈郴缁熼噰鐢?strong>娣卞害鍥犲瓙鍒嗚В鏈?(DeepFM)</strong> 鏋舵瀯锛岀粨鍚?strong>娉ㄦ剰鍔涙満鍒?/strong>鍜?strong>鍥剧缁忕綉缁?/strong>锛?
-                瀵规偅鑰呯壒寰併€佺柧鐥呮ā寮忋€佽嵂鐗╃壒鎬ц繘琛屽缁村缓妯°€傛ā鍨嬪湪璁粌杩囩▼涓瀺鍏?strong>宸垎闅愮姊害鎵板姩</strong>锛?
-                纭繚鎮ｈ€呮暟鎹殣绉佸畨鍏ㄣ€?
+                本系统采用<strong>深度因子分解机 (DeepFM)</strong> 架构，结合<strong>注意力机制</strong>和<strong>图神经网络</strong>，
+                对患者特征、疾病模式、药物特性进行多维建模。模型在训练过程中融入<strong>差分隐私梯度扰动</strong>，
+                确保患者数据隐私安全。
               </p>
               <div className="flex flex-wrap gap-2">
-                {['DeepFM 妯″瀷', '娉ㄦ剰鍔涙満鍒?, '鍥剧缁忕綉缁?, '宸垎闅愮 SGD'].map((tag, i) => (
+                {['DeepFM 模型', '注意力机制', '图神经网络', '差分隐私 SGD'].map((tag, i) => (
                   <span key={tag} className={`px-3 py-1 rounded-full text-xs font-medium ${
                     i === 0 ? 'bg-primary/10 text-primary' :
                     i === 1 ? 'bg-secondary/10 text-secondary' :
@@ -271,19 +272,19 @@ export default function DrugRecommendation() {
                   <FileText className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <CardTitle>鎮ｈ€呬俊鎭綍鍏?/CardTitle>
-                  <CardDescription>濉啓鎮ｈ€呬复搴婁俊鎭互鑾峰彇涓€у寲鎺ㄨ崘</CardDescription>
+                  <CardTitle>患者信息录入</CardTitle>
+                  <CardDescription>填写患者临床信息以获取个性化推荐</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
 
-              {/* 鎮ｈ€呭揩閫熼€夋嫨 */}
+              {/* 患者快速选择 */}
               {patients.length > 0 && (
                 <div className="p-4 rounded-xl bg-gradient-to-br from-secondary/5 to-primary/5 border border-secondary/20">
                   <Label htmlFor="quick-select" className="flex items-center gap-2 mb-2 text-sm font-medium">
                     <Users className="h-4 w-4 text-secondary" />
-                    浠庢偅鑰呮。妗堝揩閫熷～鍏?
+                    从患者档案快速填充
                   </Label>
                   <select
                     id="quick-select"
@@ -291,80 +292,80 @@ export default function DrugRecommendation() {
                     onChange={(e) => handleSelectPatient(e.target.value)}
                     className="flex h-11 w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="">-- 閫夋嫨宸叉湁鎮ｈ€咃紙鍙€夛級--</option>
+                    <option value="">-- 选择已有患者（可选）--</option>
                     {patients.map((p) => (
                       <option key={p.id} value={p.id}>
-                        {p.name} 路 {p.gender} 路 {p.age}宀?路 {p.chronicDiseases.slice(0, 2).join('銆?)}
+                        {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs text-muted-foreground mt-1.5">閫夋嫨鍚庤嚜鍔ㄥ～鍏呬笅鏂硅〃鍗曞瓧娈碉紝涔熷彲鎵嬪姩淇敼</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">选择后自动填充下方表单字段，也可手动修改</p>
                 </div>
               )}
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="age">骞撮緞</Label>
+                  <Label htmlFor="age">年龄</Label>
                   <Input
                     id="age"
                     type="number"
                     value={patientData.age}
                     onChange={(e) => setPatientData({ ...patientData, age: e.target.value })}
-                    placeholder="渚嬪锛?5"
+                    placeholder="例如：45"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="gender">鎬у埆</Label>
+                  <Label htmlFor="gender">性别</Label>
                   <select
                     id="gender"
                     value={patientData.gender}
                     onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })}
                     className="flex h-11 w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="鐢?>鐢?/option>
-                    <option value="濂?>濂?/option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
                   </select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="diseases">纭瘖鐤剧梾锛堥€楀彿鍒嗛殧锛?/Label>
+                <Label htmlFor="diseases">确诊疾病（逗号分隔）</Label>
                 <Input
                   id="diseases"
                   value={patientData.diseases}
                   onChange={(e) => setPatientData({ ...patientData, diseases: e.target.value })}
-                  placeholder="渚嬪锛? 鍨嬬硸灏跨梾锛岄珮琛€鍘嬶紝楂樿剛琛€鐥?
+                  placeholder="例如：2 型糖尿病，高血压，高脂血症"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="symptoms">涓昏鐥囩姸</Label>
+                <Label htmlFor="symptoms">主要症状</Label>
                 <textarea
                   id="symptoms"
                   value={patientData.symptoms}
                   onChange={(e) => setPatientData({ ...patientData, symptoms: e.target.value })}
                   className="flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
-                  placeholder="鎻忚堪鎮ｈ€呭綋鍓嶄富瑕佺棁鐘躲€佷綋寰佺瓑"
+                  placeholder="描述患者当前主要症状、体征等"
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="allergies">杩囨晱鍙?/Label>
+                  <Label htmlFor="allergies">过敏史</Label>
                   <Input
                     id="allergies"
                     value={patientData.allergies}
                     onChange={(e) => setPatientData({ ...patientData, allergies: e.target.value })}
-                    placeholder="渚嬪锛氶潚闇夌礌锛岀：鑳虹被"
+                    placeholder="例如：青霉素，磺胺类"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="currentMedications">褰撳墠鐢ㄨ嵂</Label>
+                  <Label htmlFor="currentMedications">当前用药</Label>
                   <Input
                     id="currentMedications"
                     value={patientData.currentMedications}
                     onChange={(e) => setPatientData({ ...patientData, currentMedications: e.target.value })}
-                    placeholder="渚嬪锛氫簩鐢插弻鑳嶏紝姘ㄦ隘鍦板钩"
+                    placeholder="例如：二甲双胍，氨氯地平"
                   />
                 </div>
               </div>
@@ -375,10 +376,10 @@ export default function DrugRecommendation() {
                   <div>
                     <Label className="text-base flex items-center gap-2">
                       <Shield className="h-4 w-4 text-primary" />
-                      宸垎闅愮鎺ㄧ悊寮€鍏?
+                      差分隐私推理开关
                     </Label>
                     <p className="text-xs text-muted-foreground mt-1">
-                      鍏抽棴鍚庡睍绀恒€屾棤 DP銆嶅熀绾跨粨鏋滐紱寮€鍚悗瀵硅嵂鐗╄瘎鍒嗘敞鍏ュ櫔澹帮紝骞惰褰曢殣绉侀绠楁秷鑰椼€?
+                      关闭后展示「无 DP」基线结果；开启后对药物评分注入噪声，并记录隐私预算消耗。
                     </p>
                   </div>
                   <button
@@ -390,27 +391,28 @@ export default function DrugRecommendation() {
                         : 'bg-background text-foreground border-border hover:bg-muted'
                     }`}
                   >
-                    {dpEnabled ? '宸插紑鍚? : '宸插叧闂?}
+                    {dpEnabled ? '已开启' : '已关闭'}
                   </button>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-3">
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground">褰撳墠 蔚</div>
+                    <div className="text-xs text-muted-foreground">当前 ε</div>
                     <div className="text-lg font-semibold text-primary">{config.epsilon.toFixed(3)}</div>
                   </div>
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground">鍣０瑙勬ā</div>
+                    <div className="text-xs text-muted-foreground">噪声规模</div>
                     <div className="text-lg font-semibold">
-                      {config.noiseMechanism === 'gaussian' ? '蟽' : 'b'} = {noiseScale.toFixed(3)}
+                      {config.noiseMechanism === 'gaussian' ? 'σ' : 'b'} = {noiseScale.toFixed(3)}
                     </div>
                   </div>
                   <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground">棰勭畻鍓╀綑</div>
-                    <div className="text-lg font-semibold text-secondary">蔚_rem = {budget.remaining.toFixed(2)}</div>
+                    <div className="text-xs text-muted-foreground">预算剩余</div>
+                    <div className="text-lg font-semibold text-secondary">ε_rem = {budget.remaining.toFixed(2)}</div>
                   </div>
                 </div>
               </div>
+
               {analyzeError && (
                 <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                   {analyzeError}
@@ -418,7 +420,8 @@ export default function DrugRecommendation() {
               )}
 
               <Button
-                onClick={handleAnalyze}                className="w-full gap-2 shadow-lg hover:shadow-xl"
+                onClick={handleAnalyze}
+                className="w-full gap-2 shadow-lg hover:shadow-xl"
                 size="lg"
                 disabled={isAnalyzing || !patientData.diseases}
               >
@@ -428,12 +431,12 @@ export default function DrugRecommendation() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    <span>姝ｅ湪鍒嗘瀽涓?..</span>
+                    <span>正在分析中...</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-5 w-5" />
-                    <span>寮€濮嬫櫤鑳芥帹鑽?/span>
+                    <span>开始智能推荐</span>
                   </>
                 )}
               </Button>
@@ -447,30 +450,30 @@ export default function DrugRecommendation() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
-                闅愮淇濇姢鐘舵€?
+                隐私保护状态
               </CardTitle>
-              <CardDescription>褰撳墠浼氳瘽鐨勯殣绉佹寚鏍?/CardDescription>
+              <CardDescription>当前会话的隐私指标</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Lock className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">宸垎闅愮鏈哄埗</span>
+                  <span className="text-sm font-medium">差分隐私机制</span>
                 </div>
                 <div className="text-lg font-semibold mb-1">
-                  {dpEnabled ? `${config.noiseMechanism} 鎵板姩` : '鏈惎鐢?DP锛堝熀绾匡級'}
+                  {dpEnabled ? `${config.noiseMechanism} 扰动` : '未启用 DP（基线）'}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  娉ㄥ叆闃舵锛歿config.applicationStage === 'data' ? '鏁版嵁灞? : config.applicationStage === 'gradient' ? '姊害灞? : '妯″瀷灞?}
+                  注入阶段：{config.applicationStage === 'data' ? '数据层' : config.applicationStage === 'gradient' ? '梯度层' : '模型层'}
                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Key className="h-4 w-4 text-secondary" />
-                  <span className="text-sm font-medium">闅愮棰勭畻娑堣€?/span>
+                  <span className="text-sm font-medium">隐私预算消耗</span>
                 </div>
-                <div className="text-lg font-semibold mb-1">蔚_total = {config.privacyBudget.toFixed(1)}</div>
+                <div className="text-lg font-semibold mb-1">ε_total = {config.privacyBudget.toFixed(1)}</div>
                 <div className="w-full h-2 bg-muted rounded-full overflow-hidden mt-2">
                   <div
                     className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500"
@@ -478,30 +481,30 @@ export default function DrugRecommendation() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  宸叉秷鑰?蔚 = {budget.spent.toFixed(2)} 路 鍓╀綑 蔚 = {budget.remaining.toFixed(2)}
+                  已消耗 ε = {budget.spent.toFixed(2)} · 剩余 ε = {budget.remaining.toFixed(2)}
                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Activity className="h-4 w-4 text-amber-500" />
-                  <span className="text-sm font-medium">鍣０瑙勬ā</span>
+                  <span className="text-sm font-medium">噪声规模</span>
                 </div>
                 <div className="text-lg font-semibold mb-1">
-                  {config.noiseMechanism === 'gaussian' ? '蟽' : 'b'} = {noiseScale.toFixed(3)}
+                  {config.noiseMechanism === 'gaussian' ? 'σ' : 'b'} = {noiseScale.toFixed(3)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {config.noiseMechanism === 'gaussian' ? `(蔚,未)-DP 路 未=${config.delta.toExponential(2)}` : '蔚-DP锛堢函 DP锛?}
+                  {config.noiseMechanism === 'gaussian' ? `(ε,δ)-DP · δ=${config.delta.toExponential(2)}` : 'ε-DP（纯 DP）'}
                 </p>
               </div>
 
               <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
                 <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
                   <CheckCircle2 className="h-4 w-4" />
-                  <span className="text-sm font-medium">鏁版嵁瀹夊叏</span>
+                  <span className="text-sm font-medium">数据安全</span>
                 </div>
                 <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                  鎵€鏈夎绠楀潎鍦ㄥ姞瀵嗙幆澧冧腑杩涜
+                  所有计算均在加密环境中进行
                 </p>
               </div>
             </CardContent>
@@ -527,34 +530,34 @@ export default function DrugRecommendation() {
                       <Stethoscope className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle>鎺ㄨ崘缁撴灉</CardTitle>
+                      <CardTitle>推荐结果</CardTitle>
                       <CardDescription>
-                        鍩轰簬娣卞害瀛︿範妯″瀷鍒嗘瀽锛屼负鎮ㄧ敓鎴愪互涓嬩釜鎬у寲鐢ㄨ嵂寤鸿
+                        基于深度学习模型分析，为您生成以下个性化用药建议
                       </CardDescription>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" className="gap-2 no-print" onClick={handlePrint}>
                     <Printer className="h-4 w-4" />
-                    鎵撳嵃 / 瀵煎嚭
+                    打印 / 导出
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                {/* DP 瀵规瘮 */}
+                {/* DP 对比 */}
                 {comparison && (
                   <div className="mb-6 p-4 rounded-xl bg-background border border-border">
                     <div className="flex items-center justify-between gap-3 flex-wrap">
                       <div className="flex items-center gap-2">
                         <GitCompare className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium">鏈?鏃?DP 缁撴灉瀵规瘮锛圱op-4锛?/span>
+                        <span className="text-sm font-medium">有/无 DP 结果对比（Top-4）</span>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {dpEnabled ? '褰撳墠灞曠ず锛欴P 缁撴灉' : '褰撳墠灞曠ず锛氬熀绾跨粨鏋?}
+                        {dpEnabled ? '当前展示：DP 结果' : '当前展示：基线结果'}
                       </div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-3 mt-3 text-sm">
                       <div className="p-3 rounded-lg bg-muted/40 border border-border">
-                        <div className="text-xs text-muted-foreground mb-2">鏃?DP锛堝熀绾匡級</div>
+                        <div className="text-xs text-muted-foreground mb-2">无 DP（基线）</div>
                         <ol className="space-y-1">
                           {comparison.base.map((r, idx) => (
                             <li key={r.drugId} className="flex justify-between gap-2">
@@ -565,7 +568,7 @@ export default function DrugRecommendation() {
                         </ol>
                       </div>
                       <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                        <div className="text-xs text-muted-foreground mb-2">宸垎闅愮锛堝櫔澹板悗锛?/div>
+                        <div className="text-xs text-muted-foreground mb-2">差分隐私（噪声后）</div>
                         <ol className="space-y-1">
                           {comparison.dp.map((r, idx) => (
                             <li key={r.drugId} className="flex justify-between gap-2">
@@ -611,20 +614,20 @@ export default function DrugRecommendation() {
                           <div className={`text-2xl font-bold ${getConfidenceColor(rec.confidence)}`}>
                             {rec.confidence}%
                           </div>
-                          <div className="text-xs text-muted-foreground">缃俊搴?/div>
+                          <div className="text-xs text-muted-foreground">置信度</div>
                         </div>
                       </div>
 
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Target className="h-4 w-4" />
-                          <span>{rec.dosage} 路 {rec.frequency}</span>
+                          <span>{rec.dosage} · {rec.frequency}</span>
                         </div>
                       </div>
 
                       <div className="mt-4">
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="text-muted-foreground">鎺ㄨ崘寮哄害</span>
+                          <span className="text-muted-foreground">推荐强度</span>
                           <span className={getConfidenceColor(rec.confidence)}>{rec.confidence}%</span>
                         </div>
                         <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
@@ -650,7 +653,7 @@ export default function DrugRecommendation() {
                     <div className="bg-background rounded-xl p-6 border border-border space-y-6">
                       <h4 className="font-semibold text-lg flex items-center gap-2">
                         <Info className="h-5 w-5 text-primary" />
-                        璇︾粏鐢ㄨ嵂璇存槑 鈥?{selectedDrug.drugName}
+                        详细用药说明 — {selectedDrug.drugName}
                       </h4>
 
                       <div className="grid md:grid-cols-2 gap-6">
@@ -658,7 +661,7 @@ export default function DrugRecommendation() {
                           <div>
                             <h5 className="font-medium mb-2 flex items-center gap-2">
                               <TrendingUp className="h-4 w-4 text-primary" />
-                              鎺ㄨ崘鐞嗙敱
+                              推荐理由
                             </h5>
                             <p className="text-sm text-muted-foreground leading-relaxed">
                               {selectedDrug.reason}
@@ -668,11 +671,11 @@ export default function DrugRecommendation() {
                           <div>
                             <h5 className="font-medium mb-2 flex items-center gap-2">
                               <Clock className="h-4 w-4 text-secondary" />
-                              鐢ㄦ硶鐢ㄩ噺
+                              用法用量
                             </h5>
                             <div className="p-3 rounded-lg bg-secondary/5 border border-secondary/20">
-                              <p className="text-sm"><strong>鍓傞噺锛?/strong>{selectedDrug.dosage}</p>
-                              <p className="text-sm"><strong>棰戠巼锛?/strong>{selectedDrug.frequency}</p>
+                              <p className="text-sm"><strong>剂量：</strong>{selectedDrug.dosage}</p>
+                              <p className="text-sm"><strong>频率：</strong>{selectedDrug.frequency}</p>
                             </div>
                           </div>
                         </div>
@@ -681,7 +684,7 @@ export default function DrugRecommendation() {
                           <div>
                             <h5 className="font-medium mb-2 flex items-center gap-2">
                               <AlertTriangle className="h-4 w-4 text-amber-500" />
-                              鑽墿鐩镐簰浣滅敤
+                              药物相互作用
                             </h5>
                             <div className="space-y-2">
                               {selectedDrug.interactions.map((interaction, i) => (
@@ -695,7 +698,7 @@ export default function DrugRecommendation() {
                           <div>
                             <h5 className="font-medium mb-2 flex items-center gap-2">
                               <Info className="h-4 w-4 text-blue-500" />
-                              甯歌鍓綔鐢?
+                              常见副作用
                             </h5>
                             <div className="flex flex-wrap gap-2">
                               {selectedDrug.sideEffects.map((effect, i) => (
@@ -713,12 +716,12 @@ export default function DrugRecommendation() {
                         <div className="p-4 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
                           <h5 className="font-medium mb-2 flex items-center gap-2 text-red-700 dark:text-red-300">
                             <AlertTriangle className="h-4 w-4" />
-                            瀹夊叏璀︾ず
+                            安全警示
                           </h5>
                           <ul className="space-y-1">
                             {selectedDrug.explanation.warnings.map((w, i) => (
                               <li key={i} className="text-sm text-red-600 dark:text-red-400 flex items-start gap-2">
-                                <span className="mt-1">鈥?/span>
+                                <span className="mt-1">•</span>
                                 <span>{w}</span>
                               </li>
                             ))}
@@ -733,7 +736,7 @@ export default function DrugRecommendation() {
                           className="flex items-center gap-2 text-sm font-medium text-primary hover:underline mb-3"
                         >
                           <Brain className="h-4 w-4" />
-                          妯″瀷鍙В閲婃€у垎鏋?
+                          模型可解释性分析
                           {showExplainability ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                         </button>
 
@@ -747,7 +750,7 @@ export default function DrugRecommendation() {
                             >
                               <div className="p-4 rounded-xl bg-gradient-to-br from-primary/3 to-secondary/3 border border-primary/10">
                                 <p className="text-xs text-muted-foreground mb-4">
-                                  浠ヤ笅灞曠ず娣卞害瀛︿範妯″瀷鍚勭壒寰佺淮搴﹀鏈鎺ㄨ崘璇勫垎鐨勮础鐚紙鍩轰簬 DeepFM 娉ㄦ剰鍔涙潈閲嶅垎鏋愶級
+                                  以下展示深度学习模型各特征维度对本次推荐评分的贡献（基于 DeepFM 注意力权重分析）
                                 </p>
                                 <div className="h-[240px]">
                                   <ResponsiveContainer width="100%" height="100%">
@@ -775,9 +778,9 @@ export default function DrugRecommendation() {
                                           borderRadius: '8px',
                                           fontSize: '12px',
                                         }}
-                                        formatter={(v: number) => [v.toFixed(3), '璐＄尞鍊?]}
+                                        formatter={(v: number) => [v.toFixed(3), '贡献值']}
                                       />
-                                      <Bar dataKey="contribution" name="鐗瑰緛璐＄尞" radius={[0, 4, 4, 0]}>
+                                      <Bar dataKey="contribution" name="特征贡献" radius={[0, 4, 4, 0]}>
                                         {selectedDrug.explanation.features.map((f, i) => (
                                           <Cell
                                             key={i}
@@ -790,7 +793,7 @@ export default function DrugRecommendation() {
                                   </ResponsiveContainer>
                                 </div>
                                 <p className="text-xs text-muted-foreground mt-3">
-                                  姝ｅ€硷紙钃濊壊锛夎〃绀鸿鐗瑰緛澧炲己鎺ㄨ崘锛岃礋鍊硷紙绾㈣壊锛夎〃绀鸿鐗瑰緛闄嶄綆鎺ㄨ崘璇勫垎锛堝杩囨晱銆佺蹇岋級
+                                  正值（蓝色）表示该特征增强推荐，负值（红色）表示该特征降低推荐评分（如过敏、禁忌）
                                 </p>
                               </div>
                             </motion.div>
@@ -804,12 +807,12 @@ export default function DrugRecommendation() {
                           <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
                           <div>
                             <h5 className="font-medium text-blue-800 dark:text-blue-300 mb-1">
-                              闅愮淇濇姢璇存槑
+                              隐私保护说明
                             </h5>
                             <p className="text-sm text-blue-700 dark:text-blue-400">
-                              鏈鎺ㄨ崘{dpEnabled ? '鍦ㄥ樊鍒嗛殣绉佷繚鎶や笅鐢熸垚' : '浠ユ棤 DP 鍩虹嚎鏂瑰紡鐢熸垚'}锛埼?= {config.epsilon.toFixed(3)}锛夛紝
-                              {dpEnabled ? '鎺ㄨ崘璇勫垎宸叉敞鍏ラ殢鏈哄櫔澹颁互闄嶄綆鎺ㄦ柇椋庨櫓銆? : '鏈敞鍏ュ櫔澹帮紝浠呯敤浜庡姣斿睍绀恒€?}
-                              鎺ㄨ崘缁撴灉浠呬綔涓轰复搴婂弬鑰冿紝鍏蜂綋鐢ㄨ嵂璇烽伒鍖诲槺銆?
+                              本次推荐{dpEnabled ? '在差分隐私保护下生成' : '以无 DP 基线方式生成'}（ε = {config.epsilon.toFixed(3)}），
+                              {dpEnabled ? '推荐评分已注入随机噪声以降低推断风险。' : '未注入噪声，仅用于对比展示。'}
+                              推荐结果仅作为临床参考，具体用药请遵医嘱。
                             </p>
                           </div>
                         </div>
@@ -825,6 +828,3 @@ export default function DrugRecommendation() {
     </div>
   )
 }
-
-
-
