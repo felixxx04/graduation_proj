@@ -60,7 +60,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <CardTitle className="text-2xl">登录智慧医药</CardTitle>
-                <CardDescription>使用后端账号登录系统（默认账号：`user` / `admin`）</CardDescription>
+                <CardDescription>使用后端账号登录系统（默认账号：admin / doctor1）</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -110,14 +110,14 @@ export default function LoginPage() {
 
             <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-lg border border-border bg-background p-3">
-                <div className="mb-1 text-xs text-muted-foreground">普通用户</div>
-                <div className="text-sm font-medium">账号：user</div>
-                <div className="text-sm font-medium">密码：123456</div>
+                <div className="mb-1 text-xs text-muted-foreground">医生</div>
+                <div className="text-sm font-medium">账号：doctor1</div>
+                <div className="text-sm font-medium">密码：admin123</div>
               </div>
               <div className="rounded-lg border border-border bg-background p-3">
                 <div className="mb-1 text-xs text-muted-foreground">管理员</div>
                 <div className="text-sm font-medium">账号：admin</div>
-                <div className="text-sm font-medium">密码：123456</div>
+                <div className="text-sm font-medium">密码：admin123</div>
               </div>
             </div>
 

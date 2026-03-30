@@ -294,12 +294,12 @@ export default function Layout() {
 
                 <div className="grid gap-3 md:grid-cols-2">
                   <div className="rounded-lg border border-border bg-background p-3">
-                    <div className="mb-1 text-xs text-muted-foreground">普通用户</div>
-                    <div className="text-sm font-medium">user / 123456</div>
+                    <div className="mb-1 text-xs text-muted-foreground">医生</div>
+                    <div className="text-sm font-medium">doctor1 / admin123</div>
                   </div>
                   <div className="rounded-lg border border-border bg-background p-3">
                     <div className="mb-1 text-xs text-muted-foreground">管理员</div>
-                    <div className="text-sm font-medium">admin / 123456</div>
+                    <div className="text-sm font-medium">admin / admin123</div>
                   </div>
                 </div>
               </CardContent>
