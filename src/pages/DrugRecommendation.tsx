@@ -219,89 +219,92 @@ export default function DrugRecommendation() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-          智能用药推荐
-        </h1>
-        <p className="text-muted-foreground">
-          基于深度学习模型的个性化用药建议，融合差分隐私保护技术
-        </p>
-      </div>
+    <div className="space-y-10">
+      {/* Hero Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden rounded-2xl"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600" />
+        <div className="absolute inset-0 bg-medical-dna opacity-20" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl" />
 
-      {/* Algorithm Info Banner */}
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-md">
-              <Brain className="h-6 w-6 text-white" />
+        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
+          <div className="flex items-start gap-5">
+            <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm items-center justify-center shadow-xl">
+              <Stethoscope className="h-8 w-8 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold mb-2 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                深度学习推荐算法
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                本系统采用<strong>深度因子分解机 (DeepFM)</strong> 架构，结合<strong>注意力机制</strong>和<strong>图神经网络</strong>，
-                对患者特征、疾病模式、药物特性进行多维建模。模型在训练过程中融入<strong>差分隐私梯度扰动</strong>，
-                确保患者数据隐私安全。
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+                智能用药推荐
+              </h1>
+              <p className="text-white/70 text-lg max-w-2xl">
+                基于深度学习模型的个性化用药建议，融合差分隐私保护技术
               </p>
-              <div className="flex flex-wrap gap-2">
-                {['DeepFM 模型', '注意力机制', '图神经网络', '差分隐私 SGD'].map((tag, i) => (
-                  <span key={tag} className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    i === 0 ? 'bg-primary/10 text-primary' :
-                    i === 1 ? 'bg-secondary/10 text-secondary' :
-                    i === 2 ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400' :
-                    'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                  }`}>{tag}</span>
+              <div className="flex flex-wrap gap-3 mt-5">
+                {['DeepFM', '注意力机制', '图神经网络', 'DP-SGD'].map((tag, i) => (
+                  <span
+                    key={tag}
+                    className="px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20"
+                  >
+                    {tag}
+                  </span>
                 ))}
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </motion.div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Input Form */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="border-border/40 bg-card/50 backdrop-blur">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <CardTitle>患者信息录入</CardTitle>
-                  <CardDescription>填写患者临床信息以获取个性化推荐</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+          >
+            <Card className="border-0 shadow-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-900 dark:via-slate-800 dark:to-slate-800" />
+              <div className="relative z-10">
+                <CardHeader className="border-b border-border/50 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                      <FileText className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl">患者信息录入</CardTitle>
+                      <CardDescription>填写患者临床信息以获取个性化推荐</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6 pt-6">
 
-              {/* 患者快速选择 */}
-              {patients.length > 0 && (
-                <div className="p-4 rounded-xl bg-gradient-to-br from-secondary/5 to-primary/5 border border-secondary/20">
-                  <Label htmlFor="quick-select" className="flex items-center gap-2 mb-2 text-sm font-medium">
-                    <Users className="h-4 w-4 text-secondary" />
-                    从患者档案快速填充
-                  </Label>
-                  <select
-                    id="quick-select"
-                    value={selectedPatientId}
-                    onChange={(e) => handleSelectPatient(e.target.value)}
-                    className="flex h-11 w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="">-- 选择已有患者（可选）--</option>
-                    {patients.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-muted-foreground mt-1.5">选择后自动填充下方表单字段，也可手动修改</p>
-                </div>
-              )}
+                  {/* 患者快速选择 */}
+                  {patients.length > 0 && (
+                    <div className="p-5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30 border border-indigo-100 dark:border-indigo-800">
+                      <Label htmlFor="quick-select" className="flex items-center gap-2 mb-3 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                        <Users className="h-4 w-4" />
+                        从患者档案快速填充
+                      </Label>
+                      <select
+                        id="quick-select"
+                        value={selectedPatientId}
+                        onChange={(e) => handleSelectPatient(e.target.value)}
+                        className="flex h-12 w-full rounded-xl border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm font-medium shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      >
+                        <option value="">-- 选择已有患者（可选）--</option>
+                        {patients.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -441,10 +444,12 @@ export default function DrugRecommendation() {
                 )}
               </Button>
             </CardContent>
+          </div>
           </Card>
-        </div>
+        </motion.div>
+      </div>
 
-        {/* Privacy Metrics Sidebar */}
+      {/* Privacy Metrics Sidebar */}
         <div className="space-y-6">
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg sticky top-24">
             <CardHeader>

@@ -66,16 +66,35 @@ export default function PrivacyConfig() {
   const utilityLoss = estimateUtilityLoss()
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-          差分隐私配置
-        </h1>
-        <p className="text-muted-foreground">
-          配置隐私保护参数，在数据安全与模型性能之间寻找最佳平衡点
-        </p>
-      </div>
+    <div className="space-y-10">
+      {/* Hero Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden rounded-2xl"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600" />
+        <div className="absolute inset-0 bg-medical-dna opacity-20" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-fuchsia-400/20 rounded-full blur-3xl" />
+
+        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
+          <div className="flex items-start gap-5">
+            <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm items-center justify-center shadow-xl">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+                差分隐私配置
+              </h1>
+              <p className="text-white/70 text-lg max-w-2xl">
+                配置隐私保护参数，在数据安全与模型性能之间寻找最佳平衡点
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Algorithm Explanation */}
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg">
@@ -137,7 +156,7 @@ export default function PrivacyConfig() {
                       适用于高维数据，提供 (ε,δ)-DP 保证
                     </p>
                   </div>
-                  <div className="p-3 rounded-lg bg-accent border border-accent-foreground/20">
+                  <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800">
                     <h5 className="font-medium mb-2">Geometric 机制</h5>
                     <p className="text-xs text-muted-foreground">
                       离散版本的 Laplace 机制<br />
@@ -326,23 +345,23 @@ export default function PrivacyConfig() {
             <CardContent>
               <div className="grid md:grid-cols-3 gap-4">
                 {[
-                  { 
-                    id: 'laplace', 
-                    name: 'Laplace', 
+                  {
+                    id: 'laplace',
+                    name: 'Laplace',
                     desc: '数值查询，纯ε-DP',
-                    icon: TrendingDown 
+                    icon: TrendingDown
                   },
-                  { 
-                    id: 'gaussian', 
-                    name: 'Gaussian', 
+                  {
+                    id: 'gaussian',
+                    name: 'Gaussian',
                     desc: '高维数据，(ε,δ)-DP',
-                    icon: Sliders 
+                    icon: Sliders
                   },
-                  { 
-                    id: 'geometric', 
-                    name: 'Geometric', 
+                  {
+                    id: 'geometric',
+                    name: 'Geometric',
                     desc: '离散数据，计数查询',
-                    icon: BarChart3 
+                    icon: BarChart3
                   },
                 ].map((mechanism) => {
                   const Icon = mechanism.icon
@@ -354,11 +373,11 @@ export default function PrivacyConfig() {
                       className={`p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                         isActive
                           ? 'border-primary bg-primary/5 shadow-md'
-                          : 'border-border hover:border-primary/50'
+                          : 'border-border hover:border-primary/50 bg-background hover:bg-muted/50'
                       }`}
                     >
-                      <Icon className={`h-6 w-6 mb-2 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <div className="font-semibold">{mechanism.name}</div>
+                      <Icon className={`h-6 w-6 mb-2 ${isActive ? 'text-primary' : 'text-foreground'}`} />
+                      <div className={`font-semibold ${isActive ? 'text-primary' : 'text-foreground'}`}>{mechanism.name}</div>
                       <div className="text-xs text-muted-foreground mt-1">{mechanism.desc}</div>
                     </button>
                   )

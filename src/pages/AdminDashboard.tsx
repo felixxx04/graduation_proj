@@ -222,13 +222,35 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-3xl font-bold text-transparent">
-          后台管理
-        </h1>
-        <p className="text-muted-foreground">系统监控、用户管理、训练任务与隐私预算审计</p>
-      </div>
+    <div className="space-y-10">
+      {/* Hero Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden rounded-2xl"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-800 via-slate-700 to-zinc-800" />
+        <div className="absolute inset-0 bg-medical-dna opacity-20" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
+          <div className="flex items-start gap-5">
+            <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm items-center justify-center shadow-xl">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+                后台管理
+              </h1>
+              <p className="text-white/60 text-lg max-w-2xl">
+                系统监控、用户管理、训练任务与隐私预算审计
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg">
         <CardContent className="flex flex-wrap items-center justify-between gap-4 pt-6">

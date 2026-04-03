@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(\"C:\\\\Program Files\\\\MySQL\\\\MySQL Server 8.0\\\\bin\\\\mysql.exe\" -h localhost -u root -pJin200426 -e \"USE medical_recommendation; UPDATE sys_user SET password_hash = '\\\\$2a\\\\$10\\\\$EqKcp1WFKVQISheBxmXNGexPR.i7QYXOJC.OFfQDT8iSaHuuPdlrW' WHERE username IN \\('admin', 'doctor1', 'researcher1'\\);\")",
+      "Bash(\"C:\\\\Program Files\\\\MySQL\\\\MySQL Server 8.0\\\\bin\\\\mysql.exe\" -h localhost -u root -pJin200426 -e \"USE medical_recommendation; UPDATE sys_user SET password_hash = '\\\\$2b\\\\$12\\\\$dBf7yIDbCZmweHRRdcF42.UfKSq.Ehm/CiZRfvr2CdJjXUAuZBOuW' WHERE username IN \\('admin', 'doctor1', 'researcher1'\\);\")",
+      "Bash(curl:*)",
+      "Bash(\"C:\\\\Program Files\\\\MySQL\\\\MySQL Server 8.0\\\\bin\\\\mysql.exe\" -h localhost -u root -pJin200426 -e \"USE medical_recommendation; UPDATE sys_user SET password_hash = '\\\\$2a\\\\$10\\\\$lut2nnnjykVjZ.8lPGoyPuwr9q1LnGVK8tMLJ0tNc20L59nqk1QBm' WHERE username IN \\('admin', 'doctor1', 'researcher1'\\);\")",
+      "Bash(python -m uvicorn app.main:app --host 0.0.0.0 --port 8001)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8001)",
+      "Bash(taskkill:*)",
+      "Bash(npm install:*)",
+      "Bash(uipro init:*)"
+    ]
+  }
+}

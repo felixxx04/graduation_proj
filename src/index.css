@@ -2,86 +2,102 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import distinctive fonts for medical system */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 220 30% 98%;
+    --foreground: 224 71% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 207 90% 54%;
-    --primary-glow: 207 100% 60%;
+    --popover-foreground: 224 71% 4%;
+    --primary: 217 91% 60%;
+    --primary-glow: 217 100% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 153 60% 45%;
+    --secondary: 160 84% 39%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 93%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 207 90% 96%;
-    --accent-foreground: 207 90% 35%;
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --info: 207 90% 54%;
+    --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 207 90% 54%;
-    --radius: 0.75rem;
-    
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 217 91% 60%;
+    --radius: 0.875rem;
+
+    /* Medical Theme Colors */
+    --medical-blue: 217 91% 60%;
+    --medical-teal: 160 84% 39%;
+    --medical-purple: 262 83% 58%;
+    --medical-rose: 346 77% 50%;
+
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 100% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(153 60% 45%), hsl(153 70% 55%));
-    --gradient-subtle: linear-gradient(180deg, hsl(210 40% 98%), hsl(210 40% 96%));
-    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54% / 0.1), hsl(153 60% 45% / 0.1));
-    
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(262 83% 58%));
+    --gradient-secondary: linear-gradient(135deg, hsl(160 84% 39%), hsl(180 70% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60% / 0.08), hsl(262 83% 58% / 0.08), hsl(160 84% 39% / 0.05));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 30% 98%));
+
     /* Shadows */
-    --shadow-sm: 0 1px 3px hsl(207 90% 54% / 0.1);
-    --shadow-md: 0 4px 12px hsl(207 90% 54% / 0.15);
-    --shadow-lg: 0 10px 40px hsl(207 90% 54% / 0.2);
-    --shadow-xl: 0 20px 60px hsl(207 90% 54% / 0.25);
-    --shadow-glow: 0 0 40px hsl(207 100% 60% / 0.4);
+    --shadow-sm: 0 1px 2px hsl(217 91% 60% / 0.04);
+    --shadow-md: 0 4px 16px hsl(217 91% 60% / 0.08);
+    --shadow-lg: 0 12px 40px hsl(217 91% 60% / 0.12);
+    --shadow-xl: 0 24px 64px hsl(217 91% 60% / 0.16);
+    --shadow-glow: 0 0 60px hsl(217 100% 65% / 0.3);
+    --shadow-inner: inset 0 2px 4px hsl(217 91% 60% / 0.06);
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 15%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 15%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 207 90% 54%;
-    --primary-glow: 207 100% 60%;
+    --background: 222 47% 6%;
+    --foreground: 220 14% 96%;
+    --card: 222 47% 10%;
+    --card-foreground: 220 14% 96%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 220 14% 96%;
+    --primary: 217 91% 65%;
+    --primary-glow: 217 100% 70%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 153 60% 45%;
+    --secondary: 160 84% 45%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 207 90% 20%;
-    --accent-foreground: 207 90% 70%;
-    --destructive: 0 63% 31%;
+    --muted: 222 30% 15%;
+    --muted-foreground: 220 12% 60%;
+    --accent: 262 83% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 35%;
     --destructive-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    --info: 207 90% 54%;
+    --info: 199 89% 55%;
     --info-foreground: 0 0% 100%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 207 90% 54%;
-    
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 217 91% 65%;
+
+    /* Medical Theme Colors - Dark */
+    --medical-blue: 217 91% 65%;
+    --medical-teal: 160 84% 45%;
+    --medical-purple: 262 83% 65%;
+    --medical-rose: 346 77% 55%;
+
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 100% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(153 60% 45%), hsl(153 70% 55%));
-    --gradient-subtle: linear-gradient(180deg, hsl(222 47% 11%), hsl(222 47% 13%));
-    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54% / 0.15), hsl(153 60% 45% / 0.15));
-    
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 65%), hsl(262 83% 65%));
+    --gradient-secondary: linear-gradient(135deg, hsl(160 84% 45%), hsl(180 70% 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 65% / 0.1), hsl(262 83% 65% / 0.08));
+    --gradient-card: linear-gradient(180deg, hsl(222 47% 10%), hsl(222 47% 8%));
+
     /* Shadows */
-    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.3);
-    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.4);
-    --shadow-lg: 0 10px 40px hsl(0 0% 0% / 0.5);
-    --shadow-xl: 0 20px 60px hsl(0 0% 0% / 0.6);
-    --shadow-glow: 0 0 40px hsl(207 100% 60% / 0.5);
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 12px 40px hsl(0 0% 0% / 0.5);
+    --shadow-xl: 0 24px 64px hsl(0 0% 0% / 0.6);
+    --shadow-glow: 0 0 60px hsl(217 100% 70% / 0.4);
   }
 }
 
@@ -89,9 +105,29 @@
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Outfit', 'Noto Sans SC', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.011em;
+  }
+
+  /* Typography refinement */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    line-height: 1.7;
   }
 }
 
@@ -139,20 +175,242 @@
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: hsl(var(--muted));
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary) / 0.3);
-  border-radius: 4px;
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.4), hsl(var(--secondary) / 0.4));
+  border-radius: 10px;
+  border: 2px solid hsl(var(--muted));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.5);
+  background: linear-gradient(180deg, hsl(var(--primary) / 0.6), hsl(var(--secondary) / 0.6));
+}
+
+/* Selection styling */
+::selection {
+  background: hsl(var(--primary) / 0.2);
+  color: hsl(var(--foreground));
+}
+
+/* Focus visible styling */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* ============================================
+   Medical Theme Visual Elements
+   ============================================ */
+
+/* Animated DNA Helix Background Pattern */
+.bg-medical-dna {
+  background-image:
+    radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, hsl(var(--secondary) / 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, hsl(var(--accent) / 0.02) 0%, transparent 40%);
+  background-size: 60px 60px, 80px 80px, 100px 100px;
+  animation: medicalFloat 20s ease-in-out infinite;
+}
+
+@keyframes medicalFloat {
+  0%, 100% { background-position: 0 0, 100% 100%, 50% 50%; }
+  50% { background-position: 20px 30px, 80% 70%, 60% 40%; }
+}
+
+/* ECG Line Animation */
+.bg-ecg-line {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 100px,
+    hsl(var(--primary) / 0.1) 100px,
+    hsl(var(--primary) / 0.1) 101px
+  );
+}
+
+/* Glass morphism card effect */
+.glass-card {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--card) / 0.8),
+    hsl(var(--card) / 0.6)
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 40px hsl(var(--primary) / 0.3), 0 0 80px hsl(var(--primary) / 0.1);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 40px hsl(var(--secondary) / 0.3), 0 0 80px hsl(var(--secondary) / 0.1);
+}
+
+/* Gradient text */
+.text-gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--medical-teal)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated gradient border */
+.border-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.border-animated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary)),
+    hsl(var(--accent)),
+    hsl(var(--secondary)),
+    hsl(var(--primary))
+  );
+  background-size: 300% 100%;
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderRotate 4s linear infinite;
+}
+
+@keyframes borderRotate {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* Pulse animation for medical elements */
+.pulse-medical {
+  animation: pulseMedical 2s ease-in-out infinite;
+}
+
+@keyframes pulseMedical {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 15px hsl(var(--primary) / 0);
+  }
+}
+
+/* Heart beat animation */
+.heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.1); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.1); }
+  70% { transform: scale(1); }
+}
+
+/* Shimmer effect for loading states */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted) / 0.5) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Floating animation */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Medical Icon Container */
+.medical-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.medical-icon-container::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.2), transparent 70%);
+  border-radius: 50%;
+  animation: pulseMedical 2s ease-in-out infinite;
+}
+
+/* Subtle noise texture overlay */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Interactive card hover effect */
+.card-hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Button styles */
+.btn-primary-glow {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  box-shadow: 0 4px 15px hsl(var(--primary) / 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-glow:hover {
+  box-shadow: 0 6px 25px hsl(var(--primary) / 0.5);
+  transform: translateY(-2px);
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }
