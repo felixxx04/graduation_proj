@@ -137,23 +137,47 @@ export default function PrivacyVisualization() {
   }, [config.privacyBudget, events])
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-          隐私保护效果可视化
-        </h1>
-        <p className="text-muted-foreground">
-          多维度展示差分隐私机制的保护效果与性能影响
-        </p>
-      </div>
+    <div className="space-y-10">
+      {/* Hero Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden rounded-2xl"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600" />
+        <div className="absolute inset-0 bg-medical-dna opacity-20" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl" />
+
+        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
+          <div className="flex items-start gap-5">
+            <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm items-center justify-center shadow-xl">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+                隐私保护效果可视化
+              </h1>
+              <p className="text-white/70 text-lg max-w-2xl">
+                多维度展示差分隐私机制的保护效果与性能影响
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* View Selector */}
-      <div className="flex gap-2">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+        className="flex flex-wrap gap-3"
+      >
         <Button
           variant={selectedView === 'overview' ? 'default' : 'outline'}
           onClick={() => setSelectedView('overview')}
-          className="gap-2"
+          className={`gap-2 rounded-xl px-6 ${selectedView === 'overview' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 shadow-lg' : ''}`}
         >
           <BarChart3 className="h-4 w-4" />
           总览
@@ -161,7 +185,7 @@ export default function PrivacyVisualization() {
         <Button
           variant={selectedView === 'comparison' ? 'default' : 'outline'}
           onClick={() => setSelectedView('comparison')}
-          className="gap-2"
+          className={`gap-2 rounded-xl px-6 ${selectedView === 'comparison' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 shadow-lg' : ''}`}
         >
           <GitCompare className="h-4 w-4" />
           对比分析
@@ -169,66 +193,81 @@ export default function PrivacyVisualization() {
         <Button
           variant={selectedView === 'analysis' ? 'default' : 'outline'}
           onClick={() => setSelectedView('analysis')}
-          className="gap-2"
+          className={`gap-2 rounded-xl px-6 ${selectedView === 'analysis' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 shadow-lg' : ''}`}
         >
           <TrendingUp className="h-4 w-4" />
           深度分析
         </Button>
-      </div>
+      </motion.div>
 
       {/* Overview View */}
       {selectedView === 'overview' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
+          className="space-y-8"
         >
           {/* Key Metrics */}
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-4 gap-5">
             {[
               {
                 icon: Shield,
                 label: '隐私保护等级',
                 value: `ε=${config.epsilon.toFixed(2)}`,
                 desc: config.epsilon <= 1.0 ? '强隐私保护' : config.epsilon <= 2.0 ? '中等保护' : '偏弱保护',
-                color: 'from-blue-500 to-cyan-500',
+                gradient: 'from-blue-500 to-indigo-500',
+                bgLight: 'bg-blue-50 dark:bg-blue-950/30',
+                borderLight: 'border-blue-100 dark:border-blue-800',
               },
               {
                 icon: Target,
                 label: '推荐准确率',
                 value: '89.7%',
                 desc: '+12% vs 基线',
-                color: 'from-green-500 to-emerald-500',
+                gradient: 'from-emerald-500 to-teal-500',
+                bgLight: 'bg-emerald-50 dark:bg-emerald-950/30',
+                borderLight: 'border-emerald-100 dark:border-emerald-800',
               },
               {
                 icon: Zap,
                 label: '响应时间',
                 value: '< 200ms',
                 desc: '实时推理',
-                color: 'from-yellow-500 to-orange-500',
+                gradient: 'from-amber-500 to-orange-500',
+                bgLight: 'bg-amber-50 dark:bg-amber-950/30',
+                borderLight: 'border-amber-100 dark:border-amber-800',
               },
               {
                 icon: Lock,
                 label: '数据安全',
                 value: budget.remaining > 0 ? 'ON' : 'LIMIT',
-                desc: budget.remaining > 0 ? '预算充足' : '预算耗尽（demo）',
-                color: 'from-purple-500 to-pink-500',
+                desc: budget.remaining > 0 ? '预算充足' : '预算耗尽',
+                gradient: budget.remaining > 0 ? 'from-purple-500 to-pink-500' : 'from-red-500 to-rose-500',
+                bgLight: budget.remaining > 0 ? 'bg-purple-50 dark:bg-purple-950/30' : 'bg-red-50 dark:bg-red-950/30',
+                borderLight: budget.remaining > 0 ? 'border-purple-100 dark:border-purple-800' : 'border-red-100 dark:border-red-800',
               },
             ].map((metric, index) => {
               const Icon = metric.icon
               return (
-                <Card key={index} className="border-border/40 bg-card/50 backdrop-blur hover:shadow-lg transition-all duration-300">
-                  <CardContent className="pt-6">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${metric.color} flex items-center justify-center mb-4 shadow-lg`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="text-3xl font-bold mb-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                      {metric.value}
-                    </div>
-                    <div className="text-sm font-medium mb-1">{metric.label}</div>
-                    <div className="text-xs text-muted-foreground">{metric.desc}</div>
-                  </CardContent>
-                </Card>
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05, duration: 0.4 }}
+                >
+                  <Card className={`border-0 shadow-lg overflow-hidden ${metric.bgLight} ${metric.borderLight} border`}>
+                    <CardContent className="pt-6 pb-5 px-5">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${metric.gradient} flex items-center justify-center mb-4 shadow-lg`}>
+                        <Icon className="h-7 w-7 text-white" />
+                      </div>
+                      <div className="text-3xl font-bold mb-1 text-foreground">
+                        {metric.value}
+                      </div>
+                      <div className="text-sm font-semibold mb-1 text-foreground">{metric.label}</div>
+                      <div className="text-xs text-muted-foreground">{metric.desc}</div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               )
             })}
           </div>

@@ -1,4 +1,4 @@
-﻿import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import {
   Activity,
@@ -13,8 +13,10 @@ import {
   User as UserIcon,
   LogIn,
   Lock,
+  Sparkles,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/lib/authStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -34,6 +36,7 @@ export default function Layout() {
   const [loginError, setLoginError] = useState<string | null>(null)
   const [loginLoading, setLoginLoading] = useState(false)
   const [pendingPath, setPendingPath] = useState('/')
+  const [scrolled, setScrolled] = useState(false)
 
   const navigation = useMemo(
     () => [
@@ -46,6 +49,14 @@ export default function Layout() {
     ],
     [user?.role]
   )
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     const state = (location as { state?: { loginModal?: boolean; from?: string } }).state
@@ -97,22 +108,41 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-950 dark:via-blue-950 dark:to-teal-950">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-blue-950/30 dark:to-indigo-950/20">
+      {/* Background Pattern */}
+      <div className="fixed inset-0 bg-medical-dna opacity-30 pointer-events-none" />
+
+      {/* Header */}
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={cn(
+          "sticky top-0 z-50 w-full transition-all duration-300",
+          scrolled
+            ? "bg-white/80 dark:bg-slate-900/80 shadow-md backdrop-blur-xl border-b border-border/50"
+            : "bg-transparent"
+        )}
+      >
         <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg">
-              <Activity className="h-6 w-6 text-white" />
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-shadow">
+                <Activity className="h-5 w-5 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white dark:border-slate-900" />
             </div>
             <div>
-              <h1 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-xl font-bold text-transparent">
+              <h1 className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
                 智慧医药
               </h1>
-              <p className="text-xs text-muted-foreground">差分隐私保护的个性化用药推荐系统</p>
+              <p className="text-[10px] text-muted-foreground leading-tight">隐私保护 · 智能推荐</p>
             </div>
-          </div>
+          </Link>
 
-          <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex flex-1 items-center justify-center gap-1">
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = location.pathname === item.href
@@ -121,207 +151,274 @@ export default function Layout() {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
+                    'relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-r from-primary/10 to-secondary/10 text-primary shadow-sm'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      ? 'text-blue-600 dark:text-blue-400'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   )}
                 >
-                  <Icon className={cn('h-4 w-4', isActive && 'text-primary')} />
+                  <Icon className={cn('h-4 w-4', isActive && 'text-blue-500')} />
                   {item.name}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNav"
+                      className="absolute inset-0 bg-blue-50 dark:bg-blue-950/50 rounded-xl -z-10"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
                 </Link>
               )
             })}
           </nav>
 
-          <div className="hidden items-center gap-2 md:flex">
+          {/* User Section */}
+          <div className="hidden lg:flex items-center gap-3">
             {isInitializing ? (
-              <div className="px-3 py-2 text-sm text-muted-foreground">验证登录状态中...</div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                验证中...
+              </div>
             ) : user ? (
               <>
-                <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2">
-                  <UserIcon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">{user.username}</span>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                    {user.role === 'admin' ? '管理员' : '普通用户'}
-                  </span>
+                <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-800 px-4 py-2">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500">
+                    <UserIcon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{user.username}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '研究员'}
+                    </div>
+                  </div>
                 </div>
                 <button
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
                   onClick={onLogout}
                 >
                   <LogOut className="h-4 w-4" />
-                  退出
                 </button>
               </>
             ) : (
-              <Button className="gap-2" onClick={() => openLoginModal('/')}>
+              <Button
+                onClick={() => openLoginModal('/')}
+                className="gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg shadow-blue-500/25 transition-all duration-300"
+              >
                 <LogIn className="h-4 w-4" />
                 登录
               </Button>
             )}
           </div>
 
+          {/* Mobile Menu Button */}
           <button
-            className="rounded-lg p-2 hover:bg-muted md:hidden"
+            className="lg:hidden rounded-xl p-2 hover:bg-muted transition-colors"
             onClick={() => setMobileMenuOpen((value) => !value)}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {mobileMenuOpen && (
-          <div className="animate-in slide-in-from-top-2 space-y-2 border-t border-border bg-background p-4 md:hidden">
-            {user ? (
-              <div className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 p-3">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-medium">{user.username}</div>
-                  <div className="text-xs text-muted-foreground">{user.role === 'admin' ? '管理员' : '普通用户'}</div>
-                </div>
-                <button
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
-                  onClick={onLogout}
-                >
-                  <LogOut className="h-4 w-4" />
-                  退出
-                </button>
-              </div>
-            ) : (
-              <div className="mb-2 flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 p-3">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-medium">未登录</div>
-                  <div className="text-xs text-muted-foreground">登录后可使用完整功能</div>
-                </div>
-                <button
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
-                  onClick={() => {
-                    openLoginModal('/')
-                    setMobileMenuOpen(false)
-                  }}
-                >
-                  <LogIn className="h-4 w-4" />
-                  登录
-                </button>
-              </div>
-            )}
-
-            {navigation.map((item) => {
-              const Icon = item.icon
-              const isActive = location.pathname === item.href
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200',
-                    isActive
-                      ? 'bg-gradient-to-r from-primary/10 to-secondary/10 text-primary shadow-sm'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Icon className={cn('h-5 w-5', isActive && 'text-primary')} />
-                  {item.name}
-                </Link>
-              )
-            })}
-          </div>
-        )}
-      </header>
-
-      {loginModalOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              closeModal()
-            }
-          }}
-        >
-          <div className="w-full max-w-lg">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-2xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Lock className="h-5 w-5 text-primary" />
-                  登录后继续
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  你正在访问受保护页面：<span className="font-medium text-foreground">{pendingPath}</span>
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <form onSubmit={onSubmitLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="modal-username">账号</Label>
-                    <Input
-                      id="modal-username"
-                      value={loginUsername}
-                      onChange={(event) => setLoginUsername(event.target.value)}
-                      placeholder="请输入账号"
-                      autoComplete="username"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="modal-password">密码</Label>
-                    <Input
-                      id="modal-password"
-                      type="password"
-                      value={loginPassword}
-                      onChange={(event) => setLoginPassword(event.target.value)}
-                      placeholder="请输入密码"
-                      autoComplete="current-password"
-                      required
-                    />
-                  </div>
-
-                  {loginError && (
-                    <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
-                      {loginError}
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden border-t border-border/50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl"
+            >
+              <div className="container py-4 space-y-2">
+                {user && (
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-muted/30 p-3 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500">
+                        <UserIcon className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <div className="font-medium">{user.username}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '研究员'}
+                        </div>
+                      </div>
                     </div>
-                  )}
+                    <button
+                      onClick={onLogout}
+                      className="p-2 rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600"
+                    >
+                      <LogOut className="h-5 w-5" />
+                    </button>
+                  </div>
+                )}
 
-                  <div className="flex gap-3">
-                    <Button type="submit" className="flex-1 gap-2" disabled={loginLoading || isInitializing}>
-                      <LogIn className="h-4 w-4" />
-                      {loginLoading ? '登录中...' : '登录'}
-                    </Button>
-                    <Button type="button" variant="outline" className="flex-1" onClick={closeModal}>
-                      取消
-                    </Button>
-                  </div>
-                </form>
+                {navigation.map((item) => {
+                  const Icon = item.icon
+                  const isActive = location.pathname === item.href
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all',
+                        isActive
+                          ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Icon className="h-5 w-5" />
+                      {item.name}
+                    </Link>
+                  )
+                })}
 
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="rounded-lg border border-border bg-background p-3">
-                    <div className="mb-1 text-xs text-muted-foreground">医生</div>
-                    <div className="text-sm font-medium">doctor1 / admin123</div>
-                  </div>
-                  <div className="rounded-lg border border-border bg-background p-3">
-                    <div className="mb-1 text-xs text-muted-foreground">管理员</div>
-                    <div className="text-sm font-medium">admin / admin123</div>
-                  </div>
+                {!user && (
+                  <Button
+                    onClick={() => {
+                      openLoginModal('/')
+                      setMobileMenuOpen(false)
+                    }}
+                    className="w-full gap-2 mt-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    登录
+                  </Button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+
+      {/* Login Modal */}
+      <AnimatePresence>
+        {loginModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+            onClick={(e) => e.target === e.currentTarget && closeModal()}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-md"
+            >
+              <Card className="border-0 shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950" />
+                <div className="relative z-10">
+                  <CardHeader className="text-center pb-2">
+                    <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/25">
+                      <Lock className="h-8 w-8 text-white" />
+                    </div>
+                    <CardTitle className="text-2xl">登录后继续</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      访问页面：<span className="font-medium text-foreground">{pendingPath}</span>
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <form onSubmit={onSubmitLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="modal-username">账号</Label>
+                        <Input
+                          id="modal-username"
+                          value={loginUsername}
+                          onChange={(e) => setLoginUsername(e.target.value)}
+                          placeholder="请输入账号"
+                          autoComplete="username"
+                          required
+                          className="h-12"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="modal-password">密码</Label>
+                        <Input
+                          id="modal-password"
+                          type="password"
+                          value={loginPassword}
+                          onChange={(e) => setLoginPassword(e.target.value)}
+                          placeholder="请输入密码"
+                          autoComplete="current-password"
+                          required
+                          className="h-12"
+                        />
+                      </div>
+
+                      {loginError && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400"
+                        >
+                          {loginError}
+                        </motion.div>
+                      )}
+
+                      <div className="flex gap-3 pt-2">
+                        <Button
+                          type="submit"
+                          className="flex-1 gap-2 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+                          disabled={loginLoading || isInitializing}
+                        >
+                          {loginLoading ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              登录中...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="h-4 w-4" />
+                              登录
+                            </>
+                          )}
+                        </Button>
+                        <Button type="button" variant="outline" className="flex-1 h-12" onClick={closeModal}>
+                          取消
+                        </Button>
+                      </div>
+                    </form>
+
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <div className="rounded-xl border border-border bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-3 text-center">
+                        <div className="text-[10px] text-muted-foreground mb-1">医生账号</div>
+                        <div className="text-sm font-semibold">doctor1</div>
+                        <div className="text-xs text-muted-foreground">admin123</div>
+                      </div>
+                      <div className="rounded-xl border border-border bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-3 text-center">
+                        <div className="text-[10px] text-muted-foreground mb-1">管理员</div>
+                        <div className="text-sm font-semibold">admin</div>
+                        <div className="text-xs text-muted-foreground">admin123</div>
+                      </div>
+                    </div>
+                  </CardContent>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      )}
+              </Card>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <main className="container py-8">
+      {/* Main Content */}
+      <main className="container py-8 relative z-10">
         <Outlet />
       </main>
 
-      <footer className="mt-auto border-t border-border/40 bg-background/50 backdrop-blur">
-        <div className="container py-6">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
+      {/* Footer */}
+      <footer className="relative z-10 mt-auto border-t border-border/30 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+        <div className="container py-8">
+          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
                 <Activity className="h-4 w-4 text-white" />
               </div>
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-sm font-medium text-transparent">
-                智慧医药
-              </span>
+              <div>
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-sm font-bold text-transparent">
+                  智慧医药
+                </span>
+                <p className="text-[10px] text-muted-foreground">差分隐私保护的智能用药推荐系统</p>
+              </div>
             </div>
             <p className="text-center text-sm text-muted-foreground md:text-right">
               基于差分隐私的 AI 个性化医疗用药推荐系统 · 保护隐私 · 精准推荐

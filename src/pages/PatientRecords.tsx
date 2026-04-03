@@ -19,6 +19,7 @@ import {
   Users,
   Heart,
   Scale,
+  BarChart3,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -26,6 +27,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { usePatientStore, calcBMI, bmiLabel, type Patient, type PatientGender } from '@/lib/patientStore'
 import { getErrorMessage } from '@/lib/api'
+import { PatientCardSkeleton, StatCardSkeleton } from '@/components/ui/skeleton'
+import { AgeDistributionChart } from '@/components/charts/AgeDistributionChart'
+import { DiseaseDistributionChart } from '@/components/charts/DiseaseDistributionChart'
 
 type SortKey = 'name' | 'age' | 'createdAt'
 type SortDir = 'asc' | 'desc'
@@ -79,6 +83,39 @@ export default function PatientRecords() {
     const bmis = patients.map((patient) => calcBMI(patient.weight, patient.height)).filter((value) => value > 0)
     const avgBMI = bmis.length > 0 ? Math.round((bmis.reduce((sum, value) => sum + value, 0) / bmis.length) * 10) / 10 : 0
     return { total: patients.length, avgAge, diseaseCount: allDiseases.size, avgBMI }
+  }, [patients])
+
+  // 年龄分布数据
+  const ageDistribution = useMemo(() => {
+    const groups = { '30-40岁': 0, '40-50岁': 0, '50-60岁': 0, '60-70岁': 0, '70岁以上': 0 }
+    patients.forEach((p) => {
+      if (p.age < 40) groups['30-40岁']++
+      else if (p.age < 50) groups['40-50岁']++
+      else if (p.age < 60) groups['50-60岁']++
+      else if (p.age < 70) groups['60-70岁']++
+      else groups['70岁以上']++
+    })
+    return [
+      { name: '30-40岁', value: groups['30-40岁'], color: '#3b82f6' },
+      { name: '40-50岁', value: groups['40-50岁'], color: '#8b5cf6' },
+      { name: '50-60岁', value: groups['50-60岁'], color: '#ec4899' },
+      { name: '60-70岁', value: groups['60-70岁'], color: '#f59e0b' },
+      { name: '70岁以上', value: groups['70岁以上'], color: '#10b981' },
+    ].filter((d) => d.value > 0)
+  }, [patients])
+
+  // 疾病分布数据
+  const diseaseDistribution = useMemo(() => {
+    const diseaseCount: Record<string, number> = {}
+    patients.forEach((p) => {
+      p.chronicDiseases.forEach((d) => {
+        diseaseCount[d] = (diseaseCount[d] || 0) + 1
+      })
+    })
+    return Object.entries(diseaseCount)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8)
   }, [patients])
 
   const filteredPatients = useMemo(() => {
@@ -198,17 +235,44 @@ export default function PatientRecords() {
   )
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-3xl font-bold text-transparent">患者档案管理</h1>
-          <p className="text-muted-foreground">管理患者健康信息，为个性化用药推荐提供数据支持</p>
+    <div className="space-y-10">
+      {/* Hero Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative overflow-hidden rounded-2xl"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-rose-600 via-pink-600 to-orange-500" />
+        <div className="absolute inset-0 bg-medical-dna opacity-20" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-400/20 rounded-full blur-3xl" />
+
+        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-5">
+              <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm items-center justify-center shadow-xl">
+                <Users className="h-8 w-8 text-white" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
+                  患者档案管理
+                </h1>
+                <p className="text-white/70 text-lg max-w-2xl">
+                  管理患者健康信息，为个性化用药推荐提供数据支持
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => { resetForm(); setShowAddForm(true) }}
+              className="gap-2 bg-white text-rose-600 hover:bg-white/90 shadow-xl px-6 py-6 text-lg font-semibold"
+            >
+              <Plus className="h-5 w-5" />
+              添加患者
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => { resetForm(); setShowAddForm(true) }} className="gap-2 shadow-lg hover:shadow-xl">
-          <Plus className="h-4 w-4" />
-          添加患者
-        </Button>
-      </div>
+      </motion.div>
 
       {(error || pageError) && (
         <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
@@ -216,27 +280,43 @@ export default function PatientRecords() {
         </div>
       )}
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {[
-          { icon: Users, label: '患者总数', value: `${stats.total}`, color: 'from-blue-500 to-cyan-500' },
-          { icon: Calendar, label: '平均年龄', value: `${stats.avgAge}`, color: 'from-purple-500 to-pink-500' },
-          { icon: Heart, label: '慢病种类', value: `${stats.diseaseCount}`, color: 'from-red-500 to-orange-500' },
-          { icon: Scale, label: '平均 BMI', value: stats.avgBMI.toFixed(1), color: 'from-green-500 to-emerald-500' },
-        ].map((item) => {
-          const Icon = item.icon
-          return (
-            <Card key={item.label} className="border-border/40 bg-card/50 backdrop-blur">
-              <CardContent className="pb-4 pt-5">
-                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${item.color} shadow-md`}>
-                  <Icon className="h-5 w-5 text-white" />
-                </div>
-                <div className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-2xl font-bold text-transparent">{item.value}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{item.label}</div>
-              </CardContent>
-            </Card>
-          )
-        })}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
+          : [
+              { icon: Users, label: '患者总数', value: `${stats.total}`, color: 'from-blue-500 to-cyan-500' },
+              { icon: Calendar, label: '平均年龄', value: `${stats.avgAge}`, color: 'from-purple-500 to-pink-500' },
+              { icon: Heart, label: '慢病种类', value: `${stats.diseaseCount}`, color: 'from-red-500 to-orange-500' },
+              { icon: Scale, label: '平均 BMI', value: stats.avgBMI.toFixed(1), color: 'from-green-500 to-emerald-500' },
+            ].map((item) => {
+              const Icon = item.icon
+              return (
+                <Card key={item.label} className="border-border/40 bg-card/50 backdrop-blur hover:shadow-lg transition-shadow">
+                  <CardContent className="pb-4 pt-5">
+                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${item.color} shadow-md`}>
+                      <Icon className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-2xl font-bold text-transparent">{item.value}</div>
+                    <div className="mt-1 text-xs text-muted-foreground">{item.label}</div>
+                  </CardContent>
+                </Card>
+              )
+            })}
       </div>
+
+      {/* Charts Section */}
+      {!isLoading && patients.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid gap-6 md:grid-cols-2"
+        >
+          <AgeDistributionChart data={ageDistribution} />
+          <DiseaseDistributionChart data={diseaseDistribution} />
+        </motion.div>
+      )}
 
       <Card className="border-border/40 bg-card/50 backdrop-blur">
         <CardContent className="space-y-3 pt-6">
@@ -349,6 +429,14 @@ export default function PatientRecords() {
         <div className="px-1 text-sm text-muted-foreground">
           {isLoading ? '加载中...' : `共 ${filteredPatients.length} 条记录${searchTerm ? `（搜索：${searchTerm}）` : ''}`}
         </div>
+
+        {isLoading && (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <PatientCardSkeleton key={i} />
+            ))}
+          </div>
+        )}
 
         <AnimatePresence>
           {!isLoading && filteredPatients.map((patient, index) => {

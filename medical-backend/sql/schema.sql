@@ -32,7 +32,7 @@ CREATE TABLE sys_user (
 CREATE TABLE patient (
     id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '患者ID',
     name VARCHAR(100) NOT NULL COMMENT '姓名',
-    gender ENUM('男', '女') NOT NULL COMMENT '性别',
+    gender ENUM('MALE', 'FEMALE', 'UNKNOWN') DEFAULT 'UNKNOWN' COMMENT '性别',
     birth_date DATE COMMENT '出生日期',
     phone VARCHAR(20) COMMENT '联系电话',
     id_card VARCHAR(18) COMMENT '身份证号(加密存储)',
@@ -59,10 +59,12 @@ CREATE TABLE patient_health_record (
     current_medications JSON COMMENT '当前用药列表 ["二甲双胍", "氨氯地平"]',
     medical_history TEXT COMMENT '病史描述',
     symptoms TEXT COMMENT '当前症状',
+    is_latest BOOLEAN DEFAULT TRUE COMMENT '是否最新记录',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     FOREIGN KEY (patient_id) REFERENCES patient(id) ON DELETE CASCADE,
     INDEX idx_patient_id (patient_id),
-    INDEX idx_record_date (record_date)
+    INDEX idx_record_date (record_date),
+    INDEX idx_patient_latest (patient_id, is_latest)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='患者健康档案表';
 
 -- =============================================

@@ -8,7 +8,10 @@ import java.util.Optional;
 public interface UserRepository {
     @Select("SELECT * FROM sys_user WHERE username = #{username}")
     Optional<User> findByUsername(String username);
-    
+
     @Select("SELECT * FROM sys_user WHERE id = #{id}")
     Optional<User> findById(Long id);
+
+    @Select("SELECT * FROM sys_user")
+    java.util.List<User> findAll();
 }

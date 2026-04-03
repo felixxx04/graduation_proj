@@ -7,6 +7,7 @@ import com.medical.service.AuthService;
 import com.medical.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -15,12 +16,12 @@ import java.util.Map;
 public class PrivacyController {
     private final PrivacyService privacyService;
     private final AuthService authService;
-    
+
     private Long getUserId(String username) {
         User user = authService.getCurrentUser(username);
         return user != null ? user.getId() : null;
     }
-    
+
     @GetMapping("/config")
     public ApiResponse<PrivacyConfig> getConfig(@RequestAttribute String username) {
         Long userId = getUserId(username);
@@ -33,7 +34,7 @@ public class PrivacyController {
         }
         return ApiResponse.success(config);
     }
-    
+
     @PutMapping("/config")
     public ApiResponse<PrivacyConfig> updateConfig(@RequestAttribute String username, @RequestBody PrivacyConfig config) {
         Long userId = getUserId(username);
@@ -43,7 +44,7 @@ public class PrivacyController {
         PrivacyConfig updated = privacyService.updateConfig(userId, config);
         return ApiResponse.success("更新成功", updated);
     }
-    
+
     @GetMapping("/budget")
     public ApiResponse<Map<String, Object>> getBudget(@RequestAttribute String username) {
         Long userId = getUserId(username);
@@ -55,5 +56,22 @@ public class PrivacyController {
             return ApiResponse.error("隐私配置不存在");
         }
         return ApiResponse.success(budget);
+    }
+
+    @GetMapping("/events")
+    public ApiResponse<List<Map<String, Object>>> getEvents(@RequestAttribute String username,
+                                                            @RequestParam(defaultValue = "30") int limit) {
+        Long userId = getUserId(username);
+        if (userId == null) {
+            return ApiResponse.error("用户不存在");
+        }
+        List<Map<String, Object>> events = privacyService.getLedgerEvents(userId, limit);
+        return ApiResponse.success(events);
+    }
+
+    @DeleteMapping("/events")
+    public ApiResponse<Void> clearEvents(@RequestAttribute String username) {
+        privacyService.clearLedger();
+        return ApiResponse.success("账本已清空", null);
     }
 }
