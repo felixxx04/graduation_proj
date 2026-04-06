@@ -1,0 +1,20 @@
+# RAG 模块依赖
+# 用于药物推荐系统的向量检索功能
+
+# 向量数据库
+chromadb>=0.4.22
+
+# Embedding 模型
+sentence-transformers>=2.2.2
+transformers>=4.35.0
+
+# 机器学习基础
+torch>=2.0.0
+numpy>=1.24.0
+
+# 数据处理
+requests>=2.31.0
+pandas>=2.0.0
+
+# 可选：更快的向量计算
+# faiss-cpu>=1.7.4  # 或 faiss-gpu（如果有 GPU）
