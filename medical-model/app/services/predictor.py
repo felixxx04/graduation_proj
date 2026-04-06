@@ -1,17 +1,42 @@
 import torch
 import numpy as np
 import json
+import logging
 from typing import Dict, List, Any, Optional
 from app.models.deepfm import DeepFM
 from app.data.preprocessor import PatientFeatureProcessor
 from app.utils.privacy import laplace_noise, gaussian_noise
 
+logger = logging.getLogger(__name__)
+
+
 class RecommendationPredictor:
-    def __init__(self, model_path: str = None):
+    def __init__(self, model_path: str = None, use_rag: bool = True):
         self.model = None
         self.preprocessor = PatientFeatureProcessor()
         self.drugs_data = []
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        # RAG 服务
+        self.use_rag = use_rag
+        self._rag_service = None
+
+    @property
+    def rag_service(self):
+        """懒加载 RAG 服务"""
+        if self._rag_service is None and self.use_rag:
+            try:
+                from app.services.rag_service import get_rag_service
+                self._rag_service = get_rag_service()
+                logger.info("RAG service initialized")
+            except Exception as e:
+                logger.warning(f"Failed to initialize RAG service: {e}")
+                self._rag_service = None
+        return self._rag_service
+
+    def is_rag_ready(self) -> bool:
+        """检查 RAG 服务是否就绪"""
+        return self.rag_service is not None and self.rag_service.is_ready()
         
     def load_model(self, model_path: str, field_dims: List[int]):
         self.model = DeepFM(field_dims)
@@ -57,8 +82,8 @@ class RecommendationPredictor:
             confidence = min(98, max(70, 70 + score * 28))
             
             recommendations.append({
-                'drugId': drug['id'],
-                'drugName': drug['name'],
+                'drugId': drug.get('id') or drug.get('drug_code', ''),
+                'drugName': drug.get('name') or drug.get('generic_name', ''),
                 'category': drug.get('category', ''),
                 'dosage': drug.get('typical_dosage', ''),
                 'frequency': drug.get('typical_frequency', ''),
@@ -97,8 +122,8 @@ class RecommendationPredictor:
                 score += noise
             
             recommendations.append({
-                'drugId': drug['id'],
-                'drugName': drug['name'],
+                'drugId': drug.get('id') or drug.get('drug_code', ''),
+                'drugName': drug.get('name') or drug.get('generic_name', ''),
                 'category': drug.get('category', ''),
                 'dosage': drug.get('typical_dosage', ''),
                 'frequency': drug.get('typical_frequency', ''),
