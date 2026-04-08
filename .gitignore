@@ -144,4 +144,13 @@ vite.config.ts.timestamp-*
 
 # Java backend build outputs
 server/target/
+medical-backend/target/
 *.class
+
+# Claude Code local settings
+.claude/
+
+# Environment files
+.env
+.env.*
+!.env.example

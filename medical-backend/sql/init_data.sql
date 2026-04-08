@@ -6,7 +6,7 @@ SET NAMES utf8mb4;
 USE medical_recommendation;
 
 -- 插入默认管理员账户
--- 密码: admin123 (BCrypt 加密)
+-- 默认密码请查看部署文档
 INSERT INTO sys_user (username, password_hash, role, enabled) VALUES
 ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt9P5C.', 'admin', TRUE),
 ('doctor1', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt9P5C.', 'doctor', TRUE),
