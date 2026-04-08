@@ -11,7 +11,8 @@
       "Bash(findstr :8001)",
       "Bash(taskkill:*)",
       "Bash(npm install:*)",
-      "Bash(uipro init:*)"
+      "Bash(uipro init:*)",
+      "Bash(reg query:*)"
     ]
   }
 }
