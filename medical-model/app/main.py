@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
+import json
+import os
 from app.config import settings
 from app.services.predictor import predictor
 
@@ -8,6 +10,9 @@ app = FastAPI(
     title=settings.app_name,
     version="1.0.0"
 )
+
+# 药物数据文件路径
+DRUGS_DATA_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'drugs_openfda.json')
 
 class DPConfig(BaseModel):
     enabled: bool = True
@@ -39,6 +44,18 @@ class TrainRequest(BaseModel):
 @app.on_event("startup")
 async def startup():
     print("Model service starting up...")
+
+    # 加载药物数据
+    if os.path.exists(DRUGS_DATA_FILE):
+        try:
+            with open(DRUGS_DATA_FILE, 'r', encoding='utf-8') as f:
+                drugs_data = json.load(f)
+            predictor.set_drugs_data(drugs_data)
+            print(f"Loaded {len(drugs_data)} drugs from {DRUGS_DATA_FILE}")
+        except Exception as e:
+            print(f"Failed to load drugs data: {e}")
+    else:
+        print(f"Drugs data file not found: {DRUGS_DATA_FILE}")
 
 @app.get("/")
 def root():
