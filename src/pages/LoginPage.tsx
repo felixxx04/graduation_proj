@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Shield, Lock, KeyRound, LogIn, Heart, Activity, Pill, Stethoscope, Sparkles } from 'lucide-react'
+import { Shield, Lock, KeyRound, LogIn, Heart, Activity, Pill, Stethoscope, Sparkles, ArrowLeft } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -49,20 +49,20 @@ export default function LoginPage() {
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
       {/* Animated Background */}
       <div className="absolute inset-0 -z-10">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-indigo-950 dark:to-purple-950" />
+        {/* Base Gradient */}
+        <div className="absolute inset-0 bg-mesh-gradient" />
 
         {/* Floating Medical Icons */}
         <div className="absolute inset-0 overflow-hidden">
           {[
-            { Icon: Heart, delay: 0, x: '10%', y: '20%', size: 24, opacity: 0.15 },
-            { Icon: Activity, delay: 1, x: '85%', y: '15%', size: 32, opacity: 0.12 },
-            { Icon: Pill, delay: 2, x: '75%', y: '70%', size: 28, opacity: 0.1 },
-            { Icon: Stethoscope, delay: 1.5, x: '15%', y: '75%', size: 30, opacity: 0.13 },
-            { Icon: Shield, delay: 0.5, x: '90%', y: '45%', size: 26, opacity: 0.11 },
-            { Icon: Heart, delay: 2.5, x: '25%', y: '50%', size: 20, opacity: 0.1 },
-            { Icon: Activity, delay: 3, x: '60%', y: '85%', size: 22, opacity: 0.12 },
-            { Icon: Pill, delay: 1.8, x: '45%', y: '10%', size: 18, opacity: 0.09 },
+            { Icon: Heart, delay: 0, x: '8%', y: '15%', size: 28, opacity: 0.12 },
+            { Icon: Activity, delay: 1, x: '88%', y: '12%', size: 36, opacity: 0.1 },
+            { Icon: Pill, delay: 2, x: '78%', y: '72%', size: 32, opacity: 0.08 },
+            { Icon: Stethoscope, delay: 1.5, x: '12%', y: '78%', size: 34, opacity: 0.1 },
+            { Icon: Shield, delay: 0.5, x: '92%', y: '42%', size: 30, opacity: 0.09 },
+            { Icon: Heart, delay: 2.5, x: '22%', y: '45%', size: 22, opacity: 0.08 },
+            { Icon: Activity, delay: 3, x: '65%', y: '88%', size: 26, opacity: 0.1 },
+            { Icon: Pill, delay: 1.8, x: '42%', y: '8%', size: 20, opacity: 0.07 },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -92,9 +92,9 @@ export default function LoginPage() {
         </div>
 
         {/* Gradient Orbs */}
-        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-gradient-to-br from-primary/20 to-secondary/10 blur-3xl" />
-        <div className="absolute -right-40 -bottom-40 h-96 w-96 rounded-full bg-gradient-to-br from-secondary/20 to-purple-500/10 blur-3xl" />
-        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-blue-400/10 to-indigo-500/10 blur-3xl" />
+        <div className="absolute -left-32 -top-32 h-80 w-80 rounded-full bg-gradient-to-br from-primary/25 to-accent/15 blur-3xl" />
+        <div className="absolute -right-32 -bottom-32 h-96 w-96 rounded-full bg-gradient-to-br from-secondary/20 to-teal-500/10 blur-3xl" />
+        <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-accent/10 to-primary/10 blur-3xl" />
       </div>
 
       {/* Login Card */}
@@ -105,21 +105,21 @@ export default function LoginPage() {
         className="relative w-full max-w-md"
       >
         {/* Glow Effect */}
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/20 via-secondary/20 to-purple-500/20 blur-xl opacity-60" />
+        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary/30 via-accent/30 to-secondary/30 blur-xl opacity-50" />
 
-        <Card className="relative border-primary/20 bg-white/80 backdrop-blur-xl dark:bg-gray-900/80 shadow-2xl">
+        <Card className="relative border-primary/20 bg-card/90 backdrop-blur-xl shadow-2xl">
           <CardHeader className="space-y-4 pb-6">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 15 }}
-              className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-secondary to-purple-500 shadow-lg"
+              className="mx-auto flex h-18 w-18 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-accent to-secondary shadow-lg shadow-primary/30"
             >
-              <Shield className="h-8 w-8 text-white" />
+              <Shield className="h-9 w-9 text-white" />
             </motion.div>
 
             <div className="text-center">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary via-secondary to-purple-600 bg-clip-text text-transparent">
+              <CardTitle className="text-2xl font-bold text-gradient-primary">
                 智慧医药推荐系统
               </CardTitle>
               <CardDescription className="mt-2 text-base">
@@ -131,47 +131,41 @@ export default function LoginPage() {
           <CardContent className="space-y-6">
             <form onSubmit={onSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="username" className="flex items-center gap-2 text-sm font-medium">
+                <Label htmlFor="username" className="flex items-center gap-2">
                   <KeyRound className="h-4 w-4 text-primary" />
                   账号
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="username"
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                    placeholder="请输入账号"
-                    autoComplete="username"
-                    required
-                    className="h-12 bg-white/50 dark:bg-gray-800/50 border-border/50 focus:border-primary focus:ring-primary/20"
-                  />
-                </div>
+                <Input
+                  id="username"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder="请输入账号"
+                  autoComplete="username"
+                  required
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="flex items-center gap-2 text-sm font-medium">
+                <Label htmlFor="password" className="flex items-center gap-2">
                   <Lock className="h-4 w-4 text-secondary" />
                   密码
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    placeholder="请输入密码"
-                    autoComplete="current-password"
-                    required
-                    className="h-12 bg-white/50 dark:bg-gray-800/50 border-border/50 focus:border-secondary focus:ring-secondary/20"
-                  />
-                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="请输入密码"
+                  autoComplete="current-password"
+                  required
+                />
               </div>
 
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400"
+                  className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
                 >
                   {error}
                 </motion.div>
@@ -183,11 +177,10 @@ export default function LoginPage() {
               >
                 <Button
                   type="submit"
-                  className="relative w-full h-12 gap-2 overflow-hidden bg-gradient-to-r from-primary via-secondary to-purple-500 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="relative w-full gap-2 overflow-hidden"
                   size="lg"
                   disabled={loading || isInitializing}
                 >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer" />
                   {loading ? (
                     <>
                       <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -216,32 +209,32 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <motion.div
-                whileHover={{ scale: 1.02, y: -2 }}
-                className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 dark:border-blue-800 dark:from-blue-950/30 dark:to-indigo-950/30"
+                whileHover={{ scale: 1.03, y: -2 }}
+                className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 p-4"
               >
-                <div className="mb-2 flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
+                <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
                   <Stethoscope className="h-3.5 w-3.5" />
                   医生账号
                 </div>
                 <div className="space-y-1 text-sm">
-                  <div className="font-medium text-gray-700 dark:text-gray-300">doctor1</div>
-                  <div className="text-gray-500 dark:text-gray-400">密码：admin123</div>
+                  <div className="font-semibold text-foreground">doctor1</div>
+                  <div className="text-muted-foreground">密码：admin123</div>
                 </div>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.02, y: -2 }}
-                className="rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-pink-50 p-4 dark:border-purple-800 dark:from-purple-950/30 dark:to-pink-950/30"
+                whileHover={{ scale: 1.03, y: -2 }}
+                className="rounded-xl border border-secondary/20 bg-gradient-to-br from-secondary/5 to-teal-500/5 p-4"
               >
-                <div className="mb-2 flex items-center gap-2 text-xs font-medium text-purple-600 dark:text-purple-400">
+                <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-secondary">
                   <Shield className="h-3.5 w-3.5" />
                   管理员账号
                 </div>
                 <div className="space-y-1 text-sm">
-                  <div className="font-medium text-gray-700 dark:text-gray-300">admin</div>
-                  <div className="text-gray-500 dark:text-gray-400">密码：admin123</div>
+                  <div className="font-semibold text-foreground">admin</div>
+                  <div className="text-muted-foreground">密码：admin123</div>
                 </div>
               </motion.div>
             </div>
@@ -249,8 +242,9 @@ export default function LoginPage() {
             <div className="text-center text-sm text-muted-foreground">
               <Link
                 to="/"
-                className="inline-flex items-center gap-1 text-primary hover:underline hover:underline-offset-4"
+                className="inline-flex items-center gap-1 text-primary hover:underline hover:underline-offset-4 transition-colors"
               >
+                <ArrowLeft className="h-4 w-4" />
                 返回首页
               </Link>
             </div>
@@ -267,15 +261,6 @@ export default function LoginPage() {
       >
         © 2024 智慧医药推荐系统 · 差分隐私保护
       </motion.div>
-
-      <style>{`
-        @keyframes shimmer {
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
     </div>
   )
 }

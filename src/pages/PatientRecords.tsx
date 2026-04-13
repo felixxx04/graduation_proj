@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react'
+﻿import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -19,7 +19,6 @@ import {
   Users,
   Heart,
   Scale,
-  BarChart3,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -28,6 +27,7 @@ import { Label } from '@/components/ui/label'
 import { usePatientStore, calcBMI, bmiLabel, type Patient, type PatientGender } from '@/lib/patientStore'
 import { getErrorMessage } from '@/lib/api'
 import { PatientCardSkeleton, StatCardSkeleton } from '@/components/ui/skeleton'
+import { TextExpander } from '@/components/ui/text-expander'
 import { AgeDistributionChart } from '@/components/charts/AgeDistributionChart'
 import { DiseaseDistributionChart } from '@/components/charts/DiseaseDistributionChart'
 
@@ -75,6 +75,18 @@ export default function PatientRecords() {
   const [submitting, setSubmitting] = useState(false)
   const [pageError, setPageError] = useState<string | null>(null)
   const [formData, setFormData] = useState<FormState>(INITIAL_FORM)
+  const addFormRef = useRef<HTMLDivElement>(null)
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 滚动到表单位置（延迟等待动画完成）
+  const scrollToForm = () => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      addFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 300)
+  }
 
   const stats = useMemo(() => {
     if (!patients.length) return { total: 0, avgAge: 0, diseaseCount: 0, avgBMI: 0 }
@@ -243,10 +255,10 @@ export default function PatientRecords() {
         transition={{ duration: 0.6 }}
         className="relative overflow-hidden rounded-2xl"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-rose-600 via-pink-600 to-orange-500" />
-        <div className="absolute inset-0 bg-medical-dna opacity-20" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-400/20 rounded-full blur-3xl" />
+        <div className="absolute inset-0 hero-gradient-warm pointer-events-none" />
+        <div className="absolute inset-0 bg-medical-dna opacity-20 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-400/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
           <div className="flex items-start justify-between gap-4">
@@ -264,7 +276,7 @@ export default function PatientRecords() {
               </div>
             </div>
             <Button
-              onClick={() => { resetForm(); setShowAddForm(true) }}
+              onClick={() => { resetForm(); setShowAddForm(true); scrollToForm() }}
               className="gap-2 bg-white text-rose-600 hover:bg-white/90 shadow-xl px-6 py-6 text-lg font-semibold"
             >
               <Plus className="h-5 w-5" />
@@ -341,7 +353,7 @@ export default function PatientRecords() {
       <AnimatePresence>
         {showAddForm && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg">
+            <Card ref={addFormRef} className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg scroll-mt-[60px]">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -552,7 +564,7 @@ export default function PatientRecords() {
                             {patient.medicalHistory && (
                               <div className="mt-5 border-t border-border pt-5">
                                 <h4 className="mb-2 text-sm font-semibold">既往病史</h4>
-                                <p className="text-sm leading-relaxed text-muted-foreground">{patient.medicalHistory}</p>
+                                <TextExpander text={patient.medicalHistory} maxLines={3} />
                               </div>
                             )}
                           </div>

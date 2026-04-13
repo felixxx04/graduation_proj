@@ -31,6 +31,7 @@ import { usePrivacyStore } from '@/lib/privacyStore'
 import { api, getErrorMessage } from '@/lib/api'
 import { gaussianSigma, laplaceScale } from '@/lib/privacy'
 import { usePatientStore } from '@/lib/patientStore'
+import { TextExpander } from '@/components/ui/text-expander'
 import {
   BarChart,
   Bar,
@@ -225,14 +226,9 @@ export default function DrugRecommendation() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden rounded-2xl"
+        className="rounded-2xl hero-gradient shadow-lg"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600" />
-        <div className="absolute inset-0 bg-medical-dna opacity-20" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl" />
-
-        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
+        <div className="px-8 py-10 md:px-12 md:py-14">
           <div className="flex items-start gap-5">
             <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm items-center justify-center shadow-xl">
               <Stethoscope className="h-8 w-8 text-white" />
@@ -245,7 +241,7 @@ export default function DrugRecommendation() {
                 基于深度学习模型的个性化用药建议，融合差分隐私保护技术
               </p>
               <div className="flex flex-wrap gap-3 mt-5">
-                {['DeepFM', '注意力机制', '图神经网络', 'DP-SGD'].map((tag, i) => (
+                {['DeepFM', '注意力机制', '图神经网络', 'DP-SGD'].map((tag) => (
                   <span
                     key={tag}
                     className="px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20"
@@ -259,199 +255,197 @@ export default function DrugRecommendation() {
         </div>
       </motion.div>
 
+      {/* 主内容区 */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Input Form */}
+        {/* 左侧：表单区域 */}
         <div className="lg:col-span-2 space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
           >
-            <Card className="border-0 shadow-xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-900 dark:via-slate-800 dark:to-slate-800" />
-              <div className="relative z-10">
-                <CardHeader className="border-b border-border/50 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
-                      <FileText className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">患者信息录入</CardTitle>
-                      <CardDescription>填写患者临床信息以获取个性化推荐</CardDescription>
-                    </div>
+            <Card className="border-border/40 bg-card/80 backdrop-blur-sm shadow-lg">
+              <CardHeader className="border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                    <FileText className="h-6 w-6 text-white" />
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-6 pt-6">
-
-                  {/* 患者快速选择 */}
-                  {patients.length > 0 && (
-                    <div className="p-5 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30 border border-indigo-100 dark:border-indigo-800">
-                      <Label htmlFor="quick-select" className="flex items-center gap-2 mb-3 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
-                        <Users className="h-4 w-4" />
-                        从患者档案快速填充
-                      </Label>
-                      <select
-                        id="quick-select"
-                        value={selectedPatientId}
-                        onChange={(e) => handleSelectPatient(e.target.value)}
-                        className="flex h-12 w-full rounded-xl border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm font-medium shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      >
-                        <option value="">-- 选择已有患者（可选）--</option>
-                        {patients.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="age">年龄</Label>
-                  <Input
-                    id="age"
-                    type="number"
-                    value={patientData.age}
-                    onChange={(e) => setPatientData({ ...patientData, age: e.target.value })}
-                    placeholder="例如：45"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="gender">性别</Label>
-                  <select
-                    id="gender"
-                    value={patientData.gender}
-                    onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })}
-                    className="flex h-11 w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="男">男</option>
-                    <option value="女">女</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="diseases">确诊疾病（逗号分隔）</Label>
-                <Input
-                  id="diseases"
-                  value={patientData.diseases}
-                  onChange={(e) => setPatientData({ ...patientData, diseases: e.target.value })}
-                  placeholder="例如：2 型糖尿病，高血压，高脂血症"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="symptoms">主要症状</Label>
-                <textarea
-                  id="symptoms"
-                  value={patientData.symptoms}
-                  onChange={(e) => setPatientData({ ...patientData, symptoms: e.target.value })}
-                  className="flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
-                  placeholder="描述患者当前主要症状、体征等"
-                />
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="allergies">过敏史</Label>
-                  <Input
-                    id="allergies"
-                    value={patientData.allergies}
-                    onChange={(e) => setPatientData({ ...patientData, allergies: e.target.value })}
-                    placeholder="例如：青霉素，磺胺类"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="currentMedications">当前用药</Label>
-                  <Input
-                    id="currentMedications"
-                    value={patientData.currentMedications}
-                    onChange={(e) => setPatientData({ ...patientData, currentMedications: e.target.value })}
-                    placeholder="例如：二甲双胍，氨氯地平"
-                  />
-                </div>
-              </div>
-
-              {/* Privacy Level Control */}
-              <div className="pt-4 border-t border-border">
-                <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
-                    <Label className="text-base flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-primary" />
-                      差分隐私推理开关
-                    </Label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      关闭后展示「无 DP」基线结果；开启后对药物评分注入噪声，并记录隐私预算消耗。
-                    </p>
+                    <CardTitle className="text-xl">患者信息录入</CardTitle>
+                    <CardDescription>填写患者临床信息以获取个性化推荐</CardDescription>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setDpEnabled((v) => !v)}
-                    className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                      dpEnabled
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-background text-foreground border-border hover:bg-muted'
-                    }`}
-                  >
-                    {dpEnabled ? '已开启' : '已关闭'}
-                  </button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6 pt-6">
+                {/* 患者快速选择 */}
+                {patients.length > 0 && (
+                  <div className="p-5 rounded-xl bg-muted/50 border border-border">
+                    <Label htmlFor="quick-select" className="flex items-center gap-2 mb-3 text-sm font-semibold">
+                      <Users className="h-4 w-4 text-primary" />
+                      从患者档案快速填充
+                    </Label>
+                    <select
+                      id="quick-select"
+                      value={selectedPatientId}
+                      onChange={(e) => handleSelectPatient(e.target.value)}
+                      className="flex h-12 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm font-medium shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent"
+                    >
+                      <option value="">-- 选择已有患者（可选）--</option>
+                      {patients.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="age">年龄</Label>
+                    <Input
+                      id="age"
+                      type="number"
+                      value={patientData.age}
+                      onChange={(e) => setPatientData({ ...patientData, age: e.target.value })}
+                      placeholder="例如：45"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">性别</Label>
+                    <select
+                      id="gender"
+                      value={patientData.gender}
+                      onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })}
+                      className="flex h-11 w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <option value="男">男</option>
+                      <option value="女">女</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground">当前 ε</div>
-                    <div className="text-lg font-semibold text-primary">{config.epsilon.toFixed(3)}</div>
+                <div className="space-y-2">
+                  <Label htmlFor="diseases">确诊疾病（逗号分隔）</Label>
+                  <Input
+                    id="diseases"
+                    value={patientData.diseases}
+                    onChange={(e) => setPatientData({ ...patientData, diseases: e.target.value })}
+                    placeholder="例如：2 型糖尿病，高血压，高脂血症"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="symptoms">主要症状</Label>
+                  <textarea
+                    id="symptoms"
+                    value={patientData.symptoms}
+                    onChange={(e) => setPatientData({ ...patientData, symptoms: e.target.value })}
+                    className="flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                    placeholder="描述患者当前主要症状、体征等"
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="allergies">过敏史</Label>
+                    <Input
+                      id="allergies"
+                      value={patientData.allergies}
+                      onChange={(e) => setPatientData({ ...patientData, allergies: e.target.value })}
+                      placeholder="例如：青霉素，磺胺类"
+                    />
                   </div>
-                  <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground">噪声规模</div>
-                    <div className="text-lg font-semibold">
-                      {config.noiseMechanism === 'gaussian' ? 'σ' : 'b'} = {noiseScale.toFixed(3)}
+                  <div className="space-y-2">
+                    <Label htmlFor="currentMedications">当前用药</Label>
+                    <Input
+                      id="currentMedications"
+                      value={patientData.currentMedications}
+                      onChange={(e) => setPatientData({ ...patientData, currentMedications: e.target.value })}
+                      placeholder="例如：二甲双胍，氨氯地平"
+                    />
+                  </div>
+                </div>
+
+                {/* Privacy Level Control */}
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div>
+                      <Label className="text-base flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-primary" />
+                        差分隐私推理开关
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        关闭后展示「无 DP」基线结果；开启后对药物评分注入噪声，并记录隐私预算消耗。
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setDpEnabled((v) => !v)}
+                      className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        dpEnabled
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'bg-background text-foreground border-border hover:bg-muted'
+                      }`}
+                    >
+                      {dpEnabled ? '已开启' : '已关闭'}
+                    </button>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                      <div className="text-xs text-muted-foreground">当前 ε</div>
+                      <div className="text-lg font-semibold text-primary">{config.epsilon.toFixed(3)}</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                      <div className="text-xs text-muted-foreground">噪声规模</div>
+                      <div className="text-lg font-semibold">
+                        {config.noiseMechanism === 'gaussian' ? 'σ' : 'b'} = {noiseScale.toFixed(3)}
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                      <div className="text-xs text-muted-foreground">预算剩余</div>
+                      <div className="text-lg font-semibold text-secondary">ε_rem = {budget.remaining.toFixed(2)}</div>
                     </div>
                   </div>
-                  <div className="p-3 rounded-lg bg-background border border-border">
-                    <div className="text-xs text-muted-foreground">预算剩余</div>
-                    <div className="text-lg font-semibold text-secondary">ε_rem = {budget.remaining.toFixed(2)}</div>
+                </div>
+
+                {analyzeError && (
+                  <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+                    {analyzeError}
                   </div>
-                </div>
-              </div>
-
-              {analyzeError && (
-                <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
-                  {analyzeError}
-                </div>
-              )}
-
-              <Button
-                onClick={handleAnalyze}
-                className="w-full gap-2 shadow-lg hover:shadow-xl"
-                size="lg"
-                disabled={isAnalyzing || !patientData.diseases}
-              >
-                {isAnalyzing ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    <span>正在分析中...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-5 w-5" />
-                    <span>开始智能推荐</span>
-                  </>
                 )}
-              </Button>
-            </CardContent>
-          </div>
-          </Card>
-        </motion.div>
-      </div>
 
-      {/* Privacy Metrics Sidebar */}
+                <Button
+                  onClick={handleAnalyze}
+                  className="w-full gap-2 shadow-lg hover:shadow-xl"
+                  size="lg"
+                  disabled={isAnalyzing || !patientData.diseases}
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>正在分析中...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-5 w-5" />
+                      <span>开始智能推荐</span>
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* 右侧：隐私面板 */}
         <div className="space-y-6">
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg sticky top-24">
+          <Card className="border-primary/20 bg-card/80 backdrop-blur-sm shadow-lg sticky top-24">
+            <div className="h-1 bg-gradient-to-r from-primary via-accent to-secondary rounded-t-xl" />
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
@@ -460,7 +454,7 @@ export default function DrugRecommendation() {
               <CardDescription>当前会话的隐私指标</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-4 rounded-lg bg-background border border-border">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Lock className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium">差分隐私机制</span>
@@ -473,7 +467,7 @@ export default function DrugRecommendation() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border border-border">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Key className="h-4 w-4 text-secondary" />
                   <span className="text-sm font-medium">隐私预算消耗</span>
@@ -490,7 +484,7 @@ export default function DrugRecommendation() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-background border border-border">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Activity className="h-4 w-4 text-amber-500" />
                   <span className="text-sm font-medium">噪声规模</span>
@@ -527,7 +521,7 @@ export default function DrugRecommendation() {
             transition={{ duration: 0.5 }}
             className="print-area"
           >
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-secondary/5 to-purple-50 dark:from-primary/10 dark:via-secondary/10 dark:to-purple-950/30 shadow-xl">
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-card to-secondary/5 shadow-xl">
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-3">
@@ -550,7 +544,7 @@ export default function DrugRecommendation() {
               <CardContent>
                 {/* DP 对比 */}
                 {comparison && (
-                  <div className="mb-6 p-4 rounded-xl bg-background border border-border">
+                  <div className="mb-6 p-4 rounded-xl bg-muted/50 border border-border">
                     <div className="flex items-center justify-between gap-3 flex-wrap">
                       <div className="flex items-center gap-2">
                         <GitCompare className="h-4 w-4 text-primary" />
@@ -599,9 +593,9 @@ export default function DrugRecommendation() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.1 }}
                       onClick={() => setSelectedDrug(selectedDrug?.id === rec.id ? null : rec)}
-                      className={`p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                      className={`p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 bg-card ${
                         selectedDrug?.id === rec.id
-                          ? 'border-primary bg-primary/5 shadow-lg scale-[1.02]'
+                          ? 'border-primary shadow-lg'
                           : 'border-border hover:border-primary/50 hover:shadow-md'
                       }`}
                     >
@@ -655,7 +649,7 @@ export default function DrugRecommendation() {
                     animate={{ opacity: 1, height: 'auto' }}
                     className="border-t border-border pt-6"
                   >
-                    <div className="bg-background rounded-xl p-6 border border-border space-y-6">
+                    <div className="bg-muted/30 rounded-xl p-6 border border-border space-y-6">
                       <h4 className="font-semibold text-lg flex items-center gap-2">
                         <Info className="h-5 w-5 text-primary" />
                         详细用药说明 — {selectedDrug.drugName}
@@ -668,9 +662,7 @@ export default function DrugRecommendation() {
                               <TrendingUp className="h-4 w-4 text-primary" />
                               推荐理由
                             </h5>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                              {selectedDrug.reason}
-                            </p>
+                            <TextExpander text={selectedDrug.reason} maxLines={3} expandText="查看完整理由" collapseText="收起理由" />
                           </div>
 
                           <div>
@@ -678,7 +670,7 @@ export default function DrugRecommendation() {
                               <Clock className="h-4 w-4 text-secondary" />
                               用法用量
                             </h5>
-                            <div className="p-3 rounded-lg bg-secondary/5 border border-secondary/20">
+                            <div className="p-3 rounded-lg bg-muted/50 border border-border">
                               <p className="text-sm"><strong>剂量：</strong>{selectedDrug.dosage}</p>
                               <p className="text-sm"><strong>频率：</strong>{selectedDrug.frequency}</p>
                             </div>
@@ -753,7 +745,7 @@ export default function DrugRecommendation() {
                               exit={{ opacity: 0, height: 0 }}
                               className="overflow-hidden"
                             >
-                              <div className="p-4 rounded-xl bg-gradient-to-br from-primary/3 to-secondary/3 border border-primary/10">
+                              <div className="p-4 rounded-xl bg-muted/30 border border-border">
                                 <p className="text-xs text-muted-foreground mb-4">
                                   以下展示深度学习模型各特征维度对本次推荐评分的贡献（基于 DeepFM 注意力权重分析）
                                 </p>

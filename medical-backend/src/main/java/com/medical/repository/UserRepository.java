@@ -14,4 +14,7 @@ public interface UserRepository {
 
     @Select("SELECT * FROM sys_user")
     java.util.List<User> findAll();
+
+    @Update("UPDATE sys_user SET enabled = #{enabled}, updated_at = #{updatedAt} WHERE id = #{id}")
+    void update(User user);
 }

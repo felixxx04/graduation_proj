@@ -290,7 +290,7 @@ export default function PrivacyVisualization() {
             <CardContent>
               <div className="h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={privacyAccuracyData}>
+                  <AreaChart data={privacyAccuracyData} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
                     <defs>
                       <linearGradient id="colorAccuracy" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
@@ -302,9 +302,9 @@ export default function PrivacyVisualization() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis 
-                      dataKey="epsilon" 
-                      label={{ value: '隐私预算 ε', position: 'insideBottom', offset: -5 }}
+                    <XAxis
+                      dataKey="epsilon"
+                      label={{ value: '隐私预算 ε', position: 'bottom', offset: 40 }}
                       stroke="hsl(var(--muted-foreground))"
                     />
                     <YAxis 
@@ -319,10 +319,10 @@ export default function PrivacyVisualization() {
                         borderRadius: '8px'
                       }}
                     />
-                    <Legend />
-                    <Area 
-                      type="monotone" 
-                      dataKey="accuracy" 
+                    <Legend layout="horizontal" align="center" verticalAlign="bottom" />
+                    <Area
+                      type="monotone"
+                      dataKey="accuracy"
                       name="推荐准确率"
                       stroke="hsl(var(--primary))" 
                       fillOpacity={1} 
@@ -411,14 +411,14 @@ export default function PrivacyVisualization() {
             <CardContent>
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
+                  <ScatterChart margin={{ top: 20, right: 20, bottom: 40, left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis
                       type="number"
                       dataKey="utility"
                       name="数据效用"
                       domain={[55, 100]}
-                      label={{ value: '数据效用 (%)', position: 'insideBottom', offset: -10, fontSize: 12 }}
+                      label={{ value: '数据效用 (%)', position: 'insideBottom', offset: -5, fontSize: 12 }}
                       stroke="hsl(var(--muted-foreground))"
                       tick={{ fontSize: 11 }}
                     />
@@ -442,7 +442,7 @@ export default function PrivacyVisualization() {
                       }}
                       formatter={(value, name) => [`${value}%`, name]}
                     />
-                    <Legend wrapperStyle={{ fontSize: '12px' }} />
+                    <Legend layout="horizontal" align="center" verticalAlign="top" wrapperStyle={{ fontSize: '12px', marginTop: '-10px' }} />
                     {['ε=0.1', 'ε=0.5', 'ε=1.0', 'ε=2.0', 'ε=5.0', 'ε=10.0'].map((epsilonName, idx) => {
                       const colors = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#6366f1']
                       return (

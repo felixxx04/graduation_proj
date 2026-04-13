@@ -14,6 +14,8 @@ import {
   LogIn,
   Lock,
   Sparkles,
+  Heart,
+  ChevronRight,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -108,9 +110,9 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-blue-950/30 dark:to-indigo-950/20">
+    <div className="min-h-screen bg-mesh-gradient">
       {/* Background Pattern */}
-      <div className="fixed inset-0 bg-medical-dna opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 bg-medical-dna opacity-40 pointer-events-none" />
 
       {/* Header */}
       <motion.header
@@ -120,7 +122,7 @@ export default function Layout() {
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-300",
           scrolled
-            ? "bg-white/80 dark:bg-slate-900/80 shadow-md backdrop-blur-xl border-b border-border/50"
+            ? "glass border-b border-border/30"
             : "bg-transparent"
         )}
       >
@@ -128,13 +130,13 @@ export default function Layout() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-shadow">
-                <Activity className="h-5 w-5 text-white" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-accent to-secondary shadow-lg shadow-primary/30 group-hover:shadow-xl group-hover:shadow-primary/40 transition-all duration-300">
+                <Heart className="h-5 w-5 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white dark:border-slate-900" />
+              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-background animate-pulse" />
             </div>
             <div>
-              <h1 className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
+              <h1 className="text-gradient-primary text-xl font-bold tracking-tight">
                 智慧医药
               </h1>
               <p className="text-[10px] text-muted-foreground leading-tight">隐私保护 · 智能推荐</p>
@@ -153,16 +155,16 @@ export default function Layout() {
                   className={cn(
                     'relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200',
                     isActive
-                      ? 'text-blue-600 dark:text-blue-400'
+                      ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   )}
                 >
-                  <Icon className={cn('h-4 w-4', isActive && 'text-blue-500')} />
+                  <Icon className={cn('h-4 w-4', isActive && 'text-primary')} />
                   {item.name}
                   {isActive && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute inset-0 bg-blue-50 dark:bg-blue-950/50 rounded-xl -z-10"
+                      className="absolute inset-0 bg-primary/10 rounded-xl -z-10"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -175,24 +177,24 @@ export default function Layout() {
           <div className="hidden lg:flex items-center gap-3">
             {isInitializing ? (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 验证中...
               </div>
             ) : user ? (
               <>
-                <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-800 px-4 py-2">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500">
+                <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card/50 backdrop-blur px-4 py-2">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent">
                     <UserIcon className="h-4 w-4 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-medium truncate">{user.username}</div>
+                    <div className="text-sm font-semibold truncate">{user.username}</div>
                     <div className="text-[10px] text-muted-foreground">
                       {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '研究员'}
                     </div>
                   </div>
                 </div>
                 <button
-                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
+                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
                   onClick={onLogout}
                 >
                   <LogOut className="h-4 w-4" />
@@ -201,7 +203,8 @@ export default function Layout() {
             ) : (
               <Button
                 onClick={() => openLoginModal('/')}
-                className="gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg shadow-blue-500/25 transition-all duration-300"
+                className="gap-2"
+                size="default"
               >
                 <LogIn className="h-4 w-4" />
                 登录
@@ -226,17 +229,17 @@ export default function Layout() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="lg:hidden border-t border-border/50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl"
+              className="lg:hidden border-t border-border/30 glass"
             >
               <div className="container py-4 space-y-2">
                 {user && (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-muted/30 p-3 mb-4">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-border/50 bg-card/50 p-3 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent">
                         <UserIcon className="h-5 w-5 text-white" />
                       </div>
                       <div>
-                        <div className="font-medium">{user.username}</div>
+                        <div className="font-semibold">{user.username}</div>
                         <div className="text-xs text-muted-foreground">
                           {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '研究员'}
                         </div>
@@ -244,7 +247,7 @@ export default function Layout() {
                     </div>
                     <button
                       onClick={onLogout}
-                      className="p-2 rounded-lg text-muted-foreground hover:bg-red-50 hover:text-red-600"
+                      className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                     >
                       <LogOut className="h-5 w-5" />
                     </button>
@@ -261,13 +264,14 @@ export default function Layout() {
                       className={cn(
                         'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all',
                         isActive
-                          ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
+                          ? 'bg-primary/10 text-primary'
                           : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <Icon className="h-5 w-5" />
                       {item.name}
+                      <ChevronRight className={cn('h-4 w-4 ml-auto', isActive ? 'opacity-100' : 'opacity-0')} />
                     </Link>
                   )
                 })}
@@ -278,7 +282,7 @@ export default function Layout() {
                       openLoginModal('/')
                       setMobileMenuOpen(false)
                     }}
-                    className="w-full gap-2 mt-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                    className="w-full gap-2 mt-4"
                   >
                     <LogIn className="h-4 w-4" />
                     登录
@@ -297,7 +301,7 @@ export default function Layout() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
             onClick={(e) => e.target === e.currentTarget && closeModal()}
           >
             <motion.div
@@ -307,10 +311,10 @@ export default function Layout() {
               className="w-full max-w-md"
             >
               <Card className="border-0 shadow-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5" />
                 <div className="relative z-10">
                   <CardHeader className="text-center pb-2">
-                    <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/25">
+                    <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
                       <Lock className="h-8 w-8 text-white" />
                     </div>
                     <CardTitle className="text-2xl">登录后继续</CardTitle>
@@ -329,7 +333,6 @@ export default function Layout() {
                           placeholder="请输入账号"
                           autoComplete="username"
                           required
-                          className="h-12"
                         />
                       </div>
                       <div className="space-y-2">
@@ -342,7 +345,6 @@ export default function Layout() {
                           placeholder="请输入密码"
                           autoComplete="current-password"
                           required
-                          className="h-12"
                         />
                       </div>
 
@@ -350,7 +352,7 @@ export default function Layout() {
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400"
+                          className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
                         >
                           {loginError}
                         </motion.div>
@@ -359,7 +361,7 @@ export default function Layout() {
                       <div className="flex gap-3 pt-2">
                         <Button
                           type="submit"
-                          className="flex-1 gap-2 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+                          className="flex-1"
                           disabled={loginLoading || isInitializing}
                         >
                           {loginLoading ? (
@@ -374,19 +376,19 @@ export default function Layout() {
                             </>
                           )}
                         </Button>
-                        <Button type="button" variant="outline" className="flex-1 h-12" onClick={closeModal}>
+                        <Button type="button" variant="outline" className="flex-1" onClick={closeModal}>
                           取消
                         </Button>
                       </div>
                     </form>
 
                     <div className="grid grid-cols-2 gap-3 pt-2">
-                      <div className="rounded-xl border border-border bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 p-3 text-center">
+                      <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 p-3 text-center">
                         <div className="text-[10px] text-muted-foreground mb-1">医生账号</div>
                         <div className="text-sm font-semibold">doctor1</div>
                         <div className="text-xs text-muted-foreground">admin123</div>
                       </div>
-                      <div className="rounded-xl border border-border bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-3 text-center">
+                      <div className="rounded-xl border border-secondary/20 bg-gradient-to-br from-secondary/5 to-teal-500/5 p-3 text-center">
                         <div className="text-[10px] text-muted-foreground mb-1">管理员</div>
                         <div className="text-sm font-semibold">admin</div>
                         <div className="text-xs text-muted-foreground">admin123</div>
@@ -406,15 +408,15 @@ export default function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-auto border-t border-border/30 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+      <footer className="relative z-10 mt-auto border-t border-border/30 glass">
         <div className="container py-8">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
-                <Activity className="h-4 w-4 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-md">
+                <Heart className="h-5 w-5 text-white" />
               </div>
               <div>
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-sm font-bold text-transparent">
+                <span className="text-gradient-primary text-sm font-bold">
                   智慧医药
                 </span>
                 <p className="text-[10px] text-muted-foreground">差分隐私保护的智能用药推荐系统</p>

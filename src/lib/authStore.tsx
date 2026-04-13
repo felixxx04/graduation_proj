@@ -1,7 +1,7 @@
 ﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { api, clearAuthToken, getAuthToken, getErrorMessage, setAuthToken } from './api'
 
-export type UserRole = 'user' | 'admin'
+export type UserRole = 'user' | 'admin' | 'doctor'
 
 export type AuthUser = {
   id: number

@@ -17,6 +17,9 @@ const config: Config = {
     },
     extend: {
       colors: {
+        rose: {
+          600: '#e5e7eb',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
