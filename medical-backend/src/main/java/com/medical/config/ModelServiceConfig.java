@@ -3,7 +3,9 @@ package com.medical.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 模型服务配置类
@@ -18,19 +20,27 @@ public class ModelServiceConfig {
      * 模型服务基础 URL
      */
     private String url = "http://localhost:8001";
-    
+
     /**
      * 初始化超时时间（毫秒）
      */
     private int initDelayMs = 2000;
-    
+
     /**
      * 连接超时时间（毫秒）
      */
     private int connectTimeoutMs = 5000;
-    
+
     /**
      * 读取超时时间（毫秒）
      */
     private int readTimeoutMs = 30000;
+
+    /**
+     * 提供 RestTemplate Bean
+     */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }

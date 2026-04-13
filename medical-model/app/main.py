@@ -3,16 +3,22 @@ from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import json
 import os
+import time
+import logging
+import torch
 from app.config import settings
 from app.services.predictor import predictor
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=settings.app_name,
     version="1.0.0"
 )
 
-# 药物数据文件路径
+# 文件路径
 DRUGS_DATA_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'drugs_openfda.json')
+TRAINED_MODEL_FILE = os.path.join(os.path.dirname(__file__), '..', 'saved_models', 'deepfm_trained.pt')
 
 class DPConfig(BaseModel):
     enabled: bool = True
@@ -56,6 +62,19 @@ async def startup():
             print(f"Failed to load drugs data: {e}")
     else:
         print(f"Drugs data file not found: {DRUGS_DATA_FILE}")
+
+    # 加载已训练的模型（如果存在）
+    if os.path.exists(TRAINED_MODEL_FILE):
+        try:
+            predictor.load_model(TRAINED_MODEL_FILE, field_dims=[200])
+            print(f"Loaded trained model from {TRAINED_MODEL_FILE}")
+            logger.info("Trained model loaded successfully")
+        except Exception as e:
+            print(f"Failed to load trained model: {e}")
+            logger.warning(f"Could not load trained model: {e}")
+    else:
+        print("No trained model found, will use mock predictions until training is done")
+        logger.info("No trained model found, model will be initialized during training")
 
 @app.get("/")
 def root():
@@ -166,10 +185,29 @@ def train(request: TrainRequest):
         torch.save(predictor.model.state_dict(), model_path)
         logger.info(f"Model saved to {model_path}")
 
+        # 转换为前端期望的格式
+        epochs_data = []
+        history = result.get('history', {})
+        losses = history.get('loss', [])
+        accuracies = history.get('accuracy', [])
+        epsilon_per_epoch = result.get('epsilon_used', 0) / max(len(losses), 1)
+
+        for i in range(len(losses)):
+            epochs_data.append({
+                "epochIndex": i,
+                "loss": losses[i],
+                "accuracy": accuracies[i] * 100,  # 转为百分比
+                "epsilonSpent": epsilon_per_epoch
+            })
+
         return {
-            "message": "Training completed successfully",
-            "config": request.dict(),
-            "result": result
+            "id": int(time.time() * 1000),
+            "status": "COMPLETED",
+            "totalEpochs": request.epochs,
+            "epsilonPerEpoch": epsilon_per_epoch,
+            "startedAt": None,
+            "finishedAt": None,
+            "epochs": epochs_data
         }
 
     except Exception as e:

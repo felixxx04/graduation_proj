@@ -39,10 +39,12 @@ class RecommendationPredictor:
         return self.rag_service is not None and self.rag_service.is_ready()
         
     def load_model(self, model_path: str, field_dims: List[int]):
+        """加载预训练模型"""
         self.model = DeepFM(field_dims)
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device, weights_only=True))
         self.model.to(self.device)
         self.model.eval()
+        logger.info(f"Model loaded from {model_path}")
 
     def load_model_from_dims(self, field_dims: List[int]):
         """从维度初始化新模型（用于训练）"""
@@ -52,19 +54,146 @@ class RecommendationPredictor:
         
     def set_drugs_data(self, drugs: List[Dict[str, Any]]):
         self.drugs_data = drugs
+
+    def _create_patient_features(self, patient_data: Dict[str, Any], feature_dim: int = 200) -> np.ndarray:
+        """创建患者特征向量（与训练时一致）"""
+        features = np.zeros(feature_dim, dtype=np.float32)
+        idx = 0
+
+        # 1. 年龄特征 (归一化)
+        age = patient_data.get('age', 45) or 45
+        features[idx] = age / 100.0
+        idx += 1
+
+        # 2. 性别特征
+        gender = patient_data.get('gender', 'MALE') or 'MALE'
+        features[idx] = 1.0 if gender == 'MALE' else 0.0
+        idx += 1
+
+        # 3. BMI (估算)
+        features[idx] = 0.55  # 默认 BMI 归一化值
+        idx += 1
+
+        # 4. 慢性疾病特征 (20 种)
+        diseases = patient_data.get('chronic_diseases', []) or []
+        if isinstance(diseases, str):
+            diseases = [d.strip() for d in diseases.split('，') if d.strip()]
+        disease_vocab = ['高血压', '糖尿病', '冠心病', '高血脂', '哮喘',
+                         '慢性肾病', '肝炎', '胃溃疡', '关节炎', '抑郁症',
+                         '甲状腺疾病', '贫血', '痛风', '骨质疏松', '心衰',
+                         '脑梗塞', '帕金森', '癫痫', '肿瘤', '其他']
+        for i, d in enumerate(disease_vocab):
+            if i + idx < feature_dim:
+                features[idx + i] = 1.0 if d in diseases else 0.0
+        idx += len(disease_vocab)
+
+        # 5. 过敏史特征 (10 种)
+        allergies = patient_data.get('allergies', []) or []
+        if isinstance(allergies, str):
+            allergies = [a.strip() for a in allergies.split('，') if a.strip()]
+        allergy_vocab = ['青霉素', '磺胺类', '阿司匹林', '碘造影剂', '头孢类',
+                         '链霉素', '万古霉素', '喹诺酮类', '四环素类', '其他']
+        for i, a in enumerate(allergy_vocab):
+            if i + idx < feature_dim:
+                features[idx + i] = 1.0 if a in allergies else 0.0
+        idx += len(allergy_vocab)
+
+        # 6. 当前用药特征 (10 种)
+        idx += 10
+
+        # 7-10. 药物相关特征在 _create_drug_patient_features 中填充
+        return features
+
+    def _create_drug_patient_features(self, patient_data: Dict[str, Any], drug: Dict[str, Any], feature_dim: int = 200) -> np.ndarray:
+        """创建患者-药物组合特征向量"""
+        # 获取患者基础特征
+        features = self._create_patient_features(patient_data, feature_dim)
+
+        # 找到当前填充位置
+        idx = 1 + 1 + 1 + 20 + 10 + 10  # age + gender + bmi + diseases + allergies + meds
+
+        # 7. 药物类别特征 (8 类)
+        drug_category = drug.get('category', '') or ''
+        category_map = {'降糖药': 0, '降压药': 1, '降脂药': 2, '抗血小板药': 3,
+                        '消化系统用药': 4, '心血管用药': 5, '抗感染药': 6, '其他': 7}
+        cat_idx = category_map.get(drug_category, 7)
+        for i in range(8):
+            if i + idx < feature_dim:
+                features[idx + i] = 1.0 if i == cat_idx else 0.0
+        idx += 8
+
+        # 8. 疾病-适应症匹配特征
+        diseases = patient_data.get('chronic_diseases', []) or []
+        if isinstance(diseases, str):
+            diseases = [d.strip() for d in diseases.split('，') if d.strip()]
+        indications = drug.get('indications', []) or []
+        if isinstance(indications, str):
+            try:
+                indications = json.loads(indications)
+            except:
+                indications = []
+
+        match_score = 0.0
+        for disease in diseases:
+            for indication in indications:
+                if disease in indication or indication in disease:
+                    match_score += 1.0
+        match_score = min(match_score / max(len(diseases), 1), 1.0)
+        if idx < feature_dim:
+            features[idx] = match_score
+        idx += 1
+
+        # 9. 禁忌症冲突特征
+        contraindications = drug.get('contraindications', []) or []
+        if isinstance(contraindications, str):
+            try:
+                contraindications = json.loads(contraindications)
+            except:
+                contraindications = []
+        conflict_score = 0.0
+        for disease in diseases:
+            for contra in contraindications:
+                if disease in contra or contra in disease:
+                    conflict_score += 1.0
+        conflict_score = min(conflict_score / max(len(diseases), 1), 1.0)
+        if idx < feature_dim:
+            features[idx] = conflict_score
+        idx += 1
+
+        # 10. 过敏冲突特征
+        allergies = patient_data.get('allergies', []) or []
+        if isinstance(allergies, str):
+            allergies = [a.strip() for a in allergies.split('，') if a.strip()]
+        side_effects = drug.get('side_effects', []) or []
+        if isinstance(side_effects, str):
+            try:
+                side_effects = json.loads(side_effects)
+            except:
+                side_effects = []
+        allergy_conflict = 0.0
+        for allergy in allergies:
+            for effect in side_effects:
+                if allergy in str(effect) or str(effect) in allergy:
+                    allergy_conflict += 1.0
+        allergy_conflict = min(allergy_conflict / max(len(allergies), 1), 1.0)
+        if idx < feature_dim:
+            features[idx] = allergy_conflict
+
+        return features
         
     def predict(self, patient_data: Dict[str, Any], top_k: int = 4,
                 dp_config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         if self.model is None:
             return self._mock_prediction(patient_data, top_k, dp_config)
-        
-        patient_features = self.preprocessor.transform_patient(patient_data)
-        
+
+        # 生成患者特征（与训练时相同的 200 维）
+        patient_features = self._create_patient_features(patient_data)
+
         recommendations = []
         for drug in self.drugs_data:
-            drug_features = self.preprocessor.transform_drug(drug)
-            combined_features = np.concatenate([patient_features, drug_features])
-            
+            # 生成药物特征（与训练时相同的方式）
+            combined_features = self._create_drug_patient_features(patient_data, drug)
+
             with torch.no_grad():
                 x = torch.tensor(combined_features, dtype=torch.float32).unsqueeze(0).to(self.device)
                 score, embeds = self.model(x)

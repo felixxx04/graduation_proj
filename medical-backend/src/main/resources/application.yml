@@ -23,6 +23,12 @@ jwt:
   secret: ${JWT_SECRET:}
   expiration: 86400000
 
+model-service:
+  url: http://localhost:8002
+  init-delay-ms: 2000
+  connect-timeout-ms: 5000
+  read-timeout-ms: 120000
+
 logging:
   level:
     com.medical: DEBUG

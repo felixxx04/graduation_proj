@@ -411,8 +411,8 @@ export default function HomePage() {
             <Link to="/recommendation">
               <Button
                 size="xl"
-                variant="glass"
-                className="gap-2 text-white border-white/30 hover:bg-white/10"
+                variant="outline"
+                className="gap-2 text-white border-white/40 bg-white/10 hover:bg-white/20 hover:border-white/60 hover:text-white"
               >
                 <Stethoscope className="h-5 w-5" />
                 获取用药推荐

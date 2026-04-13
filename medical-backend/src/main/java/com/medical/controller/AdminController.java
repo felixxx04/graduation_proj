@@ -4,12 +4,16 @@ import com.medical.dto.response.ApiResponse;
 import com.medical.entity.User;
 import com.medical.repository.UserRepository;
 import com.medical.service.AuthService;
+import com.medical.config.ModelServiceConfig;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,6 +22,8 @@ import java.util.stream.Collectors;
 public class AdminController {
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final ModelServiceConfig modelServiceConfig;
+    private final RestTemplate restTemplate;
 
     @GetMapping("/users")
     public ApiResponse<List<UserDto>> getUsers(@RequestAttribute String username) {
@@ -70,16 +76,54 @@ public class AdminController {
         @RequestBody TrainingStartRequest request,
         @RequestAttribute String username
     ) {
-        // 返回模拟的新训练任务
-        TrainingRunDto run = new TrainingRunDto();
-        run.setId(System.currentTimeMillis());
-        run.setStatus("RUNNING");
-        run.setTotalEpochs(request.getEpochs());
-        run.setEpsilonPerEpoch(0.1);
-        run.setStartedAt(LocalDateTime.now().toString());
-        run.setFinishedAt(null);
-        run.setEpochs(new ArrayList<>());
-        return ApiResponse.success(run);
+        try {
+            // 构建训练请求
+            Map<String, Object> trainRequest = new HashMap<>();
+            trainRequest.put("epochs", request.getEpochs());
+            trainRequest.put("learningRate", 0.01);
+            trainRequest.put("dpEnabled", true);
+            trainRequest.put("epsilon", 1.0);
+            trainRequest.put("batchSize", 32);
+
+            // 调用模型服务
+            String url = modelServiceConfig.getUrl() + "/model/train";
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = restTemplate.postForObject(url, trainRequest, Map.class);
+
+            if (result == null) {
+                throw new RuntimeException("模型服务返回空响应");
+            }
+
+            // 转换为 DTO
+            TrainingRunDto run = new TrainingRunDto();
+            run.setId(Long.valueOf(result.get("id").toString()));
+            run.setStatus((String) result.get("status"));
+            run.setTotalEpochs(((Number) result.get("totalEpochs")).intValue());
+            run.setEpsilonPerEpoch(((Number) result.get("epsilonPerEpoch")).doubleValue());
+            run.setStartedAt(LocalDateTime.now().minusMinutes(request.getEpochs()).toString());
+            run.setFinishedAt(LocalDateTime.now().toString());
+
+            // 转换 epochs
+            List<EpochDto> epochList = new ArrayList<>();
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> epochsData = (List<Map<String, Object>>) result.get("epochs");
+            if (epochsData != null) {
+                for (Map<String, Object> e : epochsData) {
+                    EpochDto epoch = new EpochDto();
+                    epoch.setEpochIndex(((Number) e.get("epochIndex")).intValue());
+                    epoch.setLoss(((Number) e.get("loss")).doubleValue());
+                    epoch.setAccuracy(((Number) e.get("accuracy")).doubleValue());
+                    epoch.setEpsilonSpent(((Number) e.get("epsilonSpent")).doubleValue());
+                    epoch.setCreatedAt(LocalDateTime.now().toString());
+                    epochList.add(epoch);
+                }
+            }
+            run.setEpochs(epochList);
+
+            return ApiResponse.success(run);
+        } catch (Exception e) {
+            throw new RuntimeException("训练失败: " + e.getMessage());
+        }
     }
 
     private List<EpochDto> generateMockEpochs(int count) {
