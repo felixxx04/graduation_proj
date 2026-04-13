@@ -103,10 +103,78 @@ def predict(request: PredictRequest):
 
 @app.post("/model/train")
 def train(request: TrainRequest):
-    return {
-        "message": "Training not implemented yet",
-        "config": request.dict()
-    }
+    """训练模型"""
+    from app.services.trainer import ModelTrainer, DrugRecommendationDataset, generate_synthetic_training_data
+    from torch.utils.data import DataLoader
+    import os
+
+    try:
+        # 准备训练数据
+        training_data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'training_data.json')
+
+        if os.path.exists(training_data_path):
+            # 加载真实训练数据
+            with open(training_data_path, 'r', encoding='utf-8') as f:
+                raw_data = json.load(f)
+            samples = raw_data if isinstance(raw_data, list) else raw_data.get('samples', [])
+            logger.info(f"Loaded {len(samples)} samples from {training_data_path}")
+        else:
+            # 生成合成数据
+            logger.warning(f"Training data not found at {training_data_path}, generating synthetic data")
+            samples = generate_synthetic_training_data(num_samples=1000, feature_dim=200)
+
+        # 创建数据集
+        dataset = DrugRecommendationDataset(samples, feature_dim=200)
+        train_loader = DataLoader(
+            dataset,
+            batch_size=request.batchSize,
+            shuffle=True,
+            num_workers=0
+        )
+
+        # 初始化模型（如果未加载）
+        if predictor.model is None:
+            # 根据数据维度确定 field_dims
+            field_dims = [50, 30, 20, 15, 10, 10, 10, 10, 10, 10, 5, 5, 5, 5, 5]
+            predictor.load_model_from_dims(field_dims)
+            logger.info("Model initialized for training")
+
+        # 准备 DP 配置
+        dp_config = None
+        if request.dpEnabled:
+            dp_config = {
+                'enabled': True,
+                'epsilon': request.epsilon,
+                'delta': 1e-5,
+                'sensitivity': 1.0
+            }
+
+        # 训练
+        trainer = ModelTrainer(predictor.model, predictor.device)
+        result = trainer.train(
+            train_loader=train_loader,
+            epochs=request.epochs,
+            learning_rate=request.learningRate,
+            dp_config=dp_config,
+            batch_size=request.batchSize
+        )
+
+        # 保存模型
+        model_dir = os.path.join(os.path.dirname(__file__), '..', 'saved_models')
+        os.makedirs(model_dir, exist_ok=True)
+        model_path = os.path.join(model_dir, 'deepfm_trained.pt')
+        torch.save(predictor.model.state_dict(), model_path)
+        logger.info(f"Model saved to {model_path}")
+
+        return {
+            "message": "Training completed successfully",
+            "config": request.dict(),
+            "result": result
+        }
+
+    except Exception as e:
+        logger.error(f"Training failed: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Training failed: {str(e)}")
 
 @app.post("/model/load-drugs")
 def load_drugs(drugs: List[Dict[str, Any]]):

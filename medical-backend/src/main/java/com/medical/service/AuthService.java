@@ -18,16 +18,12 @@ public class AuthService {
     
     public Map<String, Object> login(String username, String password) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
-        if (!user.getEnabled()) {
-            throw new RuntimeException("用户已禁用");
+                .orElseThrow(() -> new RuntimeException("用户名或密码错误"));
+
+        if (!user.getEnabled() || !passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new RuntimeException("用户名或密码错误");
         }
-        
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new RuntimeException("密码错误");
-        }
-        
+
         String token = jwtUtil.generateToken(username, user.getRole());
         
         Map<String, Object> result = new HashMap<>();
