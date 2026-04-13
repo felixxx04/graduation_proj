@@ -43,6 +43,12 @@ class RecommendationPredictor:
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.to(self.device)
         self.model.eval()
+
+    def load_model_from_dims(self, field_dims: List[int]):
+        """从维度初始化新模型（用于训练）"""
+        self.model = DeepFM(field_dims)
+        self.model.to(self.device)
+        logger.info(f"Model initialized with field_dims: {field_dims}")
         
     def set_drugs_data(self, drugs: List[Dict[str, Any]]):
         self.drugs_data = drugs

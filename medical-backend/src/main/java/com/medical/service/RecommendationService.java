@@ -1,11 +1,15 @@
 package com.medical.service;
 
+import com.medical.config.ModelServiceConfig;
 import com.medical.entity.Drug;
 import com.medical.entity.Recommendation;
+import com.medical.entity.User;
 import com.medical.repository.RecommendationRepository;
 import com.medical.repository.PrivacyRepository;
+import com.medical.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
@@ -13,44 +17,54 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.scheduling.annotation.Async;
 import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RecommendationService {
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String modelServiceUrl = "http://localhost:8001";
+    private final ModelServiceConfig modelServiceConfig;
     private final DrugService drugService;
     private final RecommendationRepository recommendationRepository;
     private final PrivacyRepository privacyRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private boolean drugsLoaded = false;
+    private volatile boolean drugsLoaded = false;
 
     @PostConstruct
     public void init() {
-        // 启动时异步加载药物数据到模型服务
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000); // 等待模型服务启动
-                loadDrugsToModelService();
-            } catch (Exception e) {
-                System.err.println("Failed to load drugs to model service: " + e.getMessage());
-            }
-        }).start();
+        loadDrugsAsync();
+    }
+
+    @Async
+    public void loadDrugsAsync() {
+        try {
+            int delayMs = modelServiceConfig.getInitDelayMs();
+            log.info("Waiting {}ms for model service to start...", delayMs);
+            Thread.sleep(delayMs);
+            loadDrugsToModelService();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Drug loading interrupted", e);
+        } catch (Exception e) {
+            log.error("Failed to load drugs to model service after retry", e);
+            drugsLoaded = false;
+        }
     }
 
     private synchronized void loadDrugsToModelService() {
         if (drugsLoaded) return;
-
         try {
             List<Drug> drugs = drugService.getAllDrugs();
             List<Map<String, Object>> drugData = new ArrayList<>();
-
             for (Drug drug : drugs) {
                 Map<String, Object> d = new HashMap<>();
                 d.put("id", drug.getId());
@@ -64,77 +78,64 @@ public class RecommendationService {
                 d.put("typical_frequency", drug.getTypicalFrequency());
                 drugData.add(d);
             }
-
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<List<Map<String, Object>>> request = new HttpEntity<>(drugData, headers);
-
-            restTemplate.postForObject(modelServiceUrl + "/model/load-drugs", request, Map.class);
+            String url = modelServiceConfig.getUrl() + "/model/load-drugs";
+            restTemplate.postForObject(url, request, Map.class);
             drugsLoaded = true;
-            System.out.println("Loaded " + drugs.size() + " drugs to model service");
+            log.info("Successfully loaded {} drugs to model service at {}", drugs.size(), modelServiceConfig.getUrl());
         } catch (Exception e) {
-            System.err.println("Error loading drugs to model service: " + e.getMessage());
+            log.error("Error loading drugs to model service: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to initialize model service", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Map<String, Object> generateRecommendation(Map<String, Object> request) {
-        // 确保药物数据已加载
         if (!drugsLoaded) {
             loadDrugsToModelService();
         }
-
-        String url = modelServiceUrl + "/model/predict";
+        String url = modelServiceConfig.getUrl() + "/model/predict";
         Map<String, Object> result;
-
         try {
             result = restTemplate.postForObject(url, request, Map.class);
         } catch (Exception e) {
+            log.error("Model service unavailable: {}", e.getMessage());
             return Map.of("error", "模型服务不可用: " + e.getMessage());
         }
-
-        // 保存推荐记录到数据库
         try {
             saveRecommendation(request, result);
         } catch (Exception e) {
-            System.err.println("Failed to save recommendation: " + e.getMessage());
+            log.error("Failed to save recommendation: {}", e.getMessage(), e);
         }
-
         return result;
     }
 
     private void saveRecommendation(Map<String, Object> request, Map<String, Object> result) {
-        // 获取当前用户ID
         Long userId = getCurrentUserId();
-        if (userId == null) return;
-
-        // 获取患者ID
+        if (userId == null) {
+            log.warn("No authenticated user found, skipping recommendation save");
+            return;
+        }
         Long patientId = null;
         if (request.containsKey("patientId") && request.get("patientId") != null) {
             patientId = Long.valueOf(request.get("patientId").toString());
         }
-
-        // 检查是否启用差分隐私
         Boolean dpEnabled = (Boolean) request.getOrDefault("dpEnabled", true);
-
-        // 获取隐私参数
         BigDecimal epsilonUsed = BigDecimal.ZERO;
         if (dpEnabled) {
             Object epsilon = request.get("epsilon");
             if (epsilon == null) {
-                // 从隐私配置获取默认值
                 var config = privacyRepository.findByUserId(userId);
                 if (config != null) {
                     epsilonUsed = config.getEpsilon();
                 } else {
-                    epsilonUsed = new BigDecimal("0.1"); // 默认值
+                    epsilonUsed = new BigDecimal("0.1");
                 }
             } else {
                 epsilonUsed = new BigDecimal(epsilon.toString());
             }
         }
-
-        // 保存推荐记录
         Recommendation recommendation = new Recommendation();
         recommendation.setPatientId(patientId);
         recommendation.setUserId(userId);
@@ -143,15 +144,9 @@ public class RecommendationService {
         recommendation.setDpEnabled(dpEnabled);
         recommendation.setEpsilonUsed(epsilonUsed);
         recommendation.setRecommendationType("realtime");
-
         recommendationRepository.insert(recommendation);
-
-        // 记录隐私预算消耗
         if (dpEnabled && epsilonUsed.compareTo(BigDecimal.ZERO) > 0) {
-            // 更新已使用预算
             privacyRepository.addBudgetUsed(userId, epsilonUsed);
-
-            // 记录到隐私账本
             Map<String, Object> ledgerParams = new HashMap<>();
             ledgerParams.put("userId", userId);
             ledgerParams.put("eventType", "recommendation");
@@ -165,20 +160,30 @@ public class RecommendationService {
 
     private Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated()) {
-            // 假设用户名存储在principal中
-            String username = auth.getName();
-            // 需要从UserRepository获取用户ID
-            // 这里简化处理，返回1L（admin用户）
-            return 1L; // 实际应该根据username查询
+        if (auth == null || !auth.isAuthenticated()) {
+            log.debug("No authentication found in SecurityContext");
+            return null;
         }
-        return null;
+        String username = auth.getName();
+        if (username == null || username.isEmpty()) {
+            log.debug("Authentication principal has no username");
+            return null;
+        }
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            log.error("Authenticated user not found in database: {}", username);
+            throw new IllegalStateException("Authenticated user not found: " + username);
+        }
+        User user = userOptional.get();
+        log.debug("Resolved user ID {} for username '{}'", user.getId(), username);
+        return user.getId();
     }
 
     private String toJson(Object obj) {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
+            log.error("Failed to serialize object to JSON: {}", e.getMessage());
             return "{}";
         }
     }
