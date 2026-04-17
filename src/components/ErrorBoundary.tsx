@@ -26,15 +26,15 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-          <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">出错了</h1>
-            <p className="text-gray-600 mb-4">
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <div className="max-w-md w-full border-l-4 border-l-destructive bg-card p-6 rounded-standard">
+            <h1 className="text-ia-section font-display font-semibold text-destructive mb-3">出错了</h1>
+            <p className="text-ia-body text-ia-muted mb-5">
               {this.state.error?.message || '发生未知错误'}
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              className="cursor-pointer bg-primary text-primary-foreground px-4 py-2 rounded-standard text-ia-body font-medium transition-colors duration-150 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-card active:bg-primary/80"
             >
               刷新页面
             </button>

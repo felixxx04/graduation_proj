@@ -1,15 +1,22 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
+const CHART_TOOLTIP_STYLE = {
+  backgroundColor: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: '3px',
+  fontSize: '11px',
+}
+
 interface AgeDistributionChartProps {
   data: { name: string; value: number; color: string }[]
 }
 
 export function AgeDistributionChart({ data }: AgeDistributionChartProps) {
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur">
+    <Card className="border border-ia-border bg-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">年龄分布</CardTitle>
+        <CardTitle className="text-ia-card-title font-heading">年龄分布</CardTitle>
         <CardDescription>患者年龄段统计</CardDescription>
       </CardHeader>
       <CardContent>
@@ -32,18 +39,13 @@ export function AgeDistributionChart({ data }: AgeDistributionChartProps) {
                 ))}
               </Pie>
               <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                }}
+                contentStyle={CHART_TOOLTIP_STYLE}
                 formatter={(value: number) => [`${value}人`, '数量']}
               />
               <Legend
                 verticalAlign="bottom"
                 height={36}
-                formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
+                formatter={(value) => <span className="text-ia-caption text-ia-muted">{value}</span>}
               />
             </PieChart>
           </ResponsiveContainer>

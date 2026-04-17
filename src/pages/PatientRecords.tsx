@@ -1,6 +1,6 @@
-﻿import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import {
   Plus,
   Search,
@@ -78,11 +78,8 @@ export default function PatientRecords() {
   const addFormRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // 滚动到表单位置（延迟等待动画完成）
   const scrollToForm = () => {
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current)
-    }
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current)
     scrollTimeoutRef.current = setTimeout(() => {
       addFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 300)
@@ -97,7 +94,6 @@ export default function PatientRecords() {
     return { total: patients.length, avgAge, diseaseCount: allDiseases.size, avgBMI }
   }, [patients])
 
-  // 年龄分布数据
   const ageDistribution = useMemo(() => {
     const groups = { '30-40岁': 0, '40-50岁': 0, '50-60岁': 0, '60-70岁': 0, '70岁以上': 0 }
     patients.forEach((p) => {
@@ -108,32 +104,23 @@ export default function PatientRecords() {
       else groups['70岁以上']++
     })
     return [
-      { name: '30-40岁', value: groups['30-40岁'], color: '#3b82f6' },
-      { name: '40-50岁', value: groups['40-50岁'], color: '#8b5cf6' },
-      { name: '50-60岁', value: groups['50-60岁'], color: '#ec4899' },
-      { name: '60-70岁', value: groups['60-70岁'], color: '#f59e0b' },
-      { name: '70岁以上', value: groups['70岁以上'], color: '#10b981' },
+      { name: '30-40岁', value: groups['30-40岁'], color: 'hsl(var(--ia-data-1))' },
+      { name: '40-50岁', value: groups['40-50岁'], color: 'hsl(var(--ia-data-2))' },
+      { name: '50-60岁', value: groups['50-60岁'], color: 'hsl(var(--ia-data-3))' },
+      { name: '60-70岁', value: groups['60-70岁'], color: 'hsl(var(--ia-data-4))' },
+      { name: '70岁以上', value: groups['70岁以上'], color: 'hsl(var(--ia-data-5))' },
     ].filter((d) => d.value > 0)
   }, [patients])
 
-  // 疾病分布数据
   const diseaseDistribution = useMemo(() => {
     const diseaseCount: Record<string, number> = {}
-    patients.forEach((p) => {
-      p.chronicDiseases.forEach((d) => {
-        diseaseCount[d] = (diseaseCount[d] || 0) + 1
-      })
-    })
-    return Object.entries(diseaseCount)
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 8)
+    patients.forEach((p) => { p.chronicDiseases.forEach((d) => { diseaseCount[d] = (diseaseCount[d] || 0) + 1 }) })
+    return Object.entries(diseaseCount).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count).slice(0, 8)
   }, [patients])
 
   const filteredPatients = useMemo(() => {
     const term = searchTerm.toLowerCase().trim()
     let list = patients.filter((patient) => patient.name.toLowerCase().includes(term))
-
     list = [...list].sort((left, right) => {
       const leftValue = sortKey === 'name' ? left.name : sortKey === 'age' ? left.age : left.createdAt
       const rightValue = sortKey === 'name' ? right.name : sortKey === 'age' ? right.age : right.createdAt
@@ -141,208 +128,135 @@ export default function PatientRecords() {
       if (leftValue > rightValue) return sortDir === 'asc' ? 1 : -1
       return 0
     })
-
     return list
   }, [patients, searchTerm, sortDir, sortKey])
 
   const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((current) => (current === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortKey(key)
-      setSortDir('asc')
-    }
+    if (sortKey === key) { setSortDir((current) => (current === 'asc' ? 'desc' : 'asc')) }
+    else { setSortKey(key); setSortDir('asc') }
   }
 
-  const resetForm = () => {
-    setFormData(INITIAL_FORM)
-    setShowAddForm(false)
-    setEditingId(null)
-    setPageError(null)
-  }
+  const resetForm = () => { setFormData(INITIAL_FORM); setShowAddForm(false); setEditingId(null); setPageError(null) }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    setSubmitting(true)
-    setPageError(null)
-
+    setSubmitting(true); setPageError(null)
     const payload = {
-      name: formData.name.trim(),
-      age: Number.parseInt(formData.age, 10) || 0,
-      gender: formData.gender,
-      height: Number.parseFloat(formData.height) || 0,
-      weight: Number.parseFloat(formData.weight) || 0,
-      allergies: splitList(formData.allergies),
-      chronicDiseases: splitList(formData.chronicDiseases),
-      currentMedications: splitList(formData.currentMedications),
-      medicalHistory: formData.medicalHistory.trim(),
+      name: formData.name.trim(), age: Number.parseInt(formData.age, 10) || 0, gender: formData.gender,
+      height: Number.parseFloat(formData.height) || 0, weight: Number.parseFloat(formData.weight) || 0,
+      allergies: splitList(formData.allergies), chronicDiseases: splitList(formData.chronicDiseases),
+      currentMedications: splitList(formData.currentMedications), medicalHistory: formData.medicalHistory.trim(),
     }
-
     try {
-      if (editingId) {
-        await updatePatient(editingId, payload)
-      } else {
-        await addPatient(payload)
-      }
+      if (editingId) { await updatePatient(editingId, payload) } else { await addPatient(payload) }
       resetForm()
-    } catch (submitError) {
-      setPageError(getErrorMessage(submitError, '保存患者信息失败'))
-    } finally {
-      setSubmitting(false)
-    }
+    } catch (submitError) { setPageError(getErrorMessage(submitError, '保存患者信息失败')) }
+    finally { setSubmitting(false) }
   }
 
   const handleEdit = (patient: Patient) => {
     setFormData({
-      name: patient.name,
-      age: String(patient.age),
-      gender: patient.gender,
-      height: String(patient.height),
-      weight: String(patient.weight),
-      allergies: patient.allergies.join(', '),
-      chronicDiseases: patient.chronicDiseases.join(', '),
-      currentMedications: patient.currentMedications.join(', '),
-      medicalHistory: patient.medicalHistory,
+      name: patient.name, age: String(patient.age), gender: patient.gender, height: String(patient.height),
+      weight: String(patient.weight), allergies: patient.allergies.join(', '), chronicDiseases: patient.chronicDiseases.join(', '),
+      currentMedications: patient.currentMedications.join(', '), medicalHistory: patient.medicalHistory,
     })
-    setEditingId(patient.id)
-    setShowAddForm(true)
-    setPageError(null)
+    setEditingId(patient.id); setShowAddForm(true); setPageError(null)
   }
 
   const handleDelete = async (id: string) => {
     setPageError(null)
-    try {
-      await deletePatient(id)
-    } catch (deleteError) {
-      setPageError(getErrorMessage(deleteError, '删除患者失败'))
-    }
+    try { await deletePatient(id) } catch (deleteError) { setPageError(getErrorMessage(deleteError, '删除患者失败')) }
   }
 
   const handleGoToRecommendation = (patient: Patient) => {
     navigate('/recommendation', {
-      state: {
-        prefill: {
-          age: String(patient.age),
-          gender: patient.gender,
-          diseases: patient.chronicDiseases.join('，'),
-          symptoms: patient.medicalHistory,
-          allergies: patient.allergies.join('，'),
-          currentMedications: patient.currentMedications.join('，'),
-        },
-      },
+      state: { prefill: { age: String(patient.age), gender: patient.gender, diseases: patient.chronicDiseases.join('，'), symptoms: patient.medicalHistory, allergies: patient.allergies.join('，'), currentMedications: patient.currentMedications.join('，') } },
     })
   }
 
   const SortButton = ({ label, keyName }: { label: string; keyName: SortKey }) => (
     <button
       onClick={() => toggleSort(keyName)}
-      className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-        sortKey === keyName ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+      className={`flex items-center gap-1 rounded-standard px-2.5 py-1 text-ia-label font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+        sortKey === keyName ? 'bg-primary/8 text-primary border border-primary/20' : 'text-muted-foreground hover:bg-muted border border-transparent'
       }`}
     >
       {label}
-      <ArrowUpDown className="h-3.5 w-3.5" />
-      {sortKey === keyName && <span className="text-xs">{sortDir === 'asc' ? '↑' : '↓'}</span>}
+      <ArrowUpDown className="h-3 w-3" />
+      {sortKey === keyName && <span className="text-ia-label">{sortDir === 'asc' ? '↑' : '↓'}</span>}
     </button>
   )
 
   return (
-    <div className="space-y-10">
-      {/* Hero Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative overflow-hidden rounded-2xl"
-      >
-        <div className="absolute inset-0 hero-gradient-warm pointer-events-none" />
-        <div className="absolute inset-0 bg-medical-dna opacity-20 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-400/20 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 px-8 py-10 md:px-12 md:py-14">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-5">
-              <div className="hidden md:flex w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm items-center justify-center shadow-xl">
-                <Users className="h-8 w-8 text-white" />
-              </div>
-              <div className="flex-1">
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">
-                  患者档案管理
-                </h1>
-                <p className="text-white/70 text-lg max-w-2xl">
-                  管理患者健康信息，为个性化用药推荐提供数据支持
-                </p>
-              </div>
+    <div className="space-y-8">
+      {/* Page Header */}
+      <section className="border-l-4 border-l-primary bg-card px-6 py-8">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-standard bg-primary flex-shrink-0">
+              <Users className="h-5 w-5 text-primary-foreground" />
             </div>
-            <Button
-              onClick={() => { resetForm(); setShowAddForm(true); scrollToForm() }}
-              className="gap-2 bg-white text-rose-600 hover:bg-white/90 shadow-xl px-6 py-6 text-lg font-semibold"
-            >
-              <Plus className="h-5 w-5" />
-              添加患者
-            </Button>
+            <div>
+              <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">患者档案管理</h1>
+              <p className="text-ia-body text-muted-foreground max-w-2xl">管理患者健康信息，为个性化用药推荐提供数据支持</p>
+            </div>
           </div>
+          <Button onClick={() => { resetForm(); setShowAddForm(true); scrollToForm() }} className="gap-2 cursor-pointer" size="sm">
+            <Plus className="h-4 w-4" />
+            添加患者
+          </Button>
         </div>
-      </motion.div>
+      </section>
 
       {(error || pageError) && (
-        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+        <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
           {pageError || error}
         </div>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
           : [
-              { icon: Users, label: '患者总数', value: `${stats.total}`, color: 'from-blue-500 to-cyan-500' },
-              { icon: Calendar, label: '平均年龄', value: `${stats.avgAge}`, color: 'from-purple-500 to-pink-500' },
-              { icon: Heart, label: '慢病种类', value: `${stats.diseaseCount}`, color: 'from-red-500 to-orange-500' },
-              { icon: Scale, label: '平均 BMI', value: stats.avgBMI.toFixed(1), color: 'from-green-500 to-emerald-500' },
+              { icon: Users, label: '患者总数', value: `${stats.total}`, dataColor: 'ia-data-1' },
+              { icon: Calendar, label: '平均年龄', value: `${stats.avgAge}`, dataColor: 'ia-data-2' },
+              { icon: Heart, label: '慢病种类', value: `${stats.diseaseCount}`, dataColor: 'ia-data-5' },
+              { icon: Scale, label: '平均 BMI', value: stats.avgBMI.toFixed(1), dataColor: 'ia-data-3' },
             ].map((item) => {
               const Icon = item.icon
               return (
-                <Card key={item.label} className="border-border/40 bg-card/50 backdrop-blur hover:shadow-lg transition-shadow">
-                  <CardContent className="pb-4 pt-5">
-                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${item.color} shadow-md`}>
-                      <Icon className="h-5 w-5 text-white" />
+                <Card key={item.label} hover="border">
+                  <CardContent className="pb-3 pt-4">
+                    <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-standard bg-${item.dataColor}/10`}>
+                      <Icon className={`h-4 w-4 text-${item.dataColor}`} />
                     </div>
-                    <div className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-2xl font-bold text-transparent">{item.value}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">{item.label}</div>
+                    <div className="text-xl font-heading font-bold">{item.value}</div>
+                    <div className="text-ia-label text-muted-foreground">{item.label}</div>
                   </CardContent>
                 </Card>
               )
             })}
       </div>
 
-      {/* Charts Section */}
+      {/* Charts */}
       {!isLoading && patients.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid gap-6 md:grid-cols-2"
-        >
+        <div className="grid gap-5 md:grid-cols-2">
           <AgeDistributionChart data={ageDistribution} />
           <DiseaseDistributionChart data={diseaseDistribution} />
-        </motion.div>
+        </div>
       )}
 
-      <Card className="border-border/40 bg-card/50 backdrop-blur">
-        <CardContent className="space-y-3 pt-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="搜索患者姓名..."
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              className="h-12 pl-10"
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground">排序：</span>
+      <Card hover="none">
+        <CardContent className="space-y-2.5 pt-4">
+          <Input
+            placeholder="搜索患者姓名..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            icon={<Search className="h-4 w-4" />}
+          />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-ia-label text-muted-foreground">排序：</span>
             <SortButton label="姓名" keyName="name" />
             <SortButton label="年龄" keyName="age" />
             <SortButton label="建档日期" keyName="createdAt" />
@@ -352,238 +266,206 @@ export default function PatientRecords() {
 
       <AnimatePresence>
         {showAddForm && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <Card ref={addFormRef} className="border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-lg scroll-mt-[60px]">
+          <div className="animate-fade-in">
+            <Card ref={addFormRef} hover="none" className="border-primary/20 scroll-mt-[60px]">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>{editingId ? '编辑患者信息' : '添加新患者'}</CardTitle>
                     <CardDescription>填写患者基本信息和健康档案</CardDescription>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={resetForm}>
-                    <X className="h-5 w-5" />
+                  <Button variant="ghost" size="icon" onClick={resetForm} className="cursor-pointer">
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
               </CardHeader>
               <form onSubmit={handleSubmit}>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-5">
                   <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="p-name">姓名 *</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="p-name" className="text-ia-caption font-heading font-semibold">姓名 *</Label>
                       <Input id="p-name" value={formData.name} onChange={(event) => setFormData({ ...formData, name: event.target.value })} required />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="p-age">年龄 *</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="p-age" className="text-ia-caption font-heading font-semibold">年龄 *</Label>
                       <Input id="p-age" type="number" value={formData.age} onChange={(event) => setFormData({ ...formData, age: event.target.value })} required />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="p-gender">性别 *</Label>
-                      <select
-                        id="p-gender"
-                        value={formData.gender}
-                        onChange={(event) => setFormData({ ...formData, gender: event.target.value as PatientGender })}
-                        className="flex h-11 w-full rounded-lg border border-input bg-background px-4 py-2 text-sm"
-                      >
+                    <div className="space-y-1.5">
+                      <Label htmlFor="p-gender" className="text-ia-caption font-heading font-semibold">性别 *</Label>
+                      <select id="p-gender" value={formData.gender} onChange={(event) => setFormData({ ...formData, gender: event.target.value as PatientGender })} className="flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary">
                         <option value="男">男</option>
                         <option value="女">女</option>
                         <option value="未知">未知</option>
                       </select>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="p-height">身高 (cm)</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="p-height" className="text-ia-caption font-heading font-semibold">身高 (cm)</Label>
                         <Input id="p-height" type="number" value={formData.height} onChange={(event) => setFormData({ ...formData, height: event.target.value })} />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="p-weight">体重 (kg)</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="p-weight" className="text-ia-caption font-heading font-semibold">体重 (kg)</Label>
                         <Input id="p-weight" type="number" value={formData.weight} onChange={(event) => setFormData({ ...formData, weight: event.target.value })} />
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="p-allergies">过敏史（逗号分隔）</Label>
-                    <Input id="p-allergies" value={formData.allergies} onChange={(event) => setFormData({ ...formData, allergies: event.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="p-diseases">慢病（逗号分隔）</Label>
-                    <Input id="p-diseases" value={formData.chronicDiseases} onChange={(event) => setFormData({ ...formData, chronicDiseases: event.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="p-meds">当前用药（逗号分隔）</Label>
-                    <Input id="p-meds" value={formData.currentMedications} onChange={(event) => setFormData({ ...formData, currentMedications: event.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="p-history">既往病史</Label>
-                    <textarea
-                      id="p-history"
-                      value={formData.medicalHistory}
-                      onChange={(event) => setFormData({ ...formData, medicalHistory: event.target.value })}
-                      className="flex min-h-[100px] w-full resize-none rounded-lg border border-input bg-background px-4 py-2 text-sm"
-                    />
+                  <div className="space-y-1.5"><Label htmlFor="p-allergies" className="text-ia-caption font-heading font-semibold">过敏史（逗号分隔）</Label><Input id="p-allergies" value={formData.allergies} onChange={(event) => setFormData({ ...formData, allergies: event.target.value })} /></div>
+                  <div className="space-y-1.5"><Label htmlFor="p-diseases" className="text-ia-caption font-heading font-semibold">慢病（逗号分隔）</Label><Input id="p-diseases" value={formData.chronicDiseases} onChange={(event) => setFormData({ ...formData, chronicDiseases: event.target.value })} /></div>
+                  <div className="space-y-1.5"><Label htmlFor="p-meds" className="text-ia-caption font-heading font-semibold">当前用药（逗号分隔）</Label><Input id="p-meds" value={formData.currentMedications} onChange={(event) => setFormData({ ...formData, currentMedications: event.target.value })} /></div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="p-history" className="text-ia-caption font-heading font-semibold">既往病史</Label>
+                    <textarea id="p-history" value={formData.medicalHistory} onChange={(event) => setFormData({ ...formData, medicalHistory: event.target.value })} className="flex min-h-[80px] w-full resize-none rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary" />
                   </div>
 
-                  <div className="flex gap-3 pt-4">
-                    <Button type="submit" className="gap-2" disabled={submitting}>
+                  <div className="flex gap-2 pt-3">
+                    <Button type="submit" className="gap-2 cursor-pointer" disabled={submitting}>
                       <Save className="h-4 w-4" />
                       {submitting ? '提交中...' : editingId ? '保存修改' : '添加患者'}
                     </Button>
-                    <Button type="button" variant="outline" onClick={resetForm}>取消</Button>
+                    <Button type="button" variant="outline" onClick={resetForm} className="cursor-pointer">取消</Button>
                   </div>
                 </CardContent>
               </form>
             </Card>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
-      <div className="space-y-3">
-        <div className="px-1 text-sm text-muted-foreground">
+      <div className="space-y-2.5">
+        <div className="px-1 text-ia-label text-muted-foreground">
           {isLoading ? '加载中...' : `共 ${filteredPatients.length} 条记录${searchTerm ? `（搜索：${searchTerm}）` : ''}`}
         </div>
 
         {isLoading && (
-          <div className="space-y-3">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <PatientCardSkeleton key={i} />
-            ))}
+          <div className="space-y-2.5">
+            {Array.from({ length: 5 }).map((_, i) => (<PatientCardSkeleton key={i} />))}
           </div>
         )}
 
         <AnimatePresence>
-          {!isLoading && filteredPatients.map((patient, index) => {
+          {!isLoading && filteredPatients.map((patient) => {
             const bmi = calcBMI(patient.weight, patient.height)
             const { label: bmiText, color: bmiColor } = bmiLabel(bmi)
             const isExpanded = expandedPatient === patient.id
 
             return (
-              <motion.div key={patient.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ delay: index * 0.04 }}>
-                <Card className="overflow-hidden border-border/40 bg-card/50 backdrop-blur hover:shadow-lg">
+              <div key={patient.id} className="animate-fade-in">
+                <Card hover="border" className="overflow-hidden">
                   <CardContent className="p-0">
-                    <div className="cursor-pointer p-6" onClick={() => setExpandedPatient(isExpanded ? null : patient.id)}>
+                    <div className="cursor-pointer p-4" onClick={() => setExpandedPatient(isExpanded ? null : patient.id)}>
                       <div className="flex items-start justify-between">
-                        <div className="flex min-w-0 flex-1 items-start gap-4">
-                          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-md">
-                            <User className="h-7 w-7 text-white" />
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
+                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-standard bg-primary">
+                            <User className="h-5 w-5 text-primary-foreground" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="mb-2 flex flex-wrap items-center gap-3">
-                              <h3 className="text-xl font-semibold">{patient.name}</h3>
-                              <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">{patient.gender} · {patient.age} 岁</span>
+                            <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                              <h3 className="font-heading font-semibold text-ia-card-title">{patient.name}</h3>
+                              <span className="ia-badge ia-badge-primary">{patient.gender} · {patient.age} 岁</span>
                             </div>
-                            <div className="mb-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                            <div className="mb-2 flex flex-wrap gap-3 text-ia-caption text-muted-foreground">
                               <div className="flex items-center gap-1">
-                                <Activity className="h-4 w-4" />
+                                <Activity className="h-3.5 w-3.5" />
                                 <span className={bmiColor}>BMI: {bmi.toFixed(1)} ({bmiText})</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <AlertTriangle className="h-4 w-4 text-amber-500" />
+                                <AlertTriangle className="h-3.5 w-3.5 text-ia-data-4" />
                                 <span>{patient.allergies.length} 项过敏</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
+                                <Calendar className="h-3.5 w-3.5" />
                                 <span>建档：{patient.createdAt}</span>
                               </div>
                             </div>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                               {patient.chronicDiseases.slice(0, 3).map((disease) => (
-                                <span key={disease} className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-secondary">{disease}</span>
+                                <span key={disease} className="ia-badge ia-badge-info">{disease}</span>
                               ))}
                             </div>
                           </div>
                         </div>
 
-                        <div className="ml-3 flex flex-shrink-0 items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="gap-1.5 text-xs text-secondary hover:bg-secondary/10 hover:text-secondary"
-                            onClick={(event) => { event.stopPropagation(); handleGoToRecommendation(patient) }}
-                          >
-                            <Stethoscope className="h-4 w-4" />
-                            快速推荐
+                        <div className="ml-2 flex flex-shrink-0 items-center gap-0.5">
+                          <Button variant="ghost" size="sm" className="gap-1 text-ia-label text-primary hover:text-primary cursor-pointer" onClick={(event) => { event.stopPropagation(); handleGoToRecommendation(patient) }}>
+                            <Stethoscope className="h-3.5 w-3.5" />
+                            推荐
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={(event) => { event.stopPropagation(); handleEdit(patient) }}>
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={(event) => { event.stopPropagation(); void handleDelete(patient.id) }}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon">
-                            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer" onClick={(event) => { event.stopPropagation(); handleEdit(patient) }}><Edit2 className="h-3.5 w-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer" onClick={(event) => { event.stopPropagation(); void handleDelete(patient.id) }}><Trash2 className="h-3.5 w-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">{isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}</Button>
                         </div>
                       </div>
                     </div>
 
                     <AnimatePresence>
                       {isExpanded && (
-                        <motion.div key="detail" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden border-t border-border">
-                          <div className="px-6 pb-6">
-                            <div className="mt-6 grid gap-6 md:grid-cols-3">
+                        <div className="animate-fade-in overflow-hidden border-t border-ia-border">
+                          <div className="px-4 pb-4">
+                            <div className="mt-4 grid gap-4 md:grid-cols-3">
                               <div>
-                                <h4 className="mb-3 text-sm font-semibold text-primary">当前用药</h4>
-                                <div className="space-y-2">
+                                <h4 className="mb-2 text-ia-caption font-heading font-semibold text-primary">当前用药</h4>
+                                <div className="space-y-1.5">
                                   {patient.currentMedications.length > 0 ? patient.currentMedications.map((medication) => (
-                                    <div key={medication} className="flex items-center gap-2 rounded-lg bg-primary/5 p-2.5">
-                                      <div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-                                      <span className="text-sm">{medication}</span>
+                                    <div key={medication} className="flex items-center gap-2 rounded-standard bg-primary/4 border border-primary/10 p-2">
+                                      <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+                                      <span className="text-ia-caption">{medication}</span>
                                     </div>
-                                  )) : <p className="text-sm text-muted-foreground">无</p>}
+                                  )) : <p className="text-ia-label text-muted-foreground">无</p>}
                                 </div>
                               </div>
                               <div>
-                                <h4 className="mb-3 text-sm font-semibold text-secondary">过敏史</h4>
-                                <div className="space-y-2">
+                                <h4 className="mb-2 text-ia-caption font-heading font-semibold text-secondary">过敏史</h4>
+                                <div className="space-y-1.5">
                                   {patient.allergies.length > 0 ? patient.allergies.map((allergy) => (
-                                    <div key={allergy} className="flex items-center gap-2 rounded-lg bg-red-50 p-2.5 dark:bg-red-950/30">
-                                      <AlertTriangle className="h-4 w-4 flex-shrink-0 text-red-500" />
-                                      <span className="text-sm text-red-600 dark:text-red-400">{allergy}</span>
+                                    <div key={allergy} className="flex items-center gap-2 rounded-standard border border-destructive/20 bg-destructive/4 p-2">
+                                      <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 text-destructive" />
+                                      <span className="text-ia-caption text-destructive">{allergy}</span>
                                     </div>
-                                  )) : <p className="text-sm text-muted-foreground">无过敏史</p>}
+                                  )) : <p className="text-ia-label text-muted-foreground">无过敏史</p>}
                                 </div>
                               </div>
                               <div>
-                                <h4 className="mb-3 text-sm font-semibold">体格信息</h4>
-                                <div className="space-y-2 text-sm">
-                                  <div className="flex justify-between rounded-lg bg-muted/40 p-2">
+                                <h4 className="mb-2 text-ia-caption font-heading font-semibold">体格信息</h4>
+                                <div className="space-y-1.5 text-ia-caption">
+                                  <div className="flex justify-between rounded-standard bg-muted p-2">
                                     <span className="text-muted-foreground">身高</span>
-                                    <span className="font-medium">{patient.height} cm</span>
+                                    <span className="font-heading font-semibold">{patient.height} cm</span>
                                   </div>
-                                  <div className="flex justify-between rounded-lg bg-muted/40 p-2">
+                                  <div className="flex justify-between rounded-standard bg-muted p-2">
                                     <span className="text-muted-foreground">体重</span>
-                                    <span className="font-medium">{patient.weight} kg</span>
+                                    <span className="font-heading font-semibold">{patient.weight} kg</span>
                                   </div>
-                                  <div className="flex justify-between rounded-lg bg-muted/40 p-2">
+                                  <div className="flex justify-between rounded-standard bg-muted p-2">
                                     <span className="text-muted-foreground">BMI</span>
-                                    <span className={`font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
+                                    <span className={`font-heading font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
                             {patient.medicalHistory && (
-                              <div className="mt-5 border-t border-border pt-5">
-                                <h4 className="mb-2 text-sm font-semibold">既往病史</h4>
+                              <div className="mt-4 border-t border-ia-border pt-4">
+                                <h4 className="mb-1.5 text-ia-caption font-heading font-semibold">既往病史</h4>
                                 <TextExpander text={patient.medicalHistory} maxLines={3} />
                               </div>
                             )}
                           </div>
-                        </motion.div>
+                        </div>
                       )}
                     </AnimatePresence>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             )
           })}
         </AnimatePresence>
 
         {!isLoading && filteredPatients.length === 0 && (
-          <Card className="border-dashed">
-            <CardContent className="py-12 text-center">
-              <User className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mb-2 text-lg font-semibold">未找到患者</h3>
-              <p className="text-muted-foreground">{searchTerm ? '请尝试其他搜索关键词' : '点击上方按钮添加第一位患者'}</p>
+          <Card hover="none" className="border-dashed">
+            <CardContent className="py-10 text-center">
+              <User className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
+              <h3 className="mb-1.5 font-heading font-semibold text-ia-card-title">未找到患者</h3>
+              <p className="text-ia-caption text-muted-foreground">{searchTerm ? '请尝试其他搜索关键词' : '点击上方按钮添加第一位患者'}</p>
             </CardContent>
           </Card>
         )}

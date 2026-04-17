@@ -14,19 +14,19 @@ export interface SliderProps {
 const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
   ({ value, min, max, step = 0.1, onChange, className, showTooltip = true }, ref) => {
     const percentage = ((value - min) / (max - min)) * 100
-    
+
     return (
       <div ref={ref} className={cn('relative w-full', className)}>
         <div className="relative h-2 w-full">
           {/* Track */}
-          <div className="absolute h-full w-full rounded-full bg-muted" />
-          
+          <div className="absolute h-full w-full rounded-standard bg-muted" />
+
           {/* Progress */}
-          <div 
-            className="absolute h-full rounded-full bg-gradient-to-r from-primary to-primary-glow"
+          <div
+            className="absolute h-full rounded-standard bg-primary"
             style={{ width: `${percentage}%` }}
           />
-          
+
           {/* Thumb */}
           <input
             type="range"
@@ -38,23 +38,23 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
             className="absolute w-full h-full opacity-0 cursor-pointer"
           />
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border-2 border-primary shadow-lg pointer-events-none transition-transform duration-200 hover:scale-110"
-            style={{ left: `calc(${percentage}% - 10px)` }}
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-standard bg-card border-2 border-primary pointer-events-none transition-all duration-150"
+            style={{ left: `calc(${percentage}% - 8px)` }}
           />
         </div>
-        
+
         {/* Tooltip */}
         {showTooltip && (
-          <div 
-            className="absolute -top-10 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-md shadow-md"
+          <div
+            className="absolute -top-9 bg-primary text-primary-foreground text-ia-micro font-heading font-semibold px-2 py-0.5 rounded-standard"
             style={{ left: `calc(${percentage}% - 20px)` }}
           >
             {value.toFixed(2)}
           </div>
         )}
-        
+
         {/* Min/Max labels */}
-        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+        <div className="flex justify-between mt-2 text-ia-micro text-ia-muted">
           <span>{min}</span>
           <span>{max}</span>
         </div>
