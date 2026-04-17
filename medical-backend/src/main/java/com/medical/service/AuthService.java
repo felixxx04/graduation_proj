@@ -1,6 +1,7 @@
 package com.medical.service;
 
 import com.medical.entity.User;
+import com.medical.exception.AuthenticationFailedException;
 import com.medical.repository.UserRepository;
 import com.medical.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,10 @@ public class AuthService {
     
     public Map<String, Object> login(String username, String password) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("用户名或密码错误"));
+                .orElseThrow(() -> new AuthenticationFailedException("用户名或密码错误"));
 
         if (!user.getEnabled() || !passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new AuthenticationFailedException("用户名或密码错误");
         }
 
         String token = jwtUtil.generateToken(username, user.getRole());

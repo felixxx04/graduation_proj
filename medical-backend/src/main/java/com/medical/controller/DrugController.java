@@ -20,11 +20,7 @@ public class DrugController {
     
     @GetMapping("/{id}")
     public ApiResponse<Drug> getDrugById(@PathVariable Long id) {
-        Drug drug = drugService.getDrugById(id);
-        if (drug == null) {
-            return ApiResponse.error("药物不存在");
-        }
-        return ApiResponse.success(drug);
+        return ApiResponse.success(drugService.getDrugById(id));
     }
     
     @GetMapping("/category/{category}")

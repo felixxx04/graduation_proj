@@ -1,6 +1,7 @@
 package com.medical.service;
 
 import com.medical.entity.Drug;
+import com.medical.exception.ResourceNotFoundException;
 import com.medical.repository.DrugRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,11 @@ public class DrugService {
     }
     
     public Drug getDrugById(Long id) {
-        return drugRepository.findById(id);
+        Drug drug = drugRepository.findById(id);
+        if (drug == null) {
+            throw new ResourceNotFoundException("药物不存在: id=" + id);
+        }
+        return drug;
     }
     
     public List<Drug> getDrugsByCategory(String category) {

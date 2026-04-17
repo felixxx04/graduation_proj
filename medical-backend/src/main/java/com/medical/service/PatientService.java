@@ -4,6 +4,7 @@ import com.medical.dto.request.PatientRequest;
 import com.medical.dto.response.PatientProfile;
 import com.medical.entity.HealthRecord;
 import com.medical.entity.Patient;
+import com.medical.exception.ResourceNotFoundException;
 import com.medical.repository.HealthRecordRepository;
 import com.medical.repository.PatientRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,7 +30,11 @@ public class PatientService {
     }
 
     public PatientProfile getPatientById(Long id) {
-        return patientRepository.findProfileById(id);
+        PatientProfile profile = patientRepository.findProfileById(id);
+        if (profile == null) {
+            throw new ResourceNotFoundException("患者不存在: id=" + id);
+        }
+        return profile;
     }
 
     @Transactional
@@ -54,7 +59,7 @@ public class PatientService {
         // 检查患者是否存在
         Patient existing = patientRepository.findById(id);
         if (existing == null) {
-            return null;
+            throw new ResourceNotFoundException("患者不存在: id=" + id);
         }
 
         // 1. 更新患者基础信息

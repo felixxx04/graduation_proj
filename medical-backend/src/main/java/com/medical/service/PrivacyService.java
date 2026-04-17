@@ -1,6 +1,8 @@
 package com.medical.service;
 
+import com.medical.dto.request.PrivacyConfigRequest;
 import com.medical.entity.PrivacyConfig;
+import com.medical.exception.ResourceNotFoundException;
 import com.medical.repository.PrivacyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,24 @@ public class PrivacyService {
     private final PrivacyRepository privacyRepository;
 
     public PrivacyConfig getConfig(Long userId) {
-        return privacyRepository.findByUserId(userId);
+        PrivacyConfig config = privacyRepository.findByUserId(userId);
+        if (config == null) {
+            throw new ResourceNotFoundException("隐私配置不存在: userId=" + userId);
+        }
+        return config;
     }
 
-    public PrivacyConfig updateConfig(Long userId, PrivacyConfig config) {
+    public PrivacyConfig updateConfig(Long userId, PrivacyConfigRequest request) {
+        PrivacyConfig config = privacyRepository.findByUserId(userId);
+        if (config == null) {
+            throw new ResourceNotFoundException("隐私配置不存在: userId=" + userId);
+        }
+        if (request.getEpsilon() != null) config.setEpsilon(request.getEpsilon());
+        if (request.getDelta() != null) config.setDelta(request.getDelta());
+        if (request.getSensitivity() != null) config.setSensitivity(request.getSensitivity());
+        if (request.getNoiseMechanism() != null) config.setNoiseMechanism(request.getNoiseMechanism());
+        if (request.getApplicationStage() != null) config.setApplicationStage(request.getApplicationStage());
+        if (request.getPrivacyBudget() != null) config.setPrivacyBudget(request.getPrivacyBudget());
         config.setUserId(userId);
         privacyRepository.update(config);
         return privacyRepository.findByUserId(userId);
@@ -27,7 +43,7 @@ public class PrivacyService {
     public Map<String, Object> getBudget(Long userId) {
         PrivacyConfig config = privacyRepository.findByUserId(userId);
         if (config == null) {
-            return null;
+            throw new ResourceNotFoundException("隐私配置不存在: userId=" + userId);
         }
         Map<String, Object> result = new HashMap<>();
         result.put("total", config.getPrivacyBudget());
@@ -44,14 +60,14 @@ public class PrivacyService {
         return privacyRepository.countLedgerEvents();
     }
 
-    public void clearLedger() {
-        privacyRepository.clearLedger();
+    public void clearLedger(Long userId) {
+        privacyRepository.clearLedgerByUserId(userId);
     }
 
     public Map<String, Object> getFullPrivacyInfo(Long userId) {
         PrivacyConfig config = privacyRepository.findByUserId(userId);
         if (config == null) {
-            return null;
+            throw new ResourceNotFoundException("隐私配置不存在: userId=" + userId);
         }
 
         Map<String, Object> result = new HashMap<>();

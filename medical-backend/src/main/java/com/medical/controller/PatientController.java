@@ -4,6 +4,7 @@ import com.medical.dto.request.PatientRequest;
 import com.medical.dto.response.ApiResponse;
 import com.medical.dto.response.PatientProfile;
 import com.medical.service.PatientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -21,25 +22,17 @@ public class PatientController {
 
     @GetMapping("/{id}")
     public ApiResponse<PatientProfile> getPatientById(@PathVariable Long id) {
-        PatientProfile patient = patientService.getPatientById(id);
-        if (patient == null) {
-            return ApiResponse.error("患者不存在");
-        }
-        return ApiResponse.success(patient);
+        return ApiResponse.success(patientService.getPatientById(id));
     }
 
     @PostMapping
-    public ApiResponse<PatientProfile> createPatient(@RequestBody PatientRequest request) {
+    public ApiResponse<PatientProfile> createPatient(@Valid @RequestBody PatientRequest request) {
         return ApiResponse.success("创建成功", patientService.createPatient(request));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<PatientProfile> updatePatient(@PathVariable Long id, @RequestBody PatientRequest request) {
-        PatientProfile updated = patientService.updatePatient(id, request);
-        if (updated == null) {
-            return ApiResponse.error("患者不存在");
-        }
-        return ApiResponse.success("更新成功", updated);
+    public ApiResponse<PatientProfile> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientRequest request) {
+        return ApiResponse.success("更新成功", patientService.updatePatient(id, request));
     }
 
     @DeleteMapping("/{id}")

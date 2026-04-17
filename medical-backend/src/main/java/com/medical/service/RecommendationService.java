@@ -1,5 +1,7 @@
 package com.medical.service;
 
+import com.medical.exception.ModelServiceException;
+import com.medical.exception.PrivacyBudgetExhaustedException;
 import com.medical.config.ModelServiceConfig;
 import com.medical.entity.Drug;
 import com.medical.entity.Recommendation;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,13 +33,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendationService {
-    private final RestTemplate restTemplate = new RestTemplate();
     private final ModelServiceConfig modelServiceConfig;
     private final DrugService drugService;
     private final RecommendationRepository recommendationRepository;
     private final PrivacyRepository privacyRepository;
     private final UserRepository userRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
     private volatile boolean drugsLoaded = false;
 
     @PostConstruct
@@ -87,10 +90,11 @@ public class RecommendationService {
             log.info("Successfully loaded {} drugs to model service at {}", drugs.size(), modelServiceConfig.getUrl());
         } catch (Exception e) {
             log.error("Error loading drugs to model service: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to initialize model service", e);
+            throw new ModelServiceException("Failed to initialize model service", e);
         }
     }
 
+    @Transactional
     public Map<String, Object> generateRecommendation(Map<String, Object> request) {
         if (!drugsLoaded) {
             loadDrugsToModelService();
@@ -101,14 +105,34 @@ public class RecommendationService {
             result = restTemplate.postForObject(url, request, Map.class);
         } catch (Exception e) {
             log.error("Model service unavailable: {}", e.getMessage());
-            return Map.of("error", "模型服务不可用: " + e.getMessage());
+            throw new ModelServiceException("模型服务不可用: " + e.getMessage(), e);
         }
-        try {
-            saveRecommendation(request, result);
-        } catch (Exception e) {
-            log.error("Failed to save recommendation: {}", e.getMessage(), e);
-        }
+        saveRecommendation(request, result);
         return result;
+    }
+
+    private BigDecimal resolveEpsilon(Long userId, Map<String, Object> request) {
+        Object epsilon = request.get("epsilon");
+        if (epsilon != null) {
+            return new BigDecimal(epsilon.toString());
+        }
+        var config = privacyRepository.findByUserId(userId);
+        if (config != null) {
+            return config.getEpsilon();
+        }
+        return new BigDecimal("0.1");
+    }
+
+    private void checkPrivacyBudget(Long userId, BigDecimal epsilonUsed) {
+        var config = privacyRepository.findByUserId(userId);
+        if (config == null) {
+            return;
+        }
+        BigDecimal remaining = config.getPrivacyBudget().subtract(
+            config.getBudgetUsed() != null ? config.getBudgetUsed() : BigDecimal.ZERO);
+        if (epsilonUsed.compareTo(remaining) > 0) {
+            throw new PrivacyBudgetExhaustedException("隐私预算已耗尽，剩余: " + remaining + "，需要: " + epsilonUsed);
+        }
     }
 
     private void saveRecommendation(Map<String, Object> request, Map<String, Object> result) {
@@ -124,17 +148,8 @@ public class RecommendationService {
         Boolean dpEnabled = (Boolean) request.getOrDefault("dpEnabled", true);
         BigDecimal epsilonUsed = BigDecimal.ZERO;
         if (dpEnabled) {
-            Object epsilon = request.get("epsilon");
-            if (epsilon == null) {
-                var config = privacyRepository.findByUserId(userId);
-                if (config != null) {
-                    epsilonUsed = config.getEpsilon();
-                } else {
-                    epsilonUsed = new BigDecimal("0.1");
-                }
-            } else {
-                epsilonUsed = new BigDecimal(epsilon.toString());
-            }
+            epsilonUsed = resolveEpsilon(userId, request);
+            checkPrivacyBudget(userId, epsilonUsed);
         }
         Recommendation recommendation = new Recommendation();
         recommendation.setPatientId(patientId);

@@ -14,10 +14,6 @@ public class RecommendationController {
     
     @PostMapping("/generate")
     public ApiResponse<Map<String, Object>> generate(@RequestBody Map<String, Object> request) {
-        Map<String, Object> result = recommendationService.generateRecommendation(request);
-        if (result.containsKey("error")) {
-            return ApiResponse.error((String) result.get("error"));
-        }
-        return ApiResponse.success(result);
+        return ApiResponse.success(recommendationService.generateRecommendation(request));
     }
 }

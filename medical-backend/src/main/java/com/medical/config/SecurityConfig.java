@@ -1,6 +1,9 @@
 package com.medical.config;
 
+import com.medical.dto.response.ApiResponse;
 import com.medical.security.JwtFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,7 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
-    
+    private final ObjectMapper objectMapper;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -30,8 +34,27 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/patients/**").hasAnyRole("ADMIN", "DOCTOR")
+                .requestMatchers("/api/recommendations/**").hasAnyRole("ADMIN", "DOCTOR", "RESEARCHER")
+                .requestMatchers("/api/privacy/**").hasAnyRole("ADMIN", "DOCTOR", "RESEARCHER")
+                .requestMatchers("/api/drugs/**").hasAnyRole("ADMIN", "DOCTOR", "RESEARCHER")
+                .requestMatchers("/api/dashboard/**").hasAnyRole("ADMIN", "DOCTOR", "RESEARCHER")
+                .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write(
+                        objectMapper.writeValueAsString(ApiResponse.error("未认证，请先登录")));
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write(
+                        objectMapper.writeValueAsString(ApiResponse.error("权限不足，无法访问")));
+                })
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

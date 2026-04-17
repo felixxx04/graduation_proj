@@ -36,6 +36,6 @@ public interface PrivacyRepository {
     @Select("SELECT COUNT(*) FROM privacy_ledger")
     int countLedgerEvents();
 
-    @Delete("DELETE FROM privacy_ledger")
-    int clearLedger();
+    @Delete("DELETE FROM privacy_ledger WHERE user_id = #{userId}")
+    int clearLedgerByUserId(@Param("userId") Long userId);
 }
