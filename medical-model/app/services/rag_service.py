@@ -123,7 +123,7 @@ class RAGRecommendationService:
         if isinstance(diseases, str):
             try:
                 diseases = json.loads(diseases)
-            except:
+            except (json.JSONDecodeError, ValueError):
                 diseases = [diseases] if diseases else []
 
         rag_results = self.retrieve_relevant_drugs(symptoms, diseases, top_k=20)
@@ -239,8 +239,9 @@ def get_rag_service(
 
 
 if __name__ == "__main__":
-    # 测试代码
-    print("Testing RAG service...")
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+
+    logger.info("Testing RAG service...")
 
     service = RAGRecommendationService(use_mock_embeddings=True)
 
@@ -259,4 +260,4 @@ if __name__ == "__main__":
     ]
 
     result = service.enhance_recommendation(patient, base_recs, top_k=4)
-    print(f"Result: {json.dumps(result, indent=2, ensure_ascii=False)}")
+    logger.info(f"Result: {json.dumps(result, indent=2, ensure_ascii=False)}")

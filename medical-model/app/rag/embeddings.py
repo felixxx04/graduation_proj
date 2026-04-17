@@ -166,12 +166,13 @@ def get_embedder(use_mock: bool = False) -> ChineseMedicalEmbeddings:
 
 
 if __name__ == "__main__":
-    # 测试代码
-    print("Testing embedding model...")
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+
+    logger.info("Testing embedding model...")
 
     embedder = ChineseMedicalEmbeddings()
-    print(f"Model loaded: {embedder.is_loaded()}")
-    print(f"Dimension: {embedder.get_dimension()}")
+    logger.info(f"Model loaded: {embedder.is_loaded()}")
+    logger.info(f"Dimension: {embedder.get_dimension()}")
 
     # 测试编码
     texts = [
@@ -181,8 +182,8 @@ if __name__ == "__main__":
     ]
 
     vectors = embedder.encode(texts)
-    print(f"Encoded {len(texts)} texts, shape: {vectors.shape}")
+    logger.info(f"Encoded {len(texts)} texts, shape: {vectors.shape}")
 
     # 测试相似度
     sim = embedder.similarity(vectors[0], vectors[1])
-    print(f"Similarity between text 0 and 1: {sim:.4f}")
+    logger.info(f"Similarity between text 0 and 1: {sim:.4f}")

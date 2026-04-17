@@ -2,6 +2,14 @@
 OpenFDA API 适配器
 从 FDA 官方开放数据获取药物信息
 API 文档: https://open.fda.gov/apis/drug/label/
+
+改进点：
+- 指数退避重试机制
+- 连接超时与读超时分离
+- API Key 支持（提高限流阈值）
+- 会话生命周期管理
+- 细粒度异常类型
+- 请求级日志追踪
 """
 
 import requests
@@ -9,9 +17,21 @@ import time
 import logging
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
+from app.config import settings
+from app.exceptions import (
+    DataSourceError,
+    DataSourceConnectionError,
+    DataSourceRateLimitError,
+    DataSourceValidationError,
+)
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# 保留旧名称作为别名，兼容已有代码
+OpenFDAError = DataSourceError
+OpenFDAConnectionError = DataSourceConnectionError
+OpenFDARateLimitError = DataSourceRateLimitError
+OpenFDAValidationError = DataSourceValidationError
 
 
 @dataclass
@@ -36,25 +56,125 @@ class DrugInfo:
 
 
 class OpenFDAAdapter:
-    """OpenFDA 数据源适配器"""
+    """OpenFDA 数据源适配器，支持重试与配置解耦"""
 
-    BASE_URL = "https://api.fda.gov/drug"
+    DEFAULT_BASE_URL = "https://api.fda.gov/drug"
+    MAX_RETRIES = 3
+    RETRY_BACKOFF_FACTOR = 2.0
+    RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 
-    def __init__(self, rate_limit_delay: float = 0.5, timeout: int = 30):
+    def __init__(
+        self,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+        rate_limit_delay: float = 0.5,
+        connect_timeout: int = 10,
+        read_timeout: int = 30,
+        max_retries: int = 3,
+    ):
         """
         初始化 OpenFDA 适配器
 
         Args:
-            rate_limit_delay: API 调用间隔（秒），避免触发限流
-            timeout: 请求超时时间
+            base_url: API 基础 URL，默认从 settings 获取
+            api_key: FDA API Key（可选，提高限流阈值）
+            rate_limit_delay: API 调用间隔（秒）
+            connect_timeout: 连接超时（秒）
+            read_timeout: 读取超时（秒）
+            max_retries: 最大重试次数
         """
+        self.base_url = base_url or getattr(settings, 'openfda_base_url', self.DEFAULT_BASE_URL)
+        self.api_key = api_key or getattr(settings, 'openfda_api_key', None)
         self.rate_limit_delay = rate_limit_delay
-        self.timeout = timeout
+        self.connect_timeout = connect_timeout
+        self.read_timeout = read_timeout
+        self.max_retries = min(max_retries, 5)  # 最多 5 次
+        self._last_request_time = 0.0
+
         self.session = requests.Session()
-        self.session.headers.update({
+        headers = {
             'Accept': 'application/json',
-            'User-Agent': 'MedicalRecommendationSystem/1.0'
-        })
+            'User-Agent': 'MedicalRecommendationSystem/2.0'
+        }
+        if self.api_key:
+            headers['Authorization'] = f'Bearer {self.api_key}'
+        self.session.headers.update(headers)
+
+    def _respect_rate_limit(self):
+        """遵守 API 限流策略"""
+        elapsed = time.time() - self._last_request_time
+        if elapsed < self.rate_limit_delay:
+            time.sleep(self.rate_limit_delay - elapsed)
+
+    def _make_request(self, url: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        发送 HTTP 请求，带重试与退避
+
+        Args:
+            url: 请求 URL
+            params: 查询参数
+
+        Returns:
+            JSON 响应数据
+
+        Raises:
+            OpenFDAConnectionError: 连接失败
+            OpenFDARateLimitError: 限流
+            OpenFDAError: 其他请求异常
+        """
+        if self.api_key:
+            params['api_key'] = self.api_key
+
+        last_exception = None
+        for attempt in range(1, self.max_retries + 1):
+            self._respect_rate_limit()
+            try:
+                logger.debug(f"Request attempt {attempt}/{self.max_retries}: {url}")
+                response = self.session.get(
+                    url,
+                    params=params,
+                    timeout=(self.connect_timeout, self.read_timeout)
+                )
+                self._last_request_time = time.time()
+
+                if response.status_code == 429:
+                    retry_after = int(response.headers.get('Retry-After', 60))
+                    logger.warning(f"Rate limited, retrying after {retry_after}s")
+                    if attempt < self.max_retries:
+                        time.sleep(retry_after)
+                        continue
+                    raise OpenFDARateLimitError(f"Rate limited after {self.max_retries} retries")
+
+                response.raise_for_status()
+                return response.json()
+
+            except requests.exceptions.ConnectionError as e:
+                last_exception = e
+                logger.warning(f"Connection error (attempt {attempt}): {e}")
+            except requests.exceptions.Timeout as e:
+                last_exception = e
+                logger.warning(f"Timeout (attempt {attempt}): {e}")
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code if e.response is not None else 0
+                if status_code in self.RETRY_STATUS_CODES and attempt < self.max_retries:
+                    backoff = self.RETRY_BACKOFF_FACTOR ** (attempt - 1)
+                    logger.warning(f"HTTP {status_code}, retrying in {backoff:.1f}s (attempt {attempt})")
+                    time.sleep(backoff)
+                    continue
+                raise OpenFDAError(f"HTTP error {status_code}: {e}") from e
+            except requests.exceptions.RequestException as e:
+                last_exception = e
+                logger.warning(f"Request error (attempt {attempt}): {e}")
+
+            # 退避等待
+            if attempt < self.max_retries:
+                backoff = self.RETRY_BACKOFF_FACTOR ** (attempt - 1)
+                logger.info(f"Retrying in {backoff:.1f}s...")
+                time.sleep(backoff)
+
+        raise OpenFDAConnectionError(
+            f"Failed after {self.max_retries} retries: {last_exception}"
+        ) from last_exception
 
     def search_drugs(self, query: str, limit: int = 100, skip: int = 0) -> List[DrugInfo]:
         """
@@ -62,36 +182,37 @@ class OpenFDAAdapter:
 
         Args:
             query: 搜索查询字符串
-            limit: 返回结果数量限制
-            skip: 跳过的结果数量（用于分页）
+            limit: 返回结果数量限制（最大 100）
+            skip: 跳过的结果数量
 
         Returns:
             DrugInfo 对象列表
+
+        Raises:
+            OpenFDAValidationError: 查询参数无效
+            OpenFDAError: API 请求失败
         """
-        url = f"{self.BASE_URL}/label.json"
+        if not query or not query.strip():
+            raise OpenFDAValidationError("Search query must not be empty")
+
+        url = f"{self.base_url}/label.json"
         params = {
             "search": query,
-            "limit": min(limit, 100),  # FDA API 单次最多 100 条
-            "skip": skip
+            "limit": min(max(limit, 1), 100),
+            "skip": max(skip, 0)
         }
 
         try:
-            logger.info(f"Fetching drugs from OpenFDA: {query}")
-            response = self.session.get(url, params=params, timeout=self.timeout)
-            response.raise_for_status()
-            data = response.json()
-
+            data = self._make_request(url, params)
             results = data.get("results", [])
             total = data.get("meta", {}).get("results", {}).get("total", 0)
             logger.info(f"Retrieved {len(results)} drugs, total available: {total}")
-
             return [self._parse_result(item) for item in results]
-
-        except requests.exceptions.RequestException as e:
-            logger.error(f"OpenFDA API error: {e}")
+        except OpenFDARateLimitError:
+            raise
+        except OpenFDAError as e:
+            logger.error(f"OpenFDA search failed: {e}")
             return []
-        finally:
-            time.sleep(self.rate_limit_delay)
 
     def get_drug_by_name(self, drug_name: str) -> Optional[DrugInfo]:
         """
@@ -103,6 +224,10 @@ class OpenFDAAdapter:
         Returns:
             DrugInfo 对象或 None
         """
+        if not drug_name or not drug_name.strip():
+            logger.warning("Empty drug name provided")
+            return None
+
         # 先尝试品牌名搜索
         results = self.search_drugs(f'openfda.brand_name:"{drug_name}"', limit=1)
         if results:
@@ -113,16 +238,9 @@ class OpenFDAAdapter:
         return results[0] if results else None
 
     def get_drugs_by_indication(self, indication: str, limit: int = 100) -> List[DrugInfo]:
-        """
-        根据适应症搜索药物
-
-        Args:
-            indication: 适应症关键词
-            limit: 返回结果数量限制
-
-        Returns:
-            DrugInfo 对象列表
-        """
+        """根据适应症搜索药物"""
+        if not indication or not indication.strip():
+            raise OpenFDAValidationError("Indication must not be empty")
         return self.search_drugs(f'indications_and_usage:"{indication}"', limit=limit)
 
     def fetch_all_drugs(self, batch_size: int = 100, max_total: int = 1000) -> List[DrugInfo]:
@@ -136,20 +254,30 @@ class OpenFDAAdapter:
         Returns:
             DrugInfo 对象列表
         """
-        all_drugs = []
+        all_drugs: List[DrugInfo] = []
         skip = 0
-        seen_ids = set()
+        seen_ids: set = set()
+        consecutive_empty = 0
+        max_consecutive_empty = 2
 
         while len(all_drugs) < max_total:
-            # 搜索有完整信息的药物
             query = '_exists_:indications_and_usage AND _exists_:openfda.generic_name'
-            batch = self.search_drugs(query, limit=batch_size, skip=skip)
-
-            if not batch:
+            try:
+                batch = self.search_drugs(query, limit=batch_size, skip=skip)
+            except OpenFDAError as e:
+                logger.error(f"Failed to fetch batch at skip={skip}: {e}")
                 break
 
+            if not batch:
+                consecutive_empty += 1
+                if consecutive_empty >= max_consecutive_empty:
+                    logger.info("Multiple empty batches, stopping pagination")
+                    break
+                skip += batch_size
+                continue
+
+            consecutive_empty = 0
             for drug in batch:
-                # 去重
                 if drug.fda_id and drug.fda_id not in seen_ids:
                     seen_ids.add(drug.fda_id)
                     all_drugs.append(drug)
@@ -157,55 +285,36 @@ class OpenFDAAdapter:
             skip += batch_size
             logger.info(f"Total unique drugs collected: {len(all_drugs)}")
 
-            # 如果返回数量少于批次大小，说明没有更多数据
             if len(batch) < batch_size:
                 break
 
         return all_drugs[:max_total]
 
     def fetch_common_drugs(self, limit: int = 500) -> List[DrugInfo]:
-        """
-        获取常见药物数据（优先获取常用药物类别）
-
-        Args:
-            limit: 最大获取数量
-
-        Returns:
-            DrugInfo 对象列表
-        """
-        # 常见药物类别关键词
+        """获取常见药物数据"""
         common_categories = [
-            "antihypertensive",      # 降压药
-            "antidiabetic",          # 降糖药
-            "antibiotic",            # 抗生素
-            "statin",                # 他汀类
-            "anticoagulant",         # 抗凝药
-            "analgesic",             # 镇痛药
-            "antidepressant",        # 抗抑郁药
-            "antihistamine",         # 抗组胺药
-            "proton pump inhibitor", # 质子泵抑制剂
-            "beta blocker",          # β受体阻滞剂
-            "ACE inhibitor",         # ACE抑制剂
-            "calcium channel blocker", # 钙通道阻滞剂
-            "diuretic",              # 利尿剂
-            "insulin",               # 胰岛素
-            "metformin",             # 二甲双胍
-            "aspirin",               # 阿司匹林
-            "omeprazole",            # 奥美拉唑
+            "antihypertensive", "antidiabetic", "antibiotic", "statin",
+            "anticoagulant", "analgesic", "antidepressant", "antihistamine",
+            "proton pump inhibitor", "beta blocker", "ACE inhibitor",
+            "calcium channel blocker", "diuretic", "insulin",
+            "metformin", "aspirin", "omeprazole",
         ]
 
-        all_drugs = []
-        seen_ids = set()
+        all_drugs: List[DrugInfo] = []
+        seen_ids: set = set()
 
         for category in common_categories:
             if len(all_drugs) >= limit:
                 break
 
-            # 使用适应症搜索，获取有完整信息的药物
-            results = self.search_drugs(
-                f'indications_and_usage:"{category}" AND _exists_:openfda.generic_name',
-                limit=50
-            )
+            try:
+                results = self.search_drugs(
+                    f'indications_and_usage:"{category}" AND _exists_:openfda.generic_name',
+                    limit=50
+                )
+            except OpenFDAError as e:
+                logger.warning(f"Failed to fetch category '{category}': {e}")
+                continue
 
             for drug in results:
                 if drug.fda_id and drug.fda_id not in seen_ids:
@@ -218,11 +327,15 @@ class OpenFDAAdapter:
 
     def _parse_result(self, item: Dict) -> DrugInfo:
         """解析 FDA 返回的单条数据"""
+        if not isinstance(item, dict):
+            logger.warning(f"Unexpected item type: {type(item)}, skipping")
+            return DrugInfo()
+
         openfda = item.get("openfda", {})
 
         return DrugInfo(
             fda_id=self._get_first(openfda.get("spl_id", [])),
-            brand_names=openfda.get("brand_name", [])[:5],  # 限制数量
+            brand_names=openfda.get("brand_name", [])[:5],
             generic_name=self._get_first(openfda.get("generic_name", [])),
             indications=self._extract_list(item, "indications_and_usage", max_items=3),
             contraindications=self._extract_list(item, "contraindications", max_items=3),
@@ -247,7 +360,7 @@ class OpenFDAAdapter:
         """提取列表字段"""
         value = item.get(key, [])
         if isinstance(value, str):
-            return [value[:500]]  # 限制长度
+            return [value[:500]]
         return [str(v)[:500] for v in value[:max_items]] if value else []
 
     def _extract_text(self, item: Dict, key: str, max_length: int = 500) -> str:
@@ -264,7 +377,6 @@ class OpenFDAAdapter:
         pregnancy_info = item.get("pregnancy", [])
         if pregnancy_info:
             text = str(pregnancy_info[0]) if isinstance(pregnancy_info, list) else str(pregnancy_info)
-            # 尝试提取分级 (A, B, C, D, X)
             for category in ['A', 'B', 'C', 'D', 'X']:
                 if f'category {category}' in text.lower() or f'{category}类' in text:
                     return category
@@ -291,6 +403,18 @@ class OpenFDAAdapter:
             'pregnancy_category': drug.pregnancy_category
         }
 
+    def close(self):
+        """关闭会话，释放资源"""
+        if self.session:
+            self.session.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
+
 
 # 便捷函数
 def fetch_drug_data(limit: int = 500) -> List[Dict[str, Any]]:
@@ -303,22 +427,6 @@ def fetch_drug_data(limit: int = 500) -> List[Dict[str, Any]]:
     Returns:
         药物数据字典列表
     """
-    adapter = OpenFDAAdapter()
-    drugs = adapter.fetch_common_drugs(limit=limit)
-    return [adapter.to_dict(drug) for drug in drugs]
-
-
-if __name__ == "__main__":
-    # 测试代码
-    adapter = OpenFDAAdapter()
-
-    # 测试：获取常见药物
-    print("Fetching common drugs...")
-    drugs = adapter.fetch_common_drugs(limit=10)
-
-    for drug in drugs[:5]:
-        print(f"\n--- {drug.generic_name or drug.brand_names[0] if drug.brand_names else 'Unknown'} ---")
-        print(f"FDA ID: {drug.fda_id}")
-        print(f"Brand names: {drug.brand_names}")
-        print(f"Indications: {drug.indications[:2] if drug.indications else 'N/A'}")
-        print(f"Contraindications: {drug.contraindications[:1] if drug.contraindications else 'N/A'}")
+    with OpenFDAAdapter() as adapter:
+        drugs = adapter.fetch_common_drugs(limit=limit)
+        return [adapter.to_dict(drug) for drug in drugs]

@@ -353,8 +353,9 @@ class DrugVectorStore:
 
 
 if __name__ == "__main__":
-    # 测试代码
-    print("Testing vector store...")
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+
+    logger.info("Testing vector store...")
 
     store = DrugVectorStore(use_mock_embeddings=True)
 
@@ -380,8 +381,8 @@ if __name__ == "__main__":
     ]
 
     store.add_drugs_batch(test_drugs)
-    print(f"Stats: {store.get_stats()}")
+    logger.info(f"Stats: {store.get_stats()}")
 
     # 测试搜索
     results = store.hybrid_search("糖尿病", n_results=5)
-    print(f"Search results: {results}")
+    logger.info(f"Search results: {results}")

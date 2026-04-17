@@ -10,7 +10,6 @@ import json
 from app.rag.vector_store import DrugVectorStore
 from app.rag.embeddings import ChineseMedicalEmbeddings
 from app.utils.json_helpers import safe_parse_json_list
-from app.utils.json_helpers import safe_parse_json_list
 
 logger = logging.getLogger(__name__)
 
@@ -301,8 +300,9 @@ class DrugRetriever:
 
 
 if __name__ == "__main__":
-    # 测试代码
-    print("Testing drug retriever...")
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
+
+    logger.info("Testing drug retriever...")
 
     retriever = DrugRetriever()
 
@@ -338,4 +338,4 @@ if __name__ == "__main__":
     }
 
     results = retriever.recommend(patient, top_k=4)
-    print(f"Recommendations: {results}")
+    logger.info(f"Recommendations: {results}")
