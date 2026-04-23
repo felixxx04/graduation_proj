@@ -147,6 +147,16 @@ server/target/
 medical-backend/target/
 *.class
 
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Python model service build artifacts
+medical-model/saved_models/*.pt
+medical-model/saved_models/*.json
+medical-model/data/chroma/
+
 # Claude Code local settings
 .claude/
 
