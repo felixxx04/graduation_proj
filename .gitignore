@@ -156,6 +156,13 @@ __pycache__/
 medical-model/saved_models/*.pt
 medical-model/saved_models/*.json
 medical-model/data/chroma/
+medical-model/data/pipeline_data.json
+medical-model/data/*.sql
+medical-model/data/*.csv
+medical-model/data/deepseek_prompts/
+medical-model/data/DATA_ASSET_REPORT.md
+medical-model/experiments/**/*.pt
+medical-model/audit_logs/
 
 # Claude Code local settings
 .claude/
