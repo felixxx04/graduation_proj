@@ -5,7 +5,7 @@ import {
   Stethoscope,
   Brain,
   AlertTriangle,
-  CheckCircle2,
+
   Info,
   Sparkles,
   Pill,
@@ -60,14 +60,36 @@ interface RecommendationResultItem {
   drugName: string
   dosage: string
   frequency: string
-  confidence: number
+  confidence: number | null
   score: number
+  rawScore: number
   dpNoise?: number | null
   reason: string
   interactions: string[]
   sideEffects: string[]
   category: string
   explanation: RecommendationExplanation
+  mode: 'model' | 'demo'
+  dpAnomaly?: boolean
+  warnings?: string[]
+  requiresReview?: boolean
+  safetyType?: string
+}
+
+interface ExcludedDrug {
+  drugName: string
+  reason: string
+  category: string
+}
+
+interface PrivacyBudgetInfo {
+  epsilonSpent: number
+  epsilonBudget: number
+  deltaSpent: number
+  deltaBudget: number
+  warningLevel: string
+  remainingRatio: number
+  queryCount: number
 }
 
 interface GenerateResponse {
@@ -76,6 +98,11 @@ interface GenerateResponse {
   base: RecommendationResultItem[]
   dp: RecommendationResultItem[]
   dpEnabled: boolean
+  excludedDrugs: ExcludedDrug[]
+  privacyBudget: PrivacyBudgetInfo | null
+  totalCandidates: number
+  totalExcluded: number
+  totalSafe: number
 }
 
 interface DrugResult {
@@ -83,12 +110,20 @@ interface DrugResult {
   drugName: string
   dosage: string
   frequency: string
-  confidence: number
+  confidence: number | null
   reason: string
   interactions: string[]
   sideEffects: string[]
   category: string
   explanation: RecommendationExplanation
+  mode: 'model' | 'demo'
+  score: number
+  rawScore: number
+  dpNoise?: number | null
+  dpAnomaly?: boolean
+  warnings?: string[]
+  requiresReview?: boolean
+  safetyType?: string
 }
 
 interface PatientData {
@@ -133,6 +168,11 @@ export default function DrugRecommendation() {
   const [showResults, setShowResults] = useState(false)
   const [selectedDrug, setSelectedDrug] = useState<DrugResult | null>(null)
   const [showExplainability, setShowExplainability] = useState(false)
+  const [showConsentDialog, setShowConsentDialog] = useState(false)
+  const [consentGiven, setConsentGiven] = useState(false)
+  const [excludedDrugs, setExcludedDrugs] = useState<ExcludedDrug[]>([])
+  const [budgetInfo, setBudgetInfo] = useState<PrivacyBudgetInfo | null>(null)
+  const [totalCandidateInfo, setTotalCandidateInfo] = useState<{ total: number; excluded: number; safe: number } | null>(null)
 
   const handleSelectPatient = (id: string) => {
     setSelectedPatientId(id)
@@ -152,6 +192,12 @@ export default function DrugRecommendation() {
   }
 
   const handleAnalyze = async () => {
+    // 知情同意检查: 首次使用需确认
+    if (!consentGiven) {
+      setShowConsentDialog(true)
+      return
+    }
+
     setAnalyzeError(null)
     setIsAnalyzing(true)
 
@@ -169,6 +215,13 @@ export default function DrugRecommendation() {
       })
 
       setComparison({ base: response.base, dp: response.dp })
+      setExcludedDrugs(response.excludedDrugs ?? [])
+      setBudgetInfo(response.privacyBudget ?? null)
+      setTotalCandidateInfo({
+        total: response.totalCandidates,
+        excluded: response.totalExcluded,
+        safe: response.totalSafe,
+      })
       setRecommendations(
         response.selected.map((item) => ({
           id: String(item.drugId),
@@ -181,6 +234,14 @@ export default function DrugRecommendation() {
           sideEffects: item.sideEffects,
           category: item.category,
           explanation: item.explanation,
+          mode: item.mode,
+          score: item.score,
+          rawScore: item.rawScore,
+          dpNoise: item.dpNoise,
+          dpAnomaly: item.dpAnomaly,
+          warnings: item.warnings,
+          requiresReview: item.requiresReview,
+          safetyType: item.safetyType,
         }))
       )
       setShowResults(true)
@@ -193,12 +254,16 @@ export default function DrugRecommendation() {
       setSelectedDrug(null)
       setRecommendations([])
       setComparison(null)
+      setExcludedDrugs([])
+      setBudgetInfo(null)
+      setTotalCandidateInfo(null)
     } finally {
       setIsAnalyzing(false)
     }
   }
 
-  const getConfidenceColor = (confidence: number) => {
+  const getConfidenceColor = (confidence: number | null) => {
+    if (confidence == null) return 'text-muted-foreground'
     if (confidence >= 90) return 'text-ia-data-3'
     if (confidence >= 80) return 'text-primary'
     return 'text-ia-data-4'
@@ -215,6 +280,54 @@ export default function DrugRecommendation() {
 
   return (
     <div className="space-y-8">
+
+      {/* 知情同意弹窗 */}
+      {showConsentDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-card rounded-standard p-6 max-w-md shadow-lg border border-border">
+            <div className="flex items-center gap-2 mb-4">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <h2 className="text-ia-card-title font-heading font-bold text-foreground">知情同意</h2>
+            </div>
+            <div className="space-y-3 text-ia-body text-muted-foreground">
+              <p>在使用本系统前，请确认您已了解以下事项：</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>推荐结果由AI模型生成，<strong className="text-foreground">仅供参考，不构成医疗诊断或处方建议</strong></li>
+                <li>差分隐私噪声仅保护推荐排序隐私，<strong className="text-foreground">不影响安全排除结果</strong></li>
+                <li>计算在本地服务器环境中进行，未使用加密通道</li>
+                <li>最终用药决策须由执业医师确认</li>
+              </ul>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button
+                onClick={() => {
+                  setConsentGiven(true)
+                  setShowConsentDialog(false)
+                }}
+                className="px-4 py-2 rounded-standard bg-primary text-primary-foreground font-heading font-semibold text-ia-label hover:bg-primary/90"
+              >
+                我已了解，继续使用
+              </button>
+              <button
+                onClick={() => setShowConsentDialog(false)}
+                className="px-4 py-2 rounded-standard bg-muted text-muted-foreground font-heading font-semibold text-ia-label hover:bg-muted/80"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Disclaimer Banner — 不可折叠免责声明 */}
+      <div className="bg-destructive/8 border-b border-destructive/20 px-6 py-3">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-destructive" />
+          <p className="text-ia-label font-heading font-semibold text-destructive">
+            免责声明：本系统推荐结果由AI模型生成，仅供参考，不构成医疗诊断或处方建议。最终用药决策须由执业医师确认。
+          </p>
+        </div>
+      </div>
+
       {/* Page Header — Border-left editorial */}
       <section className="border-l-4 border-l-primary bg-card px-6 py-8">
         <div className="flex items-start gap-4">
@@ -445,11 +558,11 @@ export default function DrugRecommendation() {
 
               <div className="p-3 rounded-standard border border-ia-data-3/30 bg-ia-data-3/6">
                 <div className="flex items-center gap-2 text-ia-data-3">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  <span className="text-ia-caption font-heading font-semibold">数据安全</span>
+                  <Info className="h-3.5 w-3.5" />
+                  <span className="text-ia-caption font-heading font-semibold">隐私保护说明</span>
                 </div>
                 <p className="text-ia-label text-ia-data-3/80 mt-1">
-                  所有计算均在加密环境中进行
+                  差分隐私噪声机制已应用于推荐评分，降低个体推断风险。DP仅保护排序隐私，不影响安全排除结果。计算在本地服务器环境中进行。
                 </p>
               </div>
             </CardContent>
@@ -534,21 +647,40 @@ export default function DrugRecommendation() {
                         selectedDrug?.id === rec.id
                           ? 'border-primary ia-border-3'
                           : 'border-ia-border hover:border-primary/40'
-                      }`}
+                      } ${rec.dpAnomaly ? 'border-ia-data-4/50' : ''}`}
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1.5">
                             <Pill className="h-4 w-4 text-primary" />
                             <h4 className="font-heading font-semibold text-ia-card-title">{rec.drugName}</h4>
+                            <span className={`ia-badge text-[10px] px-1.5 py-0.5 ${
+                              rec.mode === 'model'
+                                ? 'bg-primary/10 text-primary border-primary/20'
+                                : 'bg-muted text-muted-foreground border-ia-border'
+                            }`}>
+                              {rec.mode === 'model' ? '模型推理' : '演示模式'}
+                            </span>
+                            {rec.requiresReview && (
+                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-ia-data-4/10 text-ia-data-4 border-ia-data-4/20">
+                                需审核
+                              </span>
+                            )}
                           </div>
-                          <span className="ia-badge ia-badge-primary">
-                            {rec.category}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="ia-badge ia-badge-primary">
+                              {rec.category}
+                            </span>
+                            {rec.safetyType && (
+                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-ia-data-3/10 text-ia-data-3 border-ia-data-3/20">
+                                {rec.safetyType}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className={`text-xl font-heading font-bold ${getConfidenceColor(rec.confidence)}`}>
-                            {rec.confidence}%
+                            {rec.confidence != null ? `${rec.confidence}%` : '--'}
                           </div>
                           <div className="text-ia-label text-muted-foreground">置信度</div>
                         </div>
@@ -559,17 +691,143 @@ export default function DrugRecommendation() {
                         <span>{rec.dosage} · {rec.frequency}</span>
                       </div>
 
+                      {/* Score breakdown */}
+                      {dpEnabled && rec.rawScore !== undefined && (
+                        <div className="mt-2 text-ia-label text-muted-foreground flex items-center gap-1.5">
+                          <span>原始评分: {rec.rawScore.toFixed(3)}</span>
+                          {typeof rec.dpNoise === 'number' && (
+                            <>
+                              <span>→</span>
+                              <span>DP评分: {rec.score.toFixed(3)}</span>
+                              <span className={`text-[10px] ${rec.dpNoise >= 0 ? 'text-primary' : 'text-ia-data-4'}`}>
+                                (噪声 {rec.dpNoise >= 0 ? '+' : ''}{rec.dpNoise.toFixed(3)})
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                      {/* DP anomaly warning */}
+                      {rec.dpAnomaly && (
+                        <div className="mt-2 flex items-center gap-1.5 text-ia-caption text-ia-data-4">
+                          <AlertTriangle className="h-3 w-3" />
+                          <span>DP噪声可能导致排序异常（原始评分极低）</span>
+                        </div>
+                      )}
+
+                      {/* Safety warnings */}
+                      {rec.warnings && rec.warnings.length > 0 && (
+                        <div className="mt-2 flex items-center gap-1.5 text-ia-caption text-secondary">
+                          <Info className="h-3 w-3" />
+                          <span>{rec.warnings.join('；')}</span>
+                        </div>
+                      )}
+
                       <div className="mt-3">
                         <div className="progress-bar">
                           <div
                             className="progress-bar-fill"
-                            style={{ width: `${rec.confidence}%` }}
+                            style={{ width: `${rec.confidence ?? 0}%` }}
                           />
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                {/* Excluded Drugs & Budget Info */}
+                {(excludedDrugs.length > 0 || budgetInfo || totalCandidateInfo) && (
+                  <div className="mb-5 grid md:grid-cols-2 gap-3">
+                    {/* Excluded drugs section */}
+                    {excludedDrugs.length > 0 && (
+                      <div className="p-3 rounded-standard bg-destructive/4 border border-destructive/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
+                          <span className="text-ia-caption font-heading font-semibold text-destructive">
+                            安全排除药物（{excludedDrugs.length} 项）
+                          </span>
+                        </div>
+                        <p className="text-ia-label text-muted-foreground mb-2">
+                          以下药物因安全原因被排除，不受差分隐私噪声影响
+                        </p>
+                        <div className="max-h-40 overflow-y-auto space-y-1">
+                          {excludedDrugs.map((d, i) => (
+                            <div key={i} className="flex items-start gap-2 text-ia-caption">
+                              <span className="text-destructive mt-0.5">·</span>
+                              <div>
+                                <span className="font-heading font-semibold">{d.drugName}</span>
+                                <span className="text-muted-foreground ml-1.5">({d.category})</span>
+                                <span className="text-muted-foreground ml-1">— {d.reason}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Candidate stats & budget info */}
+                    {(totalCandidateInfo || budgetInfo) && (
+                      <div className="p-3 rounded-standard bg-muted border border-ia-border space-y-3">
+                        {totalCandidateInfo && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Shield className="h-3.5 w-3.5 text-primary" />
+                              <span className="text-ia-caption font-heading font-semibold">候选药物筛选</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 text-ia-label">
+                              <div className="p-2 rounded-standard bg-card border border-ia-border text-center">
+                                <div className="font-heading font-bold text-foreground">{totalCandidateInfo.total}</div>
+                                <div className="text-muted-foreground">总候选</div>
+                              </div>
+                              <div className="p-2 rounded-standard bg-destructive/6 border border-destructive/20 text-center">
+                                <div className="font-heading font-bold text-destructive">{totalCandidateInfo.excluded}</div>
+                                <div className="text-muted-foreground">已排除</div>
+                              </div>
+                              <div className="p-2 rounded-standard bg-primary/6 border border-primary/20 text-center">
+                                <div className="font-heading font-bold text-primary">{totalCandidateInfo.safe}</div>
+                                <div className="text-muted-foreground">安全候选</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {budgetInfo && (
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Lock className="h-3.5 w-3.5 text-secondary" />
+                              <span className="text-ia-caption font-heading font-semibold">本次查询隐私预算</span>
+                            </div>
+                            <div className="p-2 rounded-standard bg-card border border-ia-border text-ia-label">
+                              <div className="flex justify-between mb-1">
+                                <span className="text-muted-foreground">ε 已消耗</span>
+                                <span className={`font-heading font-bold ${
+                                  budgetInfo.warningLevel === 'EXCEEDED' ? 'text-destructive' :
+                                  budgetInfo.warningLevel === 'CRITICAL_80' ? 'text-ia-data-4' :
+                                  budgetInfo.warningLevel === 'WARNING_50' ? 'text-secondary' : 'text-foreground'
+                                }`}>
+                                  {budgetInfo.epsilonSpent.toFixed(4)} / {budgetInfo.epsilonBudget.toFixed(1)}
+                                </span>
+                              </div>
+                              <div className="progress-bar mb-1.5">
+                                <div
+                                  className={`progress-bar-fill ${
+                                    budgetInfo.warningLevel === 'EXCEEDED' ? 'bg-destructive' :
+                                    budgetInfo.warningLevel === 'CRITICAL_80' ? 'bg-ia-data-4' :
+                                    budgetInfo.warningLevel === 'WARNING_50' ? 'bg-secondary' : ''
+                                  }`}
+                                  style={{ width: `${Math.min(100, (budgetInfo.epsilonSpent / budgetInfo.epsilonBudget) * 100)}%` }}
+                                />
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">查询 #{budgetInfo.queryCount}</span>
+                                <span className="text-muted-foreground">剩余 {((budgetInfo.remainingRatio) * 100).toFixed(1)}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Detailed Drug Information */}
                 {selectedDrug && (
@@ -726,11 +984,25 @@ export default function DrugRecommendation() {
                             <h5 className="font-heading font-semibold text-ia-caption mb-1 text-primary">
                               隐私保护说明
                             </h5>
-                            <p className="text-ia-caption text-muted-foreground">
-                              本次推荐{dpEnabled ? '在差分隐私保护下生成' : '以无 DP 基线方式生成'}（ε = {config.epsilon.toFixed(3)}），
-                              {dpEnabled ? '推荐评分已注入随机噪声以降低推断风险。' : '未注入噪声，仅用于对比展示。'}
-                              推荐结果仅作为临床参考，具体用药请遵医嘱。
-                            </p>
+                            <div className="text-ia-caption text-muted-foreground space-y-1">
+                              <p>
+                                推荐模式：<strong className="text-foreground">
+                                  {selectedDrug.mode === 'model' ? '模型推理（DeepFM）' : '演示模式（规则匹配）'}
+                                </strong>
+                              </p>
+                              <p>
+                                {dpEnabled
+                                  ? '差分隐私噪声仅保护推荐排序隐私，不影响安全排除结果。推荐评分已注入随机噪声以降低推断风险。'
+                                  : '本次以无 DP 基线方式生成，未注入噪声，仅用于对比展示。'}
+                                （ε = {config.epsilon.toFixed(3)}）
+                              </p>
+                              {selectedDrug.dpAnomaly && (
+                                <p className="text-ia-data-4">
+                                  注意：该药物原始评分极低，当前排名可能因 DP 噪声而异常提升，请谨慎参考。
+                                </p>
+                              )}
+                              <p>推荐结果仅作为临床参考，具体用药请遵医嘱。</p>
+                            </div>
                           </div>
                         </div>
                       </div>

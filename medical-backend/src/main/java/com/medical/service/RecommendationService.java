@@ -10,6 +10,7 @@ import com.medical.repository.RecommendationRepository;
 import com.medical.repository.PrivacyRepository;
 import com.medical.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,14 +72,32 @@ public class RecommendationService {
             for (Drug drug : drugs) {
                 Map<String, Object> d = new HashMap<>();
                 d.put("id", drug.getId());
+                d.put("generic_name", drug.getGenericName());
                 d.put("name", drug.getName());
                 d.put("category", drug.getCategory());
-                d.put("indications", drug.getIndications());
-                d.put("contraindications", drug.getContraindications());
-                d.put("side_effects", drug.getSideEffects());
-                d.put("interactions", drug.getInteractions());
+                d.put("drug_class_en", drug.getDrugClassEn());
+                d.put("pregnancy_category", drug.getPregnancyCategory());
+                d.put("is_otc", drug.getIsOtc());
+                d.put("rx_otc", drug.getIsOtc());
                 d.put("typical_dosage", drug.getTypicalDosage());
                 d.put("typical_frequency", drug.getTypicalFrequency());
+                d.put("strength", drug.getStrength());
+
+                // indications: 解析JSON字符串为结构化列表
+                // 模型侧需要List而非原始字符串
+                Object indicationsParsed = parseJsonToList(drug.getIndications());
+                d.put("indications", indicationsParsed);
+
+                // contraindications, side_effects, interactions同理解析
+                Object contrasParsed = parseJsonToList(drug.getContraindications());
+                d.put("contraindications", contrasParsed);
+
+                Object sideEffectsParsed = parseJsonToList(drug.getSideEffects());
+                d.put("side_effects", sideEffectsParsed);
+
+                Object interactionsParsed = parseJsonToList(drug.getInteractions());
+                d.put("interactions", interactionsParsed);
+
                 drugData.add(d);
             }
             HttpHeaders headers = new HttpHeaders();
@@ -91,6 +110,24 @@ public class RecommendationService {
         } catch (Exception e) {
             log.error("Error loading drugs to model service: {}", e.getMessage(), e);
             throw new ModelServiceException("Failed to initialize model service", e);
+        }
+    }
+
+    /**
+     * 解析JSON字符串为List — 模型侧需要结构化数据而非原始字符串
+     * 如果字符串为null/空/非JSON格式，返回空列表
+     */
+    private Object parseJsonToList(String jsonString) {
+        if (jsonString == null || jsonString.isBlank()) {
+            return new ArrayList<>();
+        }
+        try {
+            return objectMapper.readValue(jsonString, new TypeReference<List<Object>>() {});
+        } catch (Exception e) {
+            // 非JSON格式(纯文本或逗号分隔)，作为单条目列表返回
+            List<String> singleList = new ArrayList<>();
+            singleList.add(jsonString);
+            return singleList;
         }
     }
 
@@ -120,7 +157,7 @@ public class RecommendationService {
         if (config != null) {
             return config.getEpsilon();
         }
-        return new BigDecimal("0.1");
+        return new BigDecimal("1.0");
     }
 
     private void checkPrivacyBudget(Long userId, BigDecimal epsilonUsed) {

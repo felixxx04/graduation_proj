@@ -18,4 +18,14 @@ public class Drug {
     private String typicalFrequency;
     private String description;
     private LocalDateTime createdAt;
+
+    // v2: migration_v2.sql新增字段 (模型推理必需)
+    private String pregnancyCategory;
+    private String isOtc;
+    private String drugClassEn;
+    private String strength;
+    private String dosageForm;
+    private String atcCode;
+    private String mechanismOfAction;
+    private String routeOfAdministration;
 }
