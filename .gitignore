@@ -153,10 +153,16 @@ __pycache__/
 *.pyo
 
 # Python model service build artifacts
+# ── 保留推荐系统运行必需的文件 ──
 medical-model/saved_models/*.pt
+!medical-model/saved_models/best_model.pt
+!medical-model/saved_models/final_model.pt
 medical-model/saved_models/*.json
+!medical-model/saved_models/encoder.json
+!medical-model/saved_models/metadata.json
 medical-model/data/chroma/
-medical-model/data/pipeline_data.json
+!medical-model/data/pipeline_data.json
+!medical-model/data/drug_name_translations.json
 medical-model/data/*.sql
 medical-model/data/*.csv
 medical-model/data/deepseek_prompts/

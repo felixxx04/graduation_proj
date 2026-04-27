@@ -21,6 +21,7 @@ from app.pipeline.record_builder import build_feature_record
 from app.services.explanation_generator import generate_explanation
 from app.data.critical_interactions import check_cross_candidate_ddi, is_critical_interaction
 from app.utils.drug_translator import build_translation_cache, translate_drug_name
+from app.utils.translation_mapper import get_mapper as get_translation_mapper
 from app.exceptions import (
     PredictionError,
     ModelNotLoadedError,
@@ -110,6 +111,7 @@ def _translate_recommendation_names(
     drugName: 替换为中文
     englishName: 保留英文原名
     """
+    mapper = get_translation_mapper()
     for rec in recommendations:
         original_name = rec.get('drugName', '')
         if original_name:
@@ -117,12 +119,53 @@ def _translate_recommendation_names(
             rec['englishName'] = original_name
             rec['drugName'] = chinese_name
 
+        # 翻译 category (drug_class_en)
+        category = rec.get('category', '')
+        if category:
+            rec['category'] = mapper.translate_class(category)
+
+        # 翻译 safetyType 枚举
+        safety_type = rec.get('safetyType', '')
+        if safety_type:
+            rec['safetyType'] = mapper.translate_enum(safety_type)
+
+        # 翻译 qualityWarning 枚举
+        quality_warning = rec.get('qualityWarning', '')
+        if quality_warning:
+            rec['qualityWarning'] = mapper.translate_enum(quality_warning)
+
+        # 翻译 matchedDisease
+        matched_disease = rec.get('matchedDisease', '')
+        if matched_disease:
+            rec['matchedDisease'] = mapper.translate_condition(matched_disease)
+
+        # 翻译 explanation 中的 matchedDisease
+        explanation = rec.get('explanation', {})
+        if isinstance(explanation, dict):
+            ind_detail = explanation.get('indicationDetail', {})
+            if isinstance(ind_detail, dict):
+                md = ind_detail.get('matchedDisease', '')
+                if md:
+                    ind_detail['matchedDisease'] = mapper.translate_condition(md)
+                matched_ind = ind_detail.get('matchedIndication', '')
+                if matched_ind:
+                    ind_detail['matchedIndication'] = mapper.translate_condition(matched_ind)
+
+                # 翻译 matchedConditions 列表
+                matched_conditions = ind_detail.get('matchedConditions', [])
+                if isinstance(matched_conditions, list):
+                    ind_detail['matchedConditions'] = [
+                        mapper.translate_condition(c) if isinstance(c, str) else c
+                        for c in matched_conditions
+                    ]
+
 
 def _translate_excluded_drug_names(
     excluded_drugs: List[Dict[str, Any]],
     translation_map: Dict[str, str],
 ) -> None:
-    """翻译排除药物列表中的药物名"""
+    """翻译排除药物列表中的药物名和类别"""
+    mapper = get_translation_mapper()
     for drug in excluded_drugs:
         original_name = drug.get('drug_name', drug.get('drugName', drug.get('name', '')))
         if original_name:
@@ -134,6 +177,11 @@ def _translate_excluded_drug_names(
                 drug['drugName'] = chinese_name
             if 'name' in drug:
                 drug['name'] = chinese_name
+
+        # 翻译排除药物中的 category
+        category = drug.get('category', '')
+        if category:
+            drug['category'] = mapper.translate_class(category)
 
 
 def _translate_ddi_warnings(
@@ -148,6 +196,24 @@ def _translate_ddi_warnings(
                 chinese_name = translate_drug_name(original, translation_map)
                 warning[f'{key}_en'] = original
                 warning[key] = chinese_name
+
+
+def _translate_side_effects(drug: Dict[str, Any]) -> List[str]:
+    """翻译副作用为中文列表
+
+    优先使用 pipeline_data.json 的 side_effects_raw（英文），
+    通过翻译映射器翻译为中文关键词列表。
+    如果 side_effects_raw 为空, 回退到 side_effects 字段。
+    """
+    mapper = get_translation_mapper()
+
+    # 优先从 side_effects_raw 翻译
+    raw = drug.get('side_effects_raw', '')
+    if raw:
+        return mapper.translate_side_effects_raw(raw)
+
+    # 回退到原始 side_effects 列表
+    return drug.get('side_effects', [])
 
 
 class RecommendationPredictor:
@@ -565,7 +631,7 @@ class RecommendationPredictor:
                 'dpConfidence': dp_confidence,
                 'reason': "基于DeepFM模型推理",
                 'interactions': [],
-                'sideEffects': drug.get('side_effects', []),
+                'sideEffects': _translate_side_effects(drug),
                 'matchedDisease': explanation['indicationDetail'].get('matchedDisease'),
                 'explanation': explanation,
                 'mode': 'model',
@@ -661,7 +727,7 @@ class RecommendationPredictor:
                 'dpConfidence': dp_confidence,
                 'reason': "基于规则匹配（演示模式，模型未加载）",
                 'interactions': [],
-                'sideEffects': drug.get('side_effects', []),
+                'sideEffects': _translate_side_effects(drug),
                 'matchedDisease': explanation['indicationDetail'].get('matchedDisease'),
                 'explanation': explanation,
                 'mode': 'demo',
