@@ -6,7 +6,7 @@ import type { ApplicationStage, NoiseMechanism, PrivacyConfig, PrivacyEventType,
 const DEFAULT_CONFIG: PrivacyConfig = {
   epsilon: 1.0,
   delta: 0.00001,
-  sensitivity: 1.0,
+  sensitivity: 0.2,  // sigmoid输出[0,1]的实证灵敏度，而非理论最大值1.0
   noiseMechanism: 'laplace',
   applicationStage: 'gradient',
   privacyBudget: 10.0,

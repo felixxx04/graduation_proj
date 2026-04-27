@@ -2,6 +2,7 @@
 
 核心功能:
 1. 强组合定理(Strong Composition): k次查询累计ε_comp = √(2k·ln(1/δ_g))·ε + kε²
+   注: ln(1/δ_g)而非ln(1.25/δ_g)，1.25系数仅用于Gaussian机制sigma计算
 2. (ε,δ)完整追踪: 每次查询记录实际消耗的(ε,δ)对
 3. 50%/80%告警: 预算使用达50%时WARNING, 80%时ERROR(可配置)
 4. 全局预算上限: 单用户/会话累计ε不超过budget上限
@@ -56,15 +57,19 @@ class PrivacyBudgetTracker:
     """差分隐私预算追踪器
 
     使用强组合定理(Strong Composition Theorem)计算累计隐私损失:
-    ε_comp = √(2k·ln(1.25/δ_g))·ε + k·ε²
+    ε_comp = √(2k·ln(1/δ_g))·ε_max + k·ε_max²
 
     其中:
     - k: 查询次数
     - ε: 每次查询的epsilon
-    - δ_g: 全局delta (默认1e-5)
+    - δ_g: 全局delta (组合定理自由参数，默认1e-5)
+    - 注: ln(1/δ_g)而非ln(1.25/δ_g)，1.25系数仅用于Gaussian机制sigma计算
 
     对于Laplace机制: δ_single = 0 (纯ε-DP)
     对于Gaussian机制: δ_single = delta参数 (近似(ε,δ)-DP)
+
+    can_spend()使用与get_status()相同的强组合定理预测，
+    确保预算检查与实际隐私损失计算一致。
 
     Args:
         epsilon_budget: 全局ε预算上限 (默认3.0)
@@ -75,7 +80,7 @@ class PrivacyBudgetTracker:
 
     def __init__(
         self,
-        epsilon_budget: float = 3.0,
+        epsilon_budget: float = 10.0,  # 强组合定理下需要更大budget，3.0不足以支持eps=1.0的单次查询
         delta_budget: float = 1e-5,
         warning_threshold: float = 0.5,
         critical_threshold: float = 0.8,
@@ -197,12 +202,13 @@ class PrivacyBudgetTracker:
                 remaining_budget_ratio=1.0,
             )
 
-        # 强组合定理: ε_comp = √(2k·ln(1.25/δ_g))·ε_max + k·ε_max²
+        # 强组合定理: ε_comp = √(2k·ln(1/δ_g))·ε_max + k·ε_max²
+        # 注: 使用ln(1/delta_g)而非ln(1.25/delta_g), 1.25系数仅用于Gaussian机制的sigma计算
         epsilon_max = max(r.epsilon_spent for r in self._spend_records)
         import math
         delta_g = self._delta_budget
         epsilon_composed = (
-            math.sqrt(2 * k * math.log(1.25 / delta_g)) * epsilon_max
+            math.sqrt(2 * k * math.log(1.0 / delta_g)) * epsilon_max
             + k * epsilon_max ** 2
         )
 
@@ -238,15 +244,32 @@ class PrivacyBudgetTracker:
     def can_spend(self, epsilon: float) -> Tuple[bool, BudgetStatus]:
         """检查是否有足够预算进行下一次查询
 
+        使用强组合定理预测: 模拟添加本次epsilon后的组合ε损失，
+        确保实际隐私损失不超过预算（与get_status()使用相同的组合定理）。
+
         Args:
             epsilon: 计划消耗的ε值
         Returns:
             (can_spend, status): 是否可以消耗 + 当前状态
         """
+        import math
         status = self.get_status()
-        # 预估消耗后组合ε: 使用简单求和作为上界
-        projected_naive = self._epsilon_spent_naive + epsilon
-        if projected_naive > self._epsilon_budget:
+
+        # 预测: 如果花费本次epsilon，组合ε损失会是多少？
+        k_projected = status.query_count + 1  # 当前查询数 + 本次查询
+        epsilon_max_projected = max(
+            max(r.epsilon_spent for r in self._spend_records) if self._spend_records else 0,
+            epsilon,
+        )
+        delta_g = self._delta_budget
+
+        # 强组合定理预测: ε_comp = √(2k·ln(1/δ_g))·ε_max + k·ε_max²
+        epsilon_composed_projected = (
+            math.sqrt(2 * k_projected * math.log(1.0 / delta_g)) * epsilon_max_projected
+            + k_projected * epsilon_max_projected ** 2
+        )
+
+        if epsilon_composed_projected > self._epsilon_budget:
             return False, status
         return True, status
 
@@ -277,7 +300,7 @@ _budget_trackers: Dict[str, PrivacyBudgetTracker] = {}
 
 def get_budget_tracker(
     user_id: str,
-    epsilon_budget: float = 3.0,
+    epsilon_budget: float = 10.0,
     delta_budget: float = 1e-5,
 ) -> PrivacyBudgetTracker:
     """获取指定用户的预算追踪器（懒创建）

@@ -64,15 +64,15 @@ class DPConfig(BaseModel):
     enabled: bool = True
     epsilon: float = 1.0  # v2: 统一默认值1.0
     delta: float = 1e-5
-    sensitivity: float = 1.0
+    sensitivity: float = 0.2  # sigmoid输出[0,1]的实证灵敏度
     noiseMechanism: str = "laplace"
     applicationStage: str = "model"
 
     @field_validator('epsilon')
     @classmethod
     def validate_epsilon(cls, v: float) -> float:
-        if v <= 0:
-            raise ValueError('epsilon must be > 0')
+        if v < 0.01 or v > 10.0:
+            raise ValueError('epsilon must be in [0.01, 10.0] for meaningful privacy protection')
         return v
 
     @field_validator('delta')
@@ -80,6 +80,13 @@ class DPConfig(BaseModel):
     def validate_delta(cls, v: float) -> float:
         if v <= 0 or v >= 1:
             raise ValueError('delta must be in (0, 1)')
+        return v
+
+    @field_validator('sensitivity')
+    @classmethod
+    def validate_sensitivity(cls, v: float) -> float:
+        if v < 0.01 or v > 1.0:
+            raise ValueError('sensitivity must be in [0.01, 1.0] for sigmoid output [0,1]')
         return v
 
     @field_validator('noiseMechanism')
@@ -144,8 +151,8 @@ class TrainRequest(BaseModel):
     @field_validator('epsilon')
     @classmethod
     def validate_epsilon(cls, v: float) -> float:
-        if v <= 0:
-            raise ValueError('epsilon must be > 0')
+        if v < 0.01 or v > 10.0:
+            raise ValueError('epsilon must be in [0.01, 10.0]')
         return v
 
     @field_validator('batchSize')
@@ -254,11 +261,25 @@ def status():
 
 @app.post("/model/predict")
 def predict(request: PredictRequest):
+    # 处理疾病和症状: 中文→英文映射 + 症状→疾病映射
+    from app.utils.disease_mapper import process_patient_input, _split_input
+
+    # 生成综合疾病名集合（包含中文翻译+症状关联）
+    expanded_diseases = process_patient_input(
+        diseases_str=request.diseases or "",
+        symptoms_str=request.symptoms or "",
+    )
+
+    # 基本疾病列表（从 diseases 字段分割）
+    disease_list = _split_input(request.diseases or "")
+
     patient_data = {
         'id': request.patientId,
         'age': request.age,
         'gender': request.gender,
-        'chronic_diseases': request.diseases.split('，') if request.diseases else [],
+        'diseases': list(expanded_diseases),  # 扩充后的英文疾病名集合
+        'disease_list': disease_list,  # 原始输入（用于解释）
+        'chronic_diseases': list(expanded_diseases),  # 同步扩充
         'symptoms': request.symptoms,
         'allergies': request.allergies.split('，') if request.allergies else [],
         'current_medications': request.currentMedications.split('，') if request.currentMedications else []

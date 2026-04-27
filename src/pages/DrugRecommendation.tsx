@@ -211,6 +211,14 @@ export default function DrugRecommendation() {
         allergies: patientData.allergies || undefined,
         currentMedications: patientData.currentMedications || undefined,
         dpEnabled,
+        dpConfig: dpEnabled ? {
+          enabled: true,
+          epsilon: config.epsilon,
+          delta: config.delta,
+          sensitivity: config.sensitivity,
+          noiseMechanism: config.noiseMechanism,
+          applicationStage: config.applicationStage,
+        } : undefined,
         topK: 4,
       })
 

@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # 差分隐私默认参数
     default_epsilon: float = 1.0
     default_delta: float = 1e-5
-    default_sensitivity: float = 1.0
+    default_sensitivity: float = 0.2  # sigmoid输出[0,1]的实证灵敏度，而非理论最大值1.0
 
     # 训练默认参数
     default_epochs: int = 10

@@ -5,9 +5,12 @@
 
 策略: 匹配前先标准化疾病名/过敏名, 然后做精确匹配+保守包含检查
 过敏匹配使用更严格的精确匹配(可致命); 禁忌匹配使用标准化后包含检查
+
+v2改进: match_indication使用特异性限定匹配，防止"fever"匹配"typhoid fever"
 """
 
 import logging
+import re
 from typing import Dict, Set, List, Any, Optional
 
 logger = logging.getLogger(__name__)
@@ -128,6 +131,39 @@ def normalize_allergy(name: str) -> str:
     return ALLERGY_NORMALIZE.get(key, key)
 
 
+def _whole_word_match(short: str, long: str) -> bool:
+    """Check if short appears as a whole word in long
+
+    使用word boundary匹配，确保短词只作为独立词出现。
+    """
+    pattern = r'\b' + re.escape(short) + r'\b'
+    return bool(re.search(pattern, long))
+
+
+def _is_specific_disease_name(name: str) -> bool:
+    """判断疾病名是否是特定复合名（而非通用症状名）
+
+    通用症状名: fever, pain, headache, cough, nausea 等单个词
+    特定复合名: typhoid fever, familial mediterranean fever, rheumatic fever,
+                chest pain, stomach pain, joint pain, productive cough 等
+
+    规则: 如果name由多个词组成 → 特定复合名
+    如果name是单个通用症状词 → 通用名（不允许匹配特定名）
+    如果name是单个词但非通用症状 → 特定疾病名
+    """
+    generic_symptoms = {
+        'fever', 'pain', 'headache', 'cough', 'nausea', 'vomiting',
+        'diarrhea', 'rash', 'itching', 'dizziness', 'fatigue',
+        'edema', 'swelling', 'anemia', 'infection', 'inflammation',
+    }
+    words = name.strip().split()
+    if len(words) <= 1 and name in generic_symptoms:
+        return False
+    if len(words) > 1:
+        return True
+    return True
+
+
 def match_allergy(
     patient_allergies: Set[str],
     contraindication_name: str,
@@ -140,7 +176,7 @@ def match_allergy(
     3. 原始名精确相等匹配(fallback)
 
     Args:
-        patient_allergies: 患者过敏集合(已小写)
+        patient_allergies: 悍者过敏集合(已小写)
         contraindication_name: 禁忌症名(原始)
     Returns:
         True if 匹配成功(应排除)
@@ -171,15 +207,15 @@ def match_condition(
     patient_conditions: Set[str],
     contraindication_name: str,
 ) -> bool:
-    """禁忌症/疾病匹配 — 使用标准化+包含检查
+    """禁忌症/疾病匹配 — 使用标准化+whole-word匹配
 
     禁忌匹配不如过敏严格(不会立即致命), 但仍需标准化:
     1. 标准化后精确相等匹配
-    2. 标准化后包含匹配(双向，需>=4字符)
-    3. 原始名包含匹配(保守fallback，标注"疑似匹配需确认")
+    2. 标准化后whole-word包含匹配(双向，需>=4字符)
+    3. 原始名whole-word包含匹配(保守fallback)
 
     Args:
-        patient_conditions: 患者疾病集合(已小写)
+        patient_conditions: 悍者疾病集合(已小写)
         contraindication_name: 禁忌症名
     Returns:
         True if 匹配成功
@@ -193,17 +229,25 @@ def match_condition(
         if cond_normalized == contra_normalized:
             return True
 
-        # 2. 标准化后包含匹配(双向，>=4字符防误匹配)
+        # 2. 标准化后whole-word匹配(双向，>=4字符)
         if len(cond_normalized) >= 4 and len(contra_normalized) >= 4:
-            if cond_normalized in contra_normalized or contra_normalized in cond_normalized:
-                return True
+            if len(cond_normalized) < len(contra_normalized):
+                if _whole_word_match(cond_normalized, contra_normalized):
+                    return True
+            elif len(contra_normalized) < len(cond_normalized):
+                if _whole_word_match(contra_normalized, cond_normalized):
+                    return True
 
-        # 3. 原始名包含匹配(fallback，保守)
+        # 3. 原始名whole-word匹配(fallback，保守)
         cond_lower = condition.lower()
         contra_lower = contraindication_name.lower()
         if len(cond_lower) >= 4 and len(contra_lower) >= 4:
-            if cond_lower in contra_lower or contra_lower in cond_lower:
-                return True
+            if len(cond_lower) < len(contra_lower):
+                if _whole_word_match(cond_lower, contra_lower):
+                    return True
+            elif len(contra_lower) < len(cond_lower):
+                if _whole_word_match(contra_lower, cond_lower):
+                    return True
 
     return False
 
@@ -212,10 +256,20 @@ def match_indication(
     patient_conditions: Set[str],
     indication_condition: str,
 ) -> bool:
-    """适应症匹配 — 使用标准化+包含检查
+    """适应症匹配 — 精确匹配 + 特异性限定whole-word匹配
+
+    关键改进: 不允许通用症状名(如"fever")匹配到特定复合病名(如"typhoid fever")。
+    "fever"作为通用症状不应匹配治疗伤寒的药物，因为退烧药≠伤寒治疗药。
+
+    匹配规则:
+    1. 精确相等匹配（最安全）
+    2. whole-word匹配，但仅当双方特异性级别相同：
+       - 通用→通用: "fever" → "fever" (exact match, rule 1 covers)
+       - 通用→特定: "fever" → "typhoid fever" → 不匹配（特异性不同）
+       - 特定→特定: 允许whole-word匹配
 
     Args:
-        patient_conditions: 患者疾病集合(已小写)
+        patient_conditions: 悍者疾病集合(已小写)
         indication_condition: 适应症疾病名
     Returns:
         True if 匹配成功
@@ -225,13 +279,20 @@ def match_indication(
     for condition in patient_conditions:
         cond_normalized = normalize_disease(condition)
 
-        # 精确相等
+        # 1. 精确相等（最安全）
         if cond_normalized == ind_normalized:
             return True
 
-        # 包含匹配(双向)
+        # 2. whole-word匹配 + 特异性检查(>=4字符)
+        # 防止"fever"(通用)匹配"typhoid fever"(特定)
         if len(cond_normalized) >= 4 and len(ind_normalized) >= 4:
-            if cond_normalized in ind_normalized or ind_normalized in cond_normalized:
-                return True
+            # 双方都必须是特定名才允许whole-word匹配
+            if _is_specific_disease_name(cond_normalized) and _is_specific_disease_name(ind_normalized):
+                if len(cond_normalized) < len(ind_normalized):
+                    if _whole_word_match(cond_normalized, ind_normalized):
+                        return True
+                elif len(ind_normalized) < len(cond_normalized):
+                    if _whole_word_match(ind_normalized, cond_normalized):
+                        return True
 
     return False

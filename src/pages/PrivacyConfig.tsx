@@ -206,8 +206,8 @@ export default function PrivacyConfig() {
                   <Label className="text-ia-caption font-heading font-semibold flex items-center gap-2"><TrendingDown className="h-3.5 w-3.5" />全局敏感度 Δf</Label>
                   <span className="text-xl font-heading font-bold text-primary">{config.sensitivity.toFixed(2)}</span>
                 </div>
-                <Slider value={config.sensitivity} min={0.1} max={5} step={0.1} onChange={(value) => setConfig({ ...config, sensitivity: value })} showTooltip={false} />
-                <p className="text-ia-label text-muted-foreground">敏感度衡量单个记录变化对查询结果的最大影响</p>
+                <Slider value={config.sensitivity} min={0.01} max={1.0} step={0.01} onChange={(value) => setConfig({ ...config, sensitivity: value })} showTooltip={false} />
+                <p className="text-ia-label text-muted-foreground">敏感度衡量单个记录变化对查询结果的最大影响（sigmoid输出范围[0,1]，上限1.0）</p>
               </div>
 
               <div className="space-y-3">

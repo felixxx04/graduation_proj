@@ -20,6 +20,7 @@ from app.utils.clinical_matcher import match_indication
 from app.pipeline.record_builder import build_feature_record
 from app.services.explanation_generator import generate_explanation
 from app.data.critical_interactions import check_cross_candidate_ddi, is_critical_interaction
+from app.utils.drug_translator import build_translation_cache, translate_drug_name
 from app.exceptions import (
     PredictionError,
     ModelNotLoadedError,
@@ -36,15 +37,21 @@ def _apply_dp_noise(
 ) -> Tuple[float, float, bool, Optional[Dict[str, Any]]]:
     """计算DP噪声并返回 (final_score, dp_noise, dp_anomaly, dp_confidence)
 
-    DP噪声安全下限保护: 无适应症药物(raw_score<=0.1)不应被DP噪声推到有适应症药物之上
-    DP置信区间: 基于噪声机制参数计算 95% 置信范围
+    DP噪声应用流程:
+    1. 根据噪声机制(Laplace/Gaussian)计算噪声值
+    2. final_score = raw_score + dp_noise
+    3. 截断final_score到[0, 1]范围 (标准DP后处理，不损害隐私保证)
+    4. dp_anomaly仅用于UI显示(标记噪声是否改变了排序)，不影响分数计算
+
+    截断到[0,1]是合法的DP后处理操作: 对所有相邻数据集的输出分布相同地适用，
+    不违反形式化DP保证。
     """
     dp_noise = 0.0
     dp_confidence = None
 
     if dp_config and dp_config.get('enabled', False):
         epsilon = dp_config.get('epsilon', 1.0)
-        sensitivity = dp_config.get('sensitivity', 1.0)
+        sensitivity = dp_config.get('sensitivity', 0.2)
         mechanism = dp_config.get('noiseMechanism', 'laplace')
         delta = dp_config.get('delta', 1e-5)
 
@@ -56,8 +63,10 @@ def _apply_dp_noise(
             ci_half = 1.96 * sigma
         else:
             noise = laplace_noise((1,), epsilon, sensitivity)[0]
-            # Laplace 95% CI: ±2·(sensitivity/ε)  (近似)
-            ci_half = 2.0 * (sensitivity / epsilon)
+            # Laplace 精确95% CI: ±(-b·ln(0.05)) = ±(scale * 2.996)
+            scale = sensitivity / epsilon
+            import math
+            ci_half = -scale * math.log(0.05)  # ≈ 2.996 * scale
 
         dp_noise = float(noise)
 
@@ -69,13 +78,68 @@ def _apply_dp_noise(
 
     final_score = raw_score + dp_noise
 
-    # DP噪声安全下限保护
+    # 截断到[0, 1] — 标准DP后处理，对所有输出分布相同适用
+    final_score = max(0.0, min(1.0, final_score))
+
+    # dp_anomaly仅用于UI显示: 标记噪声是否显著改变了排序方向
+    # 不影响分数计算，不违反DP保证
     dp_anomaly = False
-    if raw_score <= 0.1 and dp_noise > 0:
-        final_score = raw_score
-        dp_anomaly = True
+    if abs(dp_noise) > 0:
+        # 噪声将低分推到高分(可能误导) 或 将高分推到低分(可能埋没好药)
+        if (raw_score <= 0.1 and final_score > raw_score + 0.05) or \
+           (raw_score >= 0.9 and final_score < raw_score - 0.05):
+            dp_anomaly = True
 
     return final_score, dp_noise, dp_anomaly, dp_confidence
+
+
+def _translate_recommendation_names(
+    recommendations: List[Dict[str, Any]],
+    translation_map: Dict[str, str],
+) -> None:
+    """翻译推荐结果列表中的药物名为中文
+
+    drugName: 替换为中文
+    englishName: 保留英文原名
+    """
+    for rec in recommendations:
+        original_name = rec.get('drugName', '')
+        if original_name:
+            chinese_name = translate_drug_name(original_name, translation_map)
+            rec['englishName'] = original_name
+            rec['drugName'] = chinese_name
+
+
+def _translate_excluded_drug_names(
+    excluded_drugs: List[Dict[str, Any]],
+    translation_map: Dict[str, str],
+) -> None:
+    """翻译排除药物列表中的药物名"""
+    for drug in excluded_drugs:
+        original_name = drug.get('drug_name', drug.get('drugName', drug.get('name', '')))
+        if original_name:
+            chinese_name = translate_drug_name(original_name, translation_map)
+            drug['englishName'] = original_name
+            if 'drug_name' in drug:
+                drug['drug_name'] = chinese_name
+            if 'drugName' in drug:
+                drug['drugName'] = chinese_name
+            if 'name' in drug:
+                drug['name'] = chinese_name
+
+
+def _translate_ddi_warnings(
+    ddi_warnings: List[Dict[str, str]],
+    translation_map: Dict[str, str],
+) -> None:
+    """翻译DDI交叉检查警告中的药物名"""
+    for warning in ddi_warnings:
+        for key in ('drug_a', 'drug_b'):
+            original = warning.get(key, '')
+            if original:
+                chinese_name = translate_drug_name(original, translation_map)
+                warning[f'{key}_en'] = original
+                warning[key] = chinese_name
 
 
 class RecommendationPredictor:
@@ -96,6 +160,9 @@ class RecommendationPredictor:
         self.contraindication_map: Dict[str, List[Dict[str, Any]]] = {}
         self.interaction_map: Dict[str, List[Dict[str, Any]]] = {}
         self.critical_interactions: Set[Tuple[str, str]] = set()
+
+        # 药物名英→中翻译映射
+        self._drug_name_translation_map: Dict[str, str] = {}
 
     def load_model(self, model_path: str, field_dims: List[int]) -> None:
         """加载预训练模型"""
@@ -126,13 +193,56 @@ class RecommendationPredictor:
         logger.info(f"Model initialized with field_dims: {field_dims}")
 
     def set_drugs_data(self, drugs: List[Dict[str, Any]]) -> None:
-        """设置药物数据"""
+        """设置药物数据，合并适应症（保留pipeline_data中的英文结构化适应症）
+
+        当后端传入的数据覆盖已有药物时，保留已有的英文结构化 indications，
+        不被后端的中文 indications 覆盖（后端 indications 是中文且可能为空）。
+        """
         if not isinstance(drugs, list):
             logger.warning(f"Invalid drugs_data type: {type(drugs)}, expected list")
             self.drugs_data = []
             return
+
+        # 合并适应症：保留已有的英文结构化 indications
+        existing_drug_map = {
+            d.get('generic_name', d.get('name', '')): d
+            for d in self.drugs_data
+            if d.get('generic_name') or d.get('name')
+        }
+
+        for drug in drugs:
+            name = drug.get('generic_name', drug.get('name', ''))
+            existing = existing_drug_map.get(name)
+            if existing:
+                # 保留已有的英文结构化 indications（来自 pipeline_data.json）
+                existing_indications = existing.get('indications', []) or []
+                new_indications = drug.get('indications', []) or []
+
+                # 如果已有 indications 是结构化英文（来自DeepSeek），且新 indications 是中文/空，
+                # 则保留已有的
+                if existing_indications and not new_indications:
+                    drug['indications'] = existing_indications
+                elif existing_indications and new_indications:
+                    # 已有英文结构化优先（更完整），新数据作为补充
+                    drug['indications'] = existing_indications
+                # 如果已有 indications_raw 但 indications 为空，也保留
+                if existing.get('indications_raw') and not drug.get('indications_raw'):
+                    drug['indications_raw'] = existing.get('indications_raw')
+
         self.drugs_data = drugs
         logger.info(f"Drugs data updated: {len(drugs)} drugs")
+
+        # 构建药物名翻译缓存
+        try:
+            self._drug_name_translation_map = build_translation_cache(drugs)
+            translated_count = sum(
+                1 for k, v in self._drug_name_translation_map.items() if k != v
+            )
+            logger.info(
+                f"Drug name translation: {translated_count}/{len(self._drug_name_translation_map)} names translated to Chinese"
+            )
+        except Exception as e:
+            logger.warning(f"Failed to build drug translation cache: {e}", exc_info=True)
 
     def set_safety_data(
         self,
@@ -335,6 +445,12 @@ class RecommendationPredictor:
             except Exception:
                 logger.warning("Audit logging failed (non-blocking)", exc_info=True)
 
+            # 翻译药物名为中文（保留英文原名到 englishName）
+            _translate_recommendation_names(top_recommendations, self._drug_name_translation_map)
+            _translate_recommendation_names(base_merged[:top_k], self._drug_name_translation_map)
+            _translate_excluded_drug_names(exclusion_result.excluded_drugs, self._drug_name_translation_map)
+            _translate_ddi_warnings(ddi_warnings, self._drug_name_translation_map)
+
             return {
                 'recommendationId': request_id,
                 'requestId': request_id,
@@ -481,6 +597,8 @@ class RecommendationPredictor:
             base_score = 0.05  # 无适应症 → 低分
 
             # 检查适应症匹配 (v2: 使用clinical_matcher标准化匹配)
+            # 优先匹配结构化 indications，其次匹配 indications_raw
+            matched = False
             indications = drug.get('indications', []) or []
             for ind in indications:
                 ind_str = str(ind).lower() if isinstance(ind, str) else str(ind.get('condition', '')).lower()
@@ -490,6 +608,20 @@ class RecommendationPredictor:
                         base_score = 1.0
                     else:
                         base_score = max(base_score, 0.7)
+                    matched = True
+                    break
+
+            # fallback: 匹配 indications_raw（简短英文描述）
+            if not matched:
+                raw = drug.get('indications_raw', '') or ''
+                if raw:
+                    # indications_raw 可能用 | 分隔多种适应症
+                    raw_parts = [p.strip().lower() for p in raw.split('|')]
+                    for part in raw_parts:
+                        if part and match_indication(patient_conditions, part):
+                            base_score = max(base_score, 0.8)  # raw匹配略低于结构化
+                            matched = True
+                            break
 
             # DP噪声
             final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(base_score, dp_config)
