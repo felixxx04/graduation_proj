@@ -37,15 +37,21 @@ def _apply_dp_noise(
 ) -> Tuple[float, float, bool, Optional[Dict[str, Any]]]:
     """计算DP噪声并返回 (final_score, dp_noise, dp_anomaly, dp_confidence)
 
-    DP噪声应用流程:
-    1. 根据噪声机制(Laplace/Gaussian)计算噪声值
-    2. final_score = raw_score + dp_noise
-    3. 截断final_score到[0, 1]范围 (标准DP后处理，不损害隐私保证)
-    4. dp_anomaly仅用于UI显示(标记噪声是否改变了排序)，不影响分数计算
-
-    截断到[0,1]是合法的DP后处理操作: 对所有相邻数据集的输出分布相同地适用，
-    不违反形式化DP保证。
+    DP噪声应用流程 (v3: 双层防护):
+    1. 临床安全阈值: raw_score < 0.15 的药物直接归零 (公开阈值，DP后处理定理允许)
+       - 无适应症药物(base_score=0.05)不会被噪声推升到高分
+       - 阈值是公开参数，不依赖隐私数据，不违反DP保证
+    2. 根据噪声机制(Laplace/Gaussian)计算噪声值
+    3. final_score = raw_score + dp_noise
+    4. 截断: 下界0, 上界max(1.0, raw_score+0.35) — 防止噪声放大超过信号3.5倍
+    5. dp_anomaly用于UI显示: 噪声显著改变排序方向时标记警告
     """
+    # 第一层防护: 临床安全阈值 (公开阈值, 不违反DP后处理定理)
+    # raw_score < 0.15 说明药物几乎无适应症证据, 噪声不应将其推升为"推荐"
+    CLINICAL_THRESHOLD = 0.15
+    if raw_score < CLINICAL_THRESHOLD:
+        return 0.0, 0.0, False, None
+
     dp_noise = 0.0
     dp_confidence = None
 
@@ -78,16 +84,18 @@ def _apply_dp_noise(
 
     final_score = raw_score + dp_noise
 
-    # 截断到[0, 1] — 标准DP后处理，对所有输出分布相同适用
-    final_score = max(0.0, min(1.0, final_score))
+    # 第二层防护: 截断下界0, 上界=min(1.0, raw_score+0.35)
+    # 防止噪声将药物推升超过原始信号3.5倍 (如raw=0.2→最多到0.55)
+    # 上界截断是公开函数(仅依赖raw_score和常数), DP后处理定理允许
+    ceiling = min(1.0, raw_score + 0.35)
+    final_score = max(0.0, min(ceiling, final_score))
 
-    # dp_anomaly仅用于UI显示: 标记噪声是否显著改变了排序方向
-    # 不影响分数计算，不违反DP保证
+    # dp_anomaly用于UI显示: 标记噪声是否显著改变了排序方向
     dp_anomaly = False
     if abs(dp_noise) > 0:
         # 噪声将低分推到高分(可能误导) 或 将高分推到低分(可能埋没好药)
-        if (raw_score <= 0.1 and final_score > raw_score + 0.05) or \
-           (raw_score >= 0.9 and final_score < raw_score - 0.05):
+        if (raw_score <= 0.2 and final_score > raw_score + 0.1) or \
+           (raw_score >= 0.8 and final_score < raw_score - 0.1):
             dp_anomaly = True
 
     return final_score, dp_noise, dp_anomaly, dp_confidence

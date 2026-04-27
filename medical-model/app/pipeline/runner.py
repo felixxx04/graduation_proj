@@ -50,9 +50,37 @@ class PipelineRunner:
         self,
         indication_map: Dict[str, List[Dict[str, Any]]],
     ) -> None:
-        """加载适应症映射数据"""
-        self.indication_map = indication_map
-        logger.info(f"Loaded indication data: {len(indication_map)} drugs with indications")
+        """加载适应症映射数据并标准化type值
+
+        标准化规则:
+        - "Supportive" → "Adjunctive" (辅助/佐剂治疗)
+        - 空值/None → "On Label" (默认为标准适应症)
+        - 其他值保持不变
+        """
+        TYPE_NORMALIZE = {
+            'supportive': 'Adjunctive',
+            '': 'On Label',
+        }
+        normalized_map = {}
+        normalize_count = 0
+        for drug_name, indications in indication_map.items():
+            normalized_indications = []
+            for ind in indications:
+                if isinstance(ind, dict):
+                    raw_type = str(ind.get('type', '')).strip()
+                    normalized_type = TYPE_NORMALIZE.get(raw_type.lower(), raw_type)
+                    if normalized_type != raw_type:
+                        normalize_count += 1
+                    normalized_ind = {**ind, 'type': normalized_type}
+                    normalized_indications.append(normalized_ind)
+                else:
+                    normalized_indications.append(ind)
+            normalized_map[drug_name] = normalized_indications
+        self.indication_map = normalized_map
+        logger.info(
+            f"Loaded indication data: {len(normalized_map)} drugs, "
+            f"normalized {normalize_count} type values"
+        )
 
     def build_training_samples(
         self,

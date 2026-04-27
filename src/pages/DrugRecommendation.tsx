@@ -58,6 +58,7 @@ interface RecommendationExplanation {
 interface RecommendationResultItem {
   drugId: number
   drugName: string
+  englishName?: string
   dosage: string
   frequency: string
   confidence: number | null
@@ -74,6 +75,8 @@ interface RecommendationResultItem {
   warnings?: string[]
   requiresReview?: boolean
   safetyType?: string
+  qualityWarning?: string
+  dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
 }
 
 interface ExcludedDrug {
@@ -108,6 +111,7 @@ interface GenerateResponse {
 interface DrugResult {
   id: string
   drugName: string
+  englishName?: string
   dosage: string
   frequency: string
   confidence: number | null
@@ -124,6 +128,8 @@ interface DrugResult {
   warnings?: string[]
   requiresReview?: boolean
   safetyType?: string
+  qualityWarning?: string
+  dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
 }
 
 interface PatientData {
@@ -169,7 +175,12 @@ export default function DrugRecommendation() {
   const [selectedDrug, setSelectedDrug] = useState<DrugResult | null>(null)
   const [showExplainability, setShowExplainability] = useState(false)
   const [showConsentDialog, setShowConsentDialog] = useState(false)
-  const [consentGiven, setConsentGiven] = useState(false)
+  const [consentGiven, setConsentGiven] = useState(() => {
+    // 从sessionStorage恢复consent状态
+    try {
+      return sessionStorage.getItem('dp_consent_given') === 'true'
+    } catch { return false }
+  })
   const [excludedDrugs, setExcludedDrugs] = useState<ExcludedDrug[]>([])
   const [budgetInfo, setBudgetInfo] = useState<PrivacyBudgetInfo | null>(null)
   const [totalCandidateInfo, setTotalCandidateInfo] = useState<{ total: number; excluded: number; safe: number } | null>(null)
@@ -250,6 +261,9 @@ export default function DrugRecommendation() {
           warnings: item.warnings,
           requiresReview: item.requiresReview,
           safetyType: item.safetyType,
+          englishName: item.englishName,
+          qualityWarning: item.qualityWarning,
+          dpConfidence: item.dpConfidence,
         }))
       )
       setShowResults(true)
@@ -310,6 +324,13 @@ export default function DrugRecommendation() {
               <button
                 onClick={() => {
                   setConsentGiven(true)
+                  // 持久化consent到sessionStorage (页面刷新不丢失)
+                  try { sessionStorage.setItem('dp_consent_given', 'true') } catch {}
+                  // 调用consent审计API记录
+                  api.post('/model/audit/consent', {
+                    action: 'consent_given',
+                    timestamp: new Date().toISOString(),
+                  }).catch(() => {})
                   setShowConsentDialog(false)
                 }}
                 className="px-4 py-2 rounded-standard bg-primary text-primary-foreground font-heading font-semibold text-ia-label hover:bg-primary/90"
@@ -662,6 +683,9 @@ export default function DrugRecommendation() {
                           <div className="flex items-center gap-2 mb-1.5">
                             <Pill className="h-4 w-4 text-primary" />
                             <h4 className="font-heading font-semibold text-ia-card-title">{rec.drugName}</h4>
+                            {rec.englishName && (
+                              <span className="text-xs text-muted-foreground font-mono">{rec.englishName}</span>
+                            )}
                             <span className={`ia-badge text-[10px] px-1.5 py-0.5 ${
                               rec.mode === 'model'
                                 ? 'bg-primary/10 text-primary border-primary/20'
@@ -672,6 +696,16 @@ export default function DrugRecommendation() {
                             {rec.requiresReview && (
                               <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-ia-data-4/10 text-ia-data-4 border-ia-data-4/20">
                                 需审核
+                              </span>
+                            )}
+                            {rec.qualityWarning && (
+                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 border-amber-200">
+                                {rec.qualityWarning}
+                              </span>
+                            )}
+                            {rec.dpAnomaly && (
+                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-rose-100 text-rose-700 border-rose-200">
+                                DP噪声警示
                               </span>
                             )}
                           </div>
