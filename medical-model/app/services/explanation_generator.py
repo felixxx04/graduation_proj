@@ -16,6 +16,7 @@ import numpy as np
 
 from app.utils.clinical_matcher import match_indication, normalize_disease
 from app.pipeline.schema import FIELD_ORDER
+from app.utils.translation_mapper import FIELD_NAME_ZH
 
 logger = logging.getLogger(__name__)
 
@@ -194,10 +195,15 @@ def _build_feature_attribution(
             if i < len(field_indices):
                 raw_value = encoder.inverse_transform(field_name, field_indices[i])
 
+            # 翻译特征名和值
+            translated_name = FIELD_NAME_ZH.get(field_name, field_name)
+            translated_value = raw_value  # 值的翻译由predictor.py的_translate_recommendation_names处理
+
             features.append({
+                'name': translated_name,
                 'field': field_name,
                 'contribution': round(contribution, 3),
-                'value': raw_value,
+                'value': translated_value,
             })
 
         # 按贡献度降序排列

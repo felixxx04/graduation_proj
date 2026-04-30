@@ -5,7 +5,7 @@ from typing import List
 class Settings(BaseSettings):
     """模型服务配置，支持环境变量覆盖
 
-    v3: embed_dim=16(优化DP-SGD下区分度), DP模式下自动关闭dropout,
+    v4: embed_dim=8(匹配14-field schema), DP模式下自动关闭dropout,
     dp_max_grad_norm=1.0, batch_size=256(DP时Opacus建议较大batch)
     """
 
@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     app_name: str = "Medical Recommendation Model Service"
     debug: bool = False
 
-    # 模型配置 (v3: embed_dim从8提升到16, 改善DP-SGD下的separation)
-    embed_dim: int = 16
+    # 模型配置 (v4: embed_dim=8, 匹配14-field schema, medium data size)
+    embed_dim: int = 8
     hidden_dims: List[int] = [64, 32]
     dropout: float = 0.1       # 非DP模式使用
     embed_dropout: float = 0.1  # 非DP模式使用

@@ -375,6 +375,14 @@ class RuleMarker:
                     warnings.append(f"育龄女性注意: 妊娠{pregnancy_cat}级药物")
                     requires_review = True
 
+            # 安全数据未验证检查: 药物不在禁忌症映射且不在交互映射中，
+            # 说明其安全数据未经专业验证，需临床确认后方可使用
+            # 注意: 不硬排除，仅标记警告和requires_review
+            if drug_name not in contraindication_map and drug_name not in interaction_map:
+                contraindication_type = 'data_unverified'
+                warnings.append(f"安全数据未验证: {drug_name}")
+                requires_review = True
+
             candidate_flags[drug_name] = {
                 'warnings': warnings,
                 'contraindication_type': contraindication_type,

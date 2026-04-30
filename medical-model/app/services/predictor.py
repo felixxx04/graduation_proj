@@ -159,6 +159,16 @@ def _translate_recommendation_names(
                         for c in matched_conditions
                     ]
 
+        # 翻译 warnings 列表中的英文药物名/病况名
+        warnings = rec.get('warnings', [])
+        if warnings:
+            rec['warnings'] = _translate_warnings(warnings)
+
+        # 翻译 explanation.warnings 列表
+        explanation_warnings = rec.get('explanation', {}).get('warnings', [])
+        if explanation_warnings:
+            rec['explanation']['warnings'] = _translate_warnings(explanation_warnings)
+
 
 def _translate_excluded_drug_names(
     excluded_drugs: List[Dict[str, Any]],
@@ -196,6 +206,49 @@ def _translate_ddi_warnings(
                 chinese_name = translate_drug_name(original, translation_map)
                 warning[f'{key}_en'] = original
                 warning[key] = chinese_name
+
+
+def _translate_warnings(warnings: List[str]) -> List[str]:
+    """翻译警告列表中的英文药物名/病况名为中文
+
+    警告格式通常是"中文前缀: 英文名"或"中文前缀: 英文名 + 英文名"
+    仅翻译其中的英文名部分，保留中文前缀不变。
+    """
+    mapper = get_translation_mapper()
+    translated = []
+    for warning in warnings:
+        # 警告可能包含已翻译的药物名(来自翻译后的drugName)，
+        # 也可能包含英文病况名(来自RuleMarker原始生成)
+        # 简化处理: 尝试翻译warning中可能出现的英文病况名
+        translated_warning = warning
+        # 翻译安全数据未验证警告中的药物名
+        if '安全数据未验证' in warning:
+            # 格式: "安全数据未验证: EnglishDrugName"
+            parts = warning.split(': ', 1)
+            if len(parts) == 2:
+                drug_en = parts[1]
+                drug_zh = translate_drug_name(drug_en, mapper._drug_name_map) if mapper._drug_name_map else drug_en
+                translated_warning = f"{parts[0]}: {drug_zh}"
+        # 翻译交互警告中的药物名
+        elif '交互' in warning or '中度交互' in warning or '严重交互' in warning:
+            parts = warning.split(': ', 1)
+            if len(parts) == 2:
+                # 交互警告可能包含多个药物名用 " + " 连接
+                drug_parts = parts[1].split(' + ')
+                translated_drug_parts = [
+                    translate_drug_name(p.strip(), mapper._drug_name_map) if mapper._drug_name_map else p.strip()
+                    for p in drug_parts
+                ]
+                translated_warning = f"{parts[0]}: {' + '.join(translated_drug_parts)}"
+        # 翻译禁忌警告中的病况名
+        elif '相对禁忌' in warning or '绝对禁忌' in warning:
+            parts = warning.split(': ', 1)
+            if len(parts) == 2:
+                condition_en = parts[1]
+                condition_zh = mapper.translate_condition(condition_en)
+                translated_warning = f"{parts[0]}: {condition_zh}"
+        translated.append(translated_warning)
+    return translated
 
 
 def _translate_side_effects(drug: Dict[str, Any]) -> List[str]:
@@ -267,41 +320,46 @@ class RecommendationPredictor:
         logger.info(f"Model initialized with field_dims: {field_dims}")
 
     def set_drugs_data(self, drugs: List[Dict[str, Any]]) -> None:
-        """设置药物数据，合并适应症（保留pipeline_data中的英文结构化适应症）
+        """设置药物数据，合并适应症（保留pipeline_data中的英文结构化数据）
 
-        当后端传入的数据覆盖已有药物时，保留已有的英文结构化 indications，
-        不被后端的中文 indications 覆盖（后端 indications 是中文且可能为空）。
+        当后端传入的数据覆盖已有药物时，保留已有的英文结构化字段，
+        因为后端DB数据可能缺少 side_effects_raw、drug_class_en 等字段。
         """
         if not isinstance(drugs, list):
             logger.warning(f"Invalid drugs_data type: {type(drugs)}, expected list")
             self.drugs_data = []
             return
 
-        # 合并适应症：保留已有的英文结构化 indications
+        # 合并：保留已有的英文结构化数据（来自 pipeline_data.json）
         existing_drug_map = {
             d.get('generic_name', d.get('name', '')): d
             for d in self.drugs_data
             if d.get('generic_name') or d.get('name')
         }
 
+        # 需要优先保留 pipeline_data 值的字段列表
+        PRESERVE_FIELDS = (
+            'indications', 'indications_raw', 'side_effects_raw',
+            'drug_class_en', 'pregnancy_category', 'typical_dosage',
+            'typical_frequency', 'dosage_form', 'strength',
+            'route_of_administration', 'availability',
+        )
+
         for drug in drugs:
             name = drug.get('generic_name', drug.get('name', ''))
             existing = existing_drug_map.get(name)
             if existing:
-                # 保留已有的英文结构化 indications（来自 pipeline_data.json）
-                existing_indications = existing.get('indications', []) or []
-                new_indications = drug.get('indications', []) or []
-
-                # 如果已有 indications 是结构化英文（来自DeepSeek），且新 indications 是中文/空，
-                # 则保留已有的
-                if existing_indications and not new_indications:
-                    drug['indications'] = existing_indications
-                elif existing_indications and new_indications:
-                    # 已有英文结构化优先（更完整），新数据作为补充
-                    drug['indications'] = existing_indications
-                # 如果已有 indications_raw 但 indications 为空，也保留
-                if existing.get('indications_raw') and not drug.get('indications_raw'):
-                    drug['indications_raw'] = existing.get('indications_raw')
+                # 对每个保留字段：如果 pipeline_data 有值且后端数据没有，
+                # 或者两者都有值但 pipeline_data 更完整，保留 pipeline_data 值
+                for field in PRESERVE_FIELDS:
+                    existing_val = existing.get(field)
+                    new_val = drug.get(field)
+                    # pipeline_data 有值且后端没有 → 保留 pipeline_data
+                    if existing_val and not new_val:
+                        drug[field] = existing_val
+                    # 两者都有值 → pipeline_data 优先（更完整/更准确）
+                    elif existing_val and new_val:
+                        drug[field] = existing_val
 
         self.drugs_data = drugs
         logger.info(f"Drugs data updated: {len(drugs)} drugs")
@@ -389,6 +447,12 @@ class RecommendationPredictor:
             flag_result = self.rule_marker.mark(
                 patient_data, exclusion_result.safe_candidates,
                 self.contraindication_map, self.interaction_map,
+            )
+
+            # 统计安全数据未验证的候选药物数量
+            unverified_count = sum(
+                1 for flags in flag_result.candidate_flags.values()
+                if flags.get('contraindication_type') == 'data_unverified'
             )
 
             # ===== Layer 3: DeepFM排序 =====
@@ -540,6 +604,7 @@ class RecommendationPredictor:
                 'totalCandidates': len(self.drugs_data),
                 'totalExcluded': len(exclusion_result.excluded_drugs),
                 'totalSafe': len(exclusion_result.safe_candidates),
+                'unverifiedCount': unverified_count,
                 'privacyBudget': budget_info,
                 'disclaimer': "AI推荐仅供参考，最终用药决策应由临床医师做出",
                 'recommendationMode': 'dp_protected' if (dp_config and dp_config.get('enabled', False)) else 'standard',

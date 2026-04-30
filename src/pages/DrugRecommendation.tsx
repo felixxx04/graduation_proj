@@ -77,6 +77,7 @@ interface RecommendationResultItem {
   safetyType?: string
   qualityWarning?: string
   dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
+  matchedDisease?: string
 }
 
 interface ExcludedDrug {
@@ -130,6 +131,7 @@ interface DrugResult {
   safetyType?: string
   qualityWarning?: string
   dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
+  matchedDisease?: string
 }
 
 interface PatientData {
@@ -264,6 +266,7 @@ export default function DrugRecommendation() {
           englishName: item.englishName,
           qualityWarning: item.qualityWarning,
           dpConfidence: item.dpConfidence,
+          matchedDisease: item.matchedDisease,
         }))
       )
       setShowResults(true)
@@ -718,6 +721,11 @@ export default function DrugRecommendation() {
                                 {rec.safetyType}
                               </span>
                             )}
+                            {rec.matchedDisease && (
+                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary border-primary/20">
+                                匹配疾病: {rec.matchedDisease}
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="text-right">
@@ -745,6 +753,11 @@ export default function DrugRecommendation() {
                                 (噪声 {rec.dpNoise >= 0 ? '+' : ''}{rec.dpNoise.toFixed(3)})
                               </span>
                             </>
+                          )}
+                          {rec.dpConfidence && (
+                            <span className="text-[10px] text-muted-foreground">
+                              [CI: {rec.dpConfidence.low.toFixed(2)} - {rec.dpConfidence.high.toFixed(2)}]
+                            </span>
                           )}
                         </div>
                       )}
