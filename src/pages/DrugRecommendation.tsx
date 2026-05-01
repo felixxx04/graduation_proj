@@ -445,7 +445,7 @@ export default function DrugRecommendation() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="diseases" className="text-ia-caption font-heading font-semibold">确诊疾病（逗号分隔）</Label>
-                <Input id="diseases" value={patientData.diseases} onChange={(e) => setPatientData({ ...patientData, diseases: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="hypertension, type 2 diabetes mellitus 或 高血压，2型糖尿病" />
+                <Input id="diseases" value={patientData.diseases} onChange={(e) => setPatientData({ ...patientData, diseases: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="高血压，2型糖尿病" />
               </div>
 
               <div className="space-y-1.5">
@@ -462,11 +462,11 @@ export default function DrugRecommendation() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="allergies" className="text-ia-caption font-heading font-semibold">过敏史</Label>
-                  <Input id="allergies" value={patientData.allergies} onChange={(e) => setPatientData({ ...patientData, allergies: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="penicillin 或 青霉素，磺胺类" />
+                  <Input id="allergies" value={patientData.allergies} onChange={(e) => setPatientData({ ...patientData, allergies: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="青霉素，磺胺类" />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="currentMedications" className="text-ia-caption font-heading font-semibold">当前用药</Label>
-                  <Input id="currentMedications" value={patientData.currentMedications} onChange={(e) => setPatientData({ ...patientData, currentMedications: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="metformin, aspirin 或 二甲双胍，阿司匹林" />
+                  <Input id="currentMedications" value={patientData.currentMedications} onChange={(e) => setPatientData({ ...patientData, currentMedications: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="二甲双胍，阿司匹林" />
                 </div>
               </div>
 
