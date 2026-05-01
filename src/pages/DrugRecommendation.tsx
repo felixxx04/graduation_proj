@@ -755,9 +755,27 @@ export default function DrugRecommendation() {
                             </>
                           )}
                           {rec.dpConfidence && (
-                            <span className="text-[10px] text-muted-foreground">
-                              [CI: {rec.dpConfidence.low.toFixed(2)} - {rec.dpConfidence.high.toFixed(2)}]
-                            </span>
+                            <div className="mt-1 flex items-center gap-2">
+                              <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                                置信区间
+                              </span>
+                              <div className="relative h-2 w-24 bg-muted rounded-full overflow-hidden">
+                                <div
+                                  className="absolute h-full bg-primary/40 rounded-full"
+                                  style={{
+                                    left: `${Math.max(0, rec.dpConfidence.low) * 100}%`,
+                                    width: `${(Math.min(1, rec.dpConfidence.high) - Math.max(0, rec.dpConfidence.low)) * 100}%`,
+                                  }}
+                                />
+                                <div
+                                  className="absolute h-full w-1 bg-primary rounded"
+                                  style={{ left: `${rec.score * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-[10px] text-muted-foreground">
+                                [{rec.dpConfidence.low.toFixed(2)}–{rec.dpConfidence.high.toFixed(2)}]
+                              </span>
+                            </div>
                           )}
                         </div>
                       )}
