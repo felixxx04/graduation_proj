@@ -174,7 +174,8 @@ def _translate_excluded_drug_names(
     excluded_drugs: List[Dict[str, Any]],
     translation_map: Dict[str, str],
 ) -> None:
-    """翻译排除药物列表中的药物名和类别"""
+    """翻译排除药物列表中的药物名、类别和排除原因"""
+    import re
     mapper = get_translation_mapper()
     for drug in excluded_drugs:
         original_name = drug.get('drug_name', drug.get('drugName', drug.get('name', '')))
@@ -192,6 +193,118 @@ def _translate_excluded_drug_names(
         category = drug.get('category', '')
         if category:
             drug['category'] = mapper.translate_class(category)
+
+        # 翻译排除原因中的英文病况名/药物名
+        reason = drug.get('reason', '')
+        if reason and any(c.isalpha() and ord(c) < 128 for c in reason):
+            # reason 含英文内容，逐词替换可翻译的关键词
+            translated_reason = reason
+            if ': ' in reason:
+                prefix, content = reason.split(': ', 1)
+                # 1) 先尝试整句翻译（如 "moderate to severe hypertension"）
+                full_zh = mapper.translate_condition(content.lower())
+                if full_zh != content.lower():
+                    translated_reason = f"{prefix}: {full_zh}"
+                else:
+                    # 2) 逐词扫描替换：condition名、药物名、药物类别名
+                    translated_content = content
+                    # 按词长降序扫描，避免短词误截长词
+                    known_conditions = sorted(
+                        (k for k in mapper._condition_map if k in content.lower()),
+                        key=len, reverse=True,
+                    )
+                    for cond_en in known_conditions:
+                        cond_zh = mapper._condition_map[cond_en]
+                        # 大小写不敏感替换
+                        translated_content = re.sub(
+                            re.escape(cond_en), cond_zh, translated_content,
+                            flags=re.IGNORECASE,
+                        )
+                    # 替换药物名（使用词边界防止部分替换）
+                    for en_name, cn_name in translation_map.items():
+                        pattern = r'\b' + re.escape(en_name) + r'\b'
+                        try:
+                            translated_content = re.sub(
+                                pattern, cn_name, translated_content,
+                                flags=re.IGNORECASE,
+                            )
+                        except re.error:
+                            pass
+                    # 替换药物类别名
+                    for cls_en, cls_zh in mapper._class_map.items():
+                        # 使用词边界防止部分替换（如 "ARB" 不应匹配 "carbapenems"）
+                        pattern = r'\b' + re.escape(cls_en) + r'\b'
+                        try:
+                            translated_content = re.sub(
+                                pattern, cls_zh, translated_content,
+                                flags=re.IGNORECASE,
+                            )
+                        except re.error:
+                            pass
+                    # 常见描述性词汇替换（使用词边界防止部分替换）
+                    desc_map = {
+                        'hypersensitivity': '超敏反应',
+                        'uncontrolled': '未控制',
+                        'contraindicated': '禁忌',
+                        'contraindication': '禁忌症',
+                        'severe': '重度',
+                        'moderate': '中度',
+                        'mild': '轻度',
+                        'immediate': '速发',
+                        'confirmed': '已确诊',
+                        'wild-type': '野生型',
+                        'or': '或',
+                        'to': '至',
+                        'with': '伴有',
+                        'patients': '患者',
+                        'should not': '不应',
+                        'avoid': '避免',
+                        'history of': '既往',
+                        # 常见药物类别名（按长度降序排列，优先匹配长词）
+                        'beta-lactamase inhibitors': 'β-内酰胺酶抑制剂',
+                        'beta-lactamase inhibitor': 'β-内酰胺酶抑制剂',
+                        'carbapenems': '碳青霉烯类',
+                        'carbapenem': '碳青霉烯类',
+                        'penicillins': '青霉素类',
+                        'penicillin': '青霉素',
+                        'cephalosporins': '头孢菌素类',
+                        'cephalosporin': '头孢菌素',
+                        'sulfonylureas': '磺酰脲类',
+                        'sulbactam': '舒巴坦',
+                        'tazobactam': '他唑巴坦',
+                        'clavulanate': '克拉维酸',
+                        'insulin': '胰岛素',
+                        'metformin': '二甲双胍',
+                        'aspirin': '阿司匹林',
+                        'warfarin': '华法林',
+                        'heparin': '肝素',
+                        # 常见病况术语
+                        'melanoma': '黑色素瘤',
+                        'pulmonary hypertension': '肺动脉高压',
+                        'endocrine neoplasia': '内分泌肿瘤',
+                        'milk protein': '乳蛋白',
+                        'supine': '卧位',
+                        'syndrome': '综合征',
+                        'peripheral neuropathy': '外周神经病变',
+                        'impaired circulation': '循环障碍',
+                        'beta-lactams': 'β-内酰胺类',
+                        'beta-lactam': 'β-内酰胺类',
+                        'other': '其他',
+                        'anaphylaxis': '过敏性休克',
+                        'e.g.': '例如',
+                    }
+                    for en_desc, zh_desc in desc_map.items():
+                        # 短词（≤3字符）必须使用词边界，防止 "in" 替换 "penicillins"
+                        if len(en_desc) <= 3:
+                            pattern = r'\b' + re.escape(en_desc) + r'\b'
+                        else:
+                            pattern = re.escape(en_desc)
+                        translated_content = re.sub(
+                            pattern, zh_desc, translated_content,
+                            flags=re.IGNORECASE,
+                        )
+                    translated_reason = f"{prefix}: {translated_content}"
+            drug['reason'] = translated_reason
 
 
 def _translate_ddi_warnings(

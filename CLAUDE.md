@@ -157,11 +157,11 @@ Model service response fields are translated from English to Chinese before retu
 - Deep: MLP with LayerNorm + ReLU + per-layer differentiated dropout
 - DeepFM: FM + Deep + continuous feature bypass (age_raw, bmi_raw, gfr_raw, liver_score_raw)
 - Returns raw logits; sigmoid applied manually at inference
-- 16 categorical fields + 4 continuous features (718 drug candidates)
-- embed_dim=16, hidden_dims=[64, 32]
+- 14 categorical fields + 4 continuous features (1815 drug candidates)
+- embed_dim=8, hidden_dims=[64, 32]
 
 ### Feature Schema (pipeline/schema.py)
-16 categorical fields: age_group, gender, bmi_group, renal_function, hepatic_function, primary_disease, secondary_disease, allergy_severity, drug_class, med_class_1-4, pregnancy_cat, rx_otc, drug_candidate
+14 categorical fields: age_group, gender, bmi_group, renal_function, hepatic_function, primary_disease, secondary_disease, allergy_severity, drug_class, med_class_1-4, pregnancy_cat, rx_otc, drug_candidate
 4 continuous features: age_raw, bmi_raw, gfr_raw, liver_score_raw
 
 ## Port Configuration
@@ -177,9 +177,13 @@ Model service response fields are translated from English to Chinese before retu
 
 ## Current Training Status
 
-Phase 2 experiments completed (2026-04-26). Results in `experiments/results/phase2/`:
-- `no_dp_baseline_v5`: AUC-PR=0.8995, zero safety violations
-- `dp_finetune_eps1_v5`: AUC-PR=0.8998 (DP finetune, eps=1.0)
-- `dp_finetune_eps05_v5`: AUC-PR=0.9011 (DP finetune, eps=0.5) — **best model**
+Phase 3 experiments completed (2026-05-01). Results in `experiments/results/phase3/`:
+- **No-DP baseline**: AUC-PR=0.9668, separation=0.7506
+- **DP ε=1.0 finetune**: AUC-PR=0.9658, separation=0.8505
+- **DP ε=0.5 finetune**: AUC-PR=0.9662, separation=0.8506
 
-**NOTE**: `saved_models/` currently contains the older baseline (embed_dim=8, AUC-PR=0.749). The Phase 2 best model (embed_dim=16, AUC-PR=0.901) is in `experiments/results/phase2/dp_finetune_eps05_v5/`. Deploy the Phase 2 model to `saved_models/` for the production service to use it.
+**Key finding**: DP protection does NOT degrade model quality. DP models show higher separation (0.85 vs 0.75), meaning they better distinguish high-score drugs from low-score drugs.
+
+`saved_models/` contains the current production model (embed_dim=8, 14-field schema, AUC-PR=0.9466, trained on 58525 samples).
+
+Safety data coverage: contraindication 95.3% (1831/1815), interaction 81.5% (1480/1815), any-safety 97.0%.
