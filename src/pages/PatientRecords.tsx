@@ -106,11 +106,11 @@ export default function PatientRecords() {
       else groups['70岁以上']++
     })
     return [
-      { name: '30-40岁', value: groups['30-40岁'], color: 'hsl(var(--ia-data-1))' },
-      { name: '40-50岁', value: groups['40-50岁'], color: 'hsl(var(--ia-data-2))' },
-      { name: '50-60岁', value: groups['50-60岁'], color: 'hsl(var(--ia-data-3))' },
-      { name: '60-70岁', value: groups['60-70岁'], color: 'hsl(var(--ia-data-4))' },
-      { name: '70岁以上', value: groups['70岁以上'], color: 'hsl(var(--ia-data-5))' },
+      { name: '30-40岁', value: groups['30-40岁'], color: '#0ea5e9' },
+      { name: '40-50岁', value: groups['40-50岁'], color: '#14b8a6' },
+      { name: '50-60岁', value: groups['50-60岁'], color: '#22c55e' },
+      { name: '60-70岁', value: groups['60-70岁'], color: '#f59e0b' },
+      { name: '70岁以上', value: groups['70岁以上'], color: '#3b82f6' },
     ].filter((d) => d.value > 0)
   }, [patients])
 
@@ -186,13 +186,13 @@ export default function PatientRecords() {
   const SortButton = ({ label, keyName }: { label: string; keyName: SortKey }) => (
     <button
       onClick={() => toggleSort(keyName)}
-      className={`flex items-center gap-1 rounded-sm px-2.5 py-1 text-ia-label font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+      className={`flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-semibold transition-colors duration-150 cursor-pointer ${
         sortKey === keyName ? 'bg-brand-sky/8 text-brand-sky border border-brand-sky/20' : 'text-muted-foreground hover:bg-surface border border-transparent'
       }`}
     >
       {label}
       <ArrowUpDown className="h-3 w-3" />
-      {sortKey === keyName && <span className="text-ia-label">{sortDir === 'asc' ? '↑' : '↓'}</span>}
+      {sortKey === keyName && <span className="text-xs">{sortDir === 'asc' ? '↑' : '↓'}</span>}
     </button>
   )
 
@@ -206,8 +206,8 @@ export default function PatientRecords() {
               <Users className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">患者档案管理</h1>
-              <p className="text-ia-body text-muted-foreground max-w-2xl">管理患者健康信息，为个性化用药推荐提供数据支持</p>
+              <h1 className="text-2xl font-bold text-foreground mb-2">患者档案管理</h1>
+              <p className="text-base text-muted-foreground max-w-2xl">管理患者健康信息，为个性化用药推荐提供数据支持</p>
             </div>
           </div>
           <Button onClick={() => { resetForm(); setShowAddForm(true); scrollToForm() }} className="gap-2 cursor-pointer" size="sm">
@@ -218,7 +218,7 @@ export default function PatientRecords() {
       </section>
 
       {(error || pageError) && (
-        <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+        <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-sm text-destructive">
           {pageError || error}
         </div>
       )}
@@ -240,8 +240,8 @@ export default function PatientRecords() {
                     <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-sm bg-${item.dataColor}/10`}>
                       <Icon className={`h-4 w-4 text-${item.dataColor}`} />
                     </div>
-                    <div className="text-xl font-heading font-bold">{item.value}</div>
-                    <div className="text-ia-label text-muted-foreground">{item.label}</div>
+                    <div className="text-xl font-semibold font-bold">{item.value}</div>
+                    <div className="text-xs text-muted-foreground">{item.label}</div>
                   </CardContent>
                 </Card>
               )
@@ -265,7 +265,7 @@ export default function PatientRecords() {
             icon={<Search className="h-4 w-4" />}
           />
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-ia-label text-muted-foreground">排序：</span>
+            <span className="text-xs text-muted-foreground">排序：</span>
             <SortButton label="姓名" keyName="name" />
             <SortButton label="年龄" keyName="age" />
             <SortButton label="建档日期" keyName="createdAt" />
@@ -292,16 +292,16 @@ export default function PatientRecords() {
                 <CardContent className="space-y-5">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-1.5">
-                      <Label htmlFor="p-name" className="text-ia-caption font-heading font-semibold">姓名 *</Label>
+                      <Label htmlFor="p-name" className="text-sm font-semibold">姓名 *</Label>
                       <Input id="p-name" value={formData.name} onChange={(event) => setFormData({ ...formData, name: event.target.value })} required />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="p-age" className="text-ia-caption font-heading font-semibold">年龄 *</Label>
+                      <Label htmlFor="p-age" className="text-sm font-semibold">年龄 *</Label>
                       <Input id="p-age" type="number" value={formData.age} onChange={(event) => setFormData({ ...formData, age: event.target.value })} required />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="p-gender" className="text-ia-caption font-heading font-semibold">性别 *</Label>
-                      <select id="p-gender" value={formData.gender} onChange={(event) => setFormData({ ...formData, gender: event.target.value as PatientGender })} className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky">
+                      <Label htmlFor="p-gender" className="text-sm font-semibold">性别 *</Label>
+                      <select id="p-gender" value={formData.gender} onChange={(event) => setFormData({ ...formData, gender: event.target.value as PatientGender })} className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-base focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky">
                         <option value="男">男</option>
                         <option value="女">女</option>
                         <option value="未知">未知</option>
@@ -309,26 +309,26 @@ export default function PatientRecords() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <Label htmlFor="p-height" className="text-ia-caption font-heading font-semibold">身高 (cm)</Label>
+                        <Label htmlFor="p-height" className="text-sm font-semibold">身高 (cm)</Label>
                         <Input id="p-height" type="number" value={formData.height} onChange={(event) => setFormData({ ...formData, height: event.target.value })} />
                       </div>
                       <div className="space-y-1.5">
-                        <Label htmlFor="p-weight" className="text-ia-caption font-heading font-semibold">体重 (kg)</Label>
+                        <Label htmlFor="p-weight" className="text-sm font-semibold">体重 (kg)</Label>
                         <Input id="p-weight" type="number" value={formData.weight} onChange={(event) => setFormData({ ...formData, weight: event.target.value })} />
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="p-phone" className="text-ia-caption font-heading font-semibold">联系电话 <span className="text-ia-label text-muted-foreground">（可选）</span></Label>
+                      <Label htmlFor="p-phone" className="text-sm font-semibold">联系电话 <span className="text-xs text-muted-foreground">（可选）</span></Label>
                       <Input id="p-phone" value={formData.phone} onChange={(event) => setFormData({ ...formData, phone: event.target.value })} placeholder="13800138000" />
                     </div>
                   </div>
 
-                  <div className="space-y-1.5"><Label htmlFor="p-allergies" className="text-ia-caption font-heading font-semibold">过敏史（逗号分隔）</Label><Input id="p-allergies" value={formData.allergies} onChange={(event) => setFormData({ ...formData, allergies: event.target.value })} /></div>
-                  <div className="space-y-1.5"><Label htmlFor="p-diseases" className="text-ia-caption font-heading font-semibold">慢病（逗号分隔）</Label><Input id="p-diseases" value={formData.chronicDiseases} onChange={(event) => setFormData({ ...formData, chronicDiseases: event.target.value })} /></div>
-                  <div className="space-y-1.5"><Label htmlFor="p-meds" className="text-ia-caption font-heading font-semibold">当前用药（逗号分隔）</Label><Input id="p-meds" value={formData.currentMedications} onChange={(event) => setFormData({ ...formData, currentMedications: event.target.value })} /></div>
+                  <div className="space-y-1.5"><Label htmlFor="p-allergies" className="text-sm font-semibold">过敏史（逗号分隔）</Label><Input id="p-allergies" value={formData.allergies} onChange={(event) => setFormData({ ...formData, allergies: event.target.value })} /></div>
+                  <div className="space-y-1.5"><Label htmlFor="p-diseases" className="text-sm font-semibold">慢病（逗号分隔）</Label><Input id="p-diseases" value={formData.chronicDiseases} onChange={(event) => setFormData({ ...formData, chronicDiseases: event.target.value })} /></div>
+                  <div className="space-y-1.5"><Label htmlFor="p-meds" className="text-sm font-semibold">当前用药（逗号分隔）</Label><Input id="p-meds" value={formData.currentMedications} onChange={(event) => setFormData({ ...formData, currentMedications: event.target.value })} /></div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="p-history" className="text-ia-caption font-heading font-semibold">既往病史</Label>
-                    <textarea id="p-history" value={formData.medicalHistory} onChange={(event) => setFormData({ ...formData, medicalHistory: event.target.value })} className="flex min-h-[80px] w-full resize-none rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky" />
+                    <Label htmlFor="p-history" className="text-sm font-semibold">既往病史</Label>
+                    <textarea id="p-history" value={formData.medicalHistory} onChange={(event) => setFormData({ ...formData, medicalHistory: event.target.value })} className="flex min-h-[80px] w-full resize-none rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-base focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky" />
                   </div>
 
                   <div className="flex gap-2 pt-3">
@@ -346,7 +346,7 @@ export default function PatientRecords() {
       </AnimatePresence>
 
       <div className="space-y-2.5">
-        <div className="px-1 text-ia-label text-muted-foreground">
+        <div className="px-1 text-xs text-muted-foreground">
           {isLoading ? '加载中...' : `共 ${filteredPatients.length} 条记录${searchTerm ? `（搜索：${searchTerm}）` : ''}`}
         </div>
 
@@ -374,16 +374,16 @@ export default function PatientRecords() {
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="mb-1.5 flex flex-wrap items-center gap-2">
-                              <h3 className="font-heading font-semibold text-ia-card-title">{patient.name}</h3>
+                              <h3 className="font-semibold text-base">{patient.name}</h3>
                               <span className="ia-badge ia-badge-primary">{patient.gender} · {patient.age} 岁</span>
                             </div>
-                            <div className="mb-2 flex flex-wrap gap-3 text-ia-caption text-muted-foreground">
+                            <div className="mb-2 flex flex-wrap gap-3 text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <Activity className="h-3.5 w-3.5" />
                                 <span className={bmiColor}>BMI: {bmi.toFixed(1)} ({bmiText})</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <AlertTriangle className="h-3.5 w-3.5 text-ia-data-4" />
+                                <AlertTriangle className="h-3.5 w-3.5 text-amber-400" />
                                 <span>{patient.allergies.length} 项过敏</span>
                               </div>
                               <div className="flex items-center gap-1">
@@ -400,7 +400,7 @@ export default function PatientRecords() {
                         </div>
 
                         <div className="ml-2 flex flex-shrink-0 items-center gap-0.5">
-                          <Button variant="ghost" size="sm" className="gap-1 text-ia-label text-brand-sky hover:text-brand-sky cursor-pointer" onClick={(event) => { event.stopPropagation(); handleGoToRecommendation(patient) }}>
+                          <Button variant="ghost" size="sm" className="gap-1 text-xs text-brand-sky hover:text-brand-sky cursor-pointer" onClick={(event) => { event.stopPropagation(); handleGoToRecommendation(patient) }}>
                             <Stethoscope className="h-3.5 w-3.5" />
                             推荐
                           </Button>
@@ -417,48 +417,48 @@ export default function PatientRecords() {
                           <div className="px-4 pb-4">
                             <div className="mt-4 grid gap-4 md:grid-cols-3">
                               <div>
-                                <h4 className="mb-2 text-ia-caption font-heading font-semibold text-brand-sky">当前用药</h4>
+                                <h4 className="mb-2 text-sm font-semibold text-brand-sky">当前用药</h4>
                                 <div className="space-y-1.5">
                                   {patient.currentMedications.length > 0 ? patient.currentMedications.map((medication) => (
                                     <div key={medication} className="flex items-center gap-2 rounded-sm bg-brand-sky/4 border border-brand-sky/10 p-2">
                                       <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-br from-brand-sky to-sky-600" />
-                                      <span className="text-ia-caption">{medication}</span>
+                                      <span className="text-sm">{medication}</span>
                                     </div>
-                                  )) : <p className="text-ia-label text-muted-foreground">无</p>}
+                                  )) : <p className="text-xs text-muted-foreground">无</p>}
                                 </div>
                               </div>
                               <div>
-                                <h4 className="mb-2 text-ia-caption font-heading font-semibold text-secondary">过敏史</h4>
+                                <h4 className="mb-2 text-sm font-semibold text-brand-teal">过敏史</h4>
                                 <div className="space-y-1.5">
                                   {patient.allergies.length > 0 ? patient.allergies.map((allergy) => (
                                     <div key={allergy} className="flex items-center gap-2 rounded-sm border border-destructive/20 bg-destructive/4 p-2">
                                       <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 text-destructive" />
-                                      <span className="text-ia-caption text-destructive">{allergy}</span>
+                                      <span className="text-sm text-destructive">{allergy}</span>
                                     </div>
-                                  )) : <p className="text-ia-label text-muted-foreground">无过敏史</p>}
+                                  )) : <p className="text-xs text-muted-foreground">无过敏史</p>}
                                 </div>
                               </div>
                               <div>
-                                <h4 className="mb-2 text-ia-caption font-heading font-semibold">体格信息</h4>
-                                <div className="space-y-1.5 text-ia-caption">
+                                <h4 className="mb-2 text-sm font-semibold">体格信息</h4>
+                                <div className="space-y-1.5 text-sm">
                                   <div className="flex justify-between rounded-sm bg-surface p-2">
                                     <span className="text-muted-foreground">身高</span>
-                                    <span className="font-heading font-semibold">{patient.height} cm</span>
+                                    <span className="font-semibold">{patient.height} cm</span>
                                   </div>
                                   <div className="flex justify-between rounded-sm bg-surface p-2">
                                     <span className="text-muted-foreground">体重</span>
-                                    <span className="font-heading font-semibold">{patient.weight} kg</span>
+                                    <span className="font-semibold">{patient.weight} kg</span>
                                   </div>
                                   <div className="flex justify-between rounded-sm bg-surface p-2">
                                     <span className="text-muted-foreground">BMI</span>
-                                    <span className={`font-heading font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
+                                    <span className={`font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
                             {patient.medicalHistory && (
                               <div className="mt-4 border-t border-white/[0.06] pt-4">
-                                <h4 className="mb-1.5 text-ia-caption font-heading font-semibold">既往病史</h4>
+                                <h4 className="mb-1.5 text-sm font-semibold">既往病史</h4>
                                 <TextExpander text={patient.medicalHistory} maxLines={3} />
                               </div>
                             )}
@@ -477,8 +477,8 @@ export default function PatientRecords() {
           <Card hover="none" className="border-dashed">
             <CardContent className="py-10 text-center">
               <User className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
-              <h3 className="mb-1.5 font-heading font-semibold text-ia-card-title">未找到患者</h3>
-              <p className="text-ia-caption text-muted-foreground">{searchTerm ? '请尝试其他搜索关键词' : '点击上方按钮添加第一位患者'}</p>
+              <h3 className="mb-1.5 font-semibold text-base">未找到患者</h3>
+              <p className="text-sm text-muted-foreground">{searchTerm ? '请尝试其他搜索关键词' : '点击上方按钮添加第一位患者'}</p>
             </CardContent>
           </Card>
         )}
