@@ -111,12 +111,21 @@ const METRIC_COLORS: Record<string, { bg: string; text: string }> = {
   red: { bg: 'rgba(239,68,68,0.1)', text: '#ef4444' },
 }
 
+export const CHART_GRADIENT_COLORS = {
+  primary: { start: '#0ea5e9', end: '#0284c7' },
+  accent: { start: '#14b8a6', end: '#0d6b7d' },
+  success: { start: '#22c55e', end: '#16a34a' },
+  warning: { start: '#f59e0b', end: '#d97706' },
+  danger: { start: '#ef4444', end: '#dc2626' },
+}
+
 const CHART_TOOLTIP_STYLE = {
   backgroundColor: '#0f2744',
-  border: '1px solid rgba(255,255,255,0.10)',
+  border: '1px solid rgba(14,165,233,0.20)',
   borderRadius: '8px',
   fontSize: '12px',
   color: '#f8fafc',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
 }
 
 export default function PrivacyVisualization() {
@@ -229,11 +238,13 @@ export default function PrivacyVisualization() {
                   <AreaChart data={privacyAccuracyData} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
                     <defs>
                       <linearGradient id="colorAccuracy" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
+                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.35}/>
+                        <stop offset="50%" stopColor="#0ea5e9" stopOpacity={0.1}/>
                         <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorUtility" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
+                        <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.35}/>
+                        <stop offset="50%" stopColor="#14b8a6" stopOpacity={0.1}/>
                         <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
@@ -241,7 +252,7 @@ export default function PrivacyVisualization() {
                     <XAxis dataKey="epsilon" label={{ value: '隐私预算 ε', position: 'bottom', offset: 40 }} stroke="#94a3b8" />
                     <YAxis label={{ value: '百分比 (%)', angle: -90, position: 'insideLeft' }} stroke="#94a3b8" domain={[0, 100]} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                    <Legend layout="horizontal" align="center" verticalAlign="bottom" />
+                    <Legend layout="horizontal" align="center" verticalAlign="bottom" wrapperStyle={{ color: '#cbd5e1', fontSize: '12px' }} />
                     <Area type="monotone" dataKey="accuracy" name="推荐准确率" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorAccuracy)" strokeWidth={2} />
                     <Area type="monotone" dataKey="utility" name="数据效用" stroke="#14b8a6" fillOpacity={1} fill="url(#colorUtility)" strokeWidth={2} />
                   </AreaChart>
@@ -270,11 +281,17 @@ export default function PrivacyVisualization() {
               <div className="h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={featureImportanceData} layout="vertical">
+                    <defs>
+                      <linearGradient id="featureBarGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#0284c7" />
+                        <stop offset="100%" stopColor="#0ea5e9" />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                     <XAxis type="number" domain={[0, 1]} stroke="#94a3b8" />
                     <YAxis dataKey="feature" type="category" width={90} stroke="#94a3b8" />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                    <Bar dataKey="importance" name="重要性得分" fill="#0ea5e9" radius={[0, 2, 2, 0]} />
+                    <Bar dataKey="importance" name="重要性得分" fill="url(#featureBarGrad)" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -303,9 +320,9 @@ export default function PrivacyVisualization() {
                     <YAxis type="number" dataKey="privacy" name="隐私保护强度" domain={[30, 100]} label={{ value: '隐私保护强度 (%)', angle: -90, position: 'insideLeft', fontSize: 11 }} stroke="#94a3b8" tick={{ fontSize: 10 }} />
                     <ZAxis range={[50, 50]} />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={CHART_TOOLTIP_STYLE} formatter={(value: number, name: string) => [`${value}%`, name]} />
-                    <Legend layout="horizontal" align="center" verticalAlign="top" wrapperStyle={{ fontSize: '11px', marginTop: '-10px' }} />
+                    <Legend layout="horizontal" align="center" verticalAlign="top" wrapperStyle={{ color: '#cbd5e1', fontSize: '11px', marginTop: '-10px' }} />
                     {['ε=0.1', 'ε=0.5', 'ε=1.0', 'ε=2.0', 'ε=5.0', 'ε=10.0'].map((epsilonName, idx) => {
-                      const colors = ['#0ea5e9', '#14b8a6', '#22c55e', '#f59e0b', '#ef4444', '#ef4444']
+                      const colors = ['#0ea5e9', '#0891b2', '#0d6b7d', '#14b8a6', '#22c55e', '#4ade80']
                       return (
                         <Scatter key={epsilonName} name={epsilonName} data={scatterData.filter((d) => d.name === epsilonName)} fill={colors[idx]} opacity={0.8} />
                       )
@@ -341,14 +358,28 @@ export default function PrivacyVisualization() {
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={noiseMechanismData}>
+                    <defs>
+                      <linearGradient id="mechBarAcc" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#0ea5e9" />
+                        <stop offset="100%" stopColor="#0284c7" />
+                      </linearGradient>
+                      <linearGradient id="mechBarPriv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#14b8a6" />
+                        <stop offset="100%" stopColor="#0d6b7d" />
+                      </linearGradient>
+                      <linearGradient id="mechBarSpeed" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f59e0b" />
+                        <stop offset="100%" stopColor="#d97706" />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                     <XAxis dataKey="mechanism" stroke="#94a3b8" />
                     <YAxis stroke="#94a3b8" domain={[0, 100]} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                    <Legend />
-                    <Bar dataKey="accuracy" name="准确率 (%)" fill="#0ea5e9" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="privacy" name="隐私保护" fill="#14b8a6" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="speed" name="计算速度" fill="#f59e0b" radius={[2, 2, 0, 0]} />
+                    <Legend wrapperStyle={{ color: '#cbd5e1', fontSize: '12px' }} />
+                    <Bar dataKey="accuracy" name="准确率 (%)" fill="url(#mechBarAcc)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="privacy" name="隐私保护" fill="url(#mechBarPriv)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="speed" name="计算速度" fill="url(#mechBarSpeed)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -383,14 +414,28 @@ export default function PrivacyVisualization() {
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stageComparisonData}>
+                    <defs>
+                      <linearGradient id="stageBarAcc" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#0ea5e9" />
+                        <stop offset="100%" stopColor="#0284c7" />
+                      </linearGradient>
+                      <linearGradient id="stageBarPriv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#14b8a6" />
+                        <stop offset="100%" stopColor="#0d6b7d" />
+                      </linearGradient>
+                      <linearGradient id="stageBarOver" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#ef4444" />
+                        <stop offset="100%" stopColor="#dc2626" />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
                     <XAxis dataKey="stage" stroke="#94a3b8" />
                     <YAxis stroke="#94a3b8" domain={[0, 100]} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                     <Legend />
-                    <Bar dataKey="accuracy" name="准确率 (%)" fill="#0ea5e9" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="privacy" name="隐私保护" fill="#14b8a6" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="overhead" name="计算开销 (%)" fill="#ef4444" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="accuracy" name="准确率 (%)" fill="url(#stageBarAcc)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="privacy" name="隐私保护" fill="url(#stageBarPriv)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="overhead" name="计算开销 (%)" fill="url(#stageBarOver)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -421,12 +466,12 @@ export default function PrivacyVisualization() {
                   <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
                     <PolarGrid stroke="rgba(255,255,255,0.08)" />
                     <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#94a3b8', fontSize: 9 }} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                    <Legend wrapperStyle={{ fontSize: '12px' }} />
-                    <Radar name="Laplace" dataKey="Laplace" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.1} strokeWidth={1.5} />
-                    <Radar name="Gaussian" dataKey="Gaussian" stroke="#14b8a6" fill="#14b8a6" fillOpacity={0.1} strokeWidth={1.5} />
-                    <Radar name="Geometric" dataKey="Geometric" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.1} strokeWidth={1.5} />
+                    <Legend wrapperStyle={{ color: '#cbd5e1', fontSize: '12px' }} />
+                    <Radar name="Laplace" dataKey="Laplace" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.25} strokeWidth={1.5} />
+                    <Radar name="Gaussian" dataKey="Gaussian" stroke="#14b8a6" fill="#14b8a6" fillOpacity={0.25} strokeWidth={1.5} />
+                    <Radar name="Geometric" dataKey="Geometric" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.25} strokeWidth={1.5} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
@@ -435,12 +480,12 @@ export default function PrivacyVisualization() {
                   <div className="font-semibold text-brand-sky mb-0.5">Laplace 机制</div>
                   <p className="text-xs text-muted-foreground">隐私保护最强，适用于低维数值查询</p>
                 </div>
-                <div className="p-2.5 rounded-sm border border-secondary/20 bg-secondary/4">
-                  <div className="font-semibold text-secondary mb-0.5">Gaussian 机制</div>
+                <div className="p-2.5 rounded-sm border border-brand-teal/20 bg-brand-teal/4">
+                  <div className="font-semibold text-brand-teal mb-0.5">Gaussian 机制</div>
                   <p className="text-xs text-muted-foreground">高维适用性最优，准确率最高</p>
                 </div>
-                <div className="p-2.5 rounded-sm border border-warning/20 bg-warning/4">
-                  <div className="font-semibold text-warning mb-0.5">Geometric 机制</div>
+                <div className="p-2.5 rounded-sm border border-amber-500/20 bg-amber-500/4">
+                  <div className="font-semibold text-amber-400 mb-0.5">Geometric 机制</div>
                   <p className="text-xs text-muted-foreground">离散数据计算速度最快</p>
                 </div>
               </div>
@@ -472,9 +517,9 @@ export default function PrivacyVisualization() {
                     <XAxis dataKey="epoch" label={{ value: '操作序号', position: 'insideBottom', offset: -5 }} stroke="#94a3b8" />
                     <YAxis label={{ value: '预算值', angle: -90, position: 'insideLeft' }} stroke="#94a3b8" />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                    <Legend />
-                    <Line type="monotone" dataKey="consumed" name="已消耗预算" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444', r: 4 }} />
-                    <Line type="monotone" dataKey="remaining" name="剩余预算" stroke="#14b8a6" strokeWidth={2} dot={{ fill: '#14b8a6', r: 4 }} />
+                    <Legend wrapperStyle={{ color: '#cbd5e1', fontSize: '12px' }} />
+                    <Line type="monotone" dataKey="consumed" name="已消耗预算" stroke="#f59e0b" strokeWidth={2} dot={{ fill: '#f59e0b', r: 4, strokeWidth: 0 }} />
+                    <Line type="monotone" dataKey="remaining" name="剩余预算" stroke="#22c55e" strokeWidth={2} dot={{ fill: '#22c55e', r: 4, strokeWidth: 0 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -556,7 +601,7 @@ export default function PrivacyVisualization() {
                     { label: 'F1 分数', value: 89.2, max: 100 },
                     { label: 'AUC-ROC', value: 93.5, max: 100 },
                   ]},
-                  { title: '隐私保护指标', icon: Lock, iconColor: 'text-secondary', metrics: [
+                  { title: '隐私保护指标', icon: Lock, iconColor: 'text-brand-teal', metrics: [
                     { label: '隐私预算 ε', value: 1.0, max: 10 },
                     { label: '松弛参数 δ', value: 0.00001, max: 0.001, isExp: true },
                     { label: '敏感度 Δf', value: 1.0, max: 5 },
