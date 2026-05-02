@@ -182,17 +182,26 @@ def _translate_excluded_drug_names(
         if original_name:
             chinese_name = translate_drug_name(original_name, translation_map)
             drug['englishName'] = original_name
+            # 前端期望 camelCase 'drugName'，确保始终存在此键
+            drug['drugName'] = chinese_name
             if 'drug_name' in drug:
                 drug['drug_name'] = chinese_name
-            if 'drugName' in drug:
-                drug['drugName'] = chinese_name
             if 'name' in drug:
                 drug['name'] = chinese_name
 
-        # 翻译排除药物中的 category
-        category = drug.get('category', '')
-        if category:
-            drug['category'] = mapper.translate_class(category)
+        # 从 drug_data 提取 category（前端期望此字段）
+        drug_data = drug.get('drug_data', {})
+        if drug_data and not drug.get('category'):
+            drug_class = drug_data.get('drug_class_en', drug_data.get('category', ''))
+            if drug_class:
+                drug['category'] = mapper.translate_class(drug_class)
+        # 翻译已有的 category
+        elif drug.get('category'):
+            drug['category'] = mapper.translate_class(drug['category'])
+
+        # 前端期望 excludedReason 字段（映射 reason）
+        if drug.get('reason') and not drug.get('excludedReason'):
+            drug['excludedReason'] = drug['reason']
 
         # 翻译排除原因中的英文病况名/药物名
         reason = drug.get('reason', '')
@@ -437,13 +446,32 @@ class RecommendationPredictor:
 
         当后端传入的数据覆盖已有药物时，保留已有的英文结构化字段，
         因为后端DB数据可能缺少 side_effects_raw、drug_class_en 等字段。
+
+        如果传入空列表且已有pipeline_data药品，则跳过（保留现有药品不被清空）。
         """
         if not isinstance(drugs, list):
             logger.warning(f"Invalid drugs_data type: {type(drugs)}, expected list")
             self.drugs_data = []
             return
 
-        # 合并：保留已有的英文结构化数据（来自 pipeline_data.json）
+        # 保护：空列表不应清空已有药品（pipeline_data.json已有1815药品）
+        if not drugs and self.drugs_data:
+            logger.info(
+                f"Empty drugs list received, keeping existing {len(self.drugs_data)} "
+                f"pipeline_data drugs (skip override)"
+            )
+            # 确保翻译缓存已构建（如果之前未构建）
+            if not self._drug_name_translation_map:
+                self._drug_name_translation_map = build_translation_cache(self.drugs_data)
+                logger.info(
+                    f"Translation cache built from existing drugs: "
+                    f"{len(self._drug_name_translation_map)} entries"
+                )
+            return
+
+        # 合并逻辑：
+        # - 已有药品(self.drugs_data)：保留pipeline_data字段优先，补充MySQL缺失字段
+        # - 新传入的药品(不在已有列表中)：直接添加
         existing_drug_map = {
             d.get('generic_name', d.get('name', '')): d
             for d in self.drugs_data
@@ -462,24 +490,33 @@ class RecommendationPredictor:
             name = drug.get('generic_name', drug.get('name', ''))
             existing = existing_drug_map.get(name)
             if existing:
-                # 对每个保留字段：如果 pipeline_data 有值且后端数据没有，
-                # 或者两者都有值但 pipeline_data 更完整，保留 pipeline_data 值
+                # 已有药品：pipeline_data字段优先，MySQL补充缺失字段
                 for field in PRESERVE_FIELDS:
                     existing_val = existing.get(field)
                     new_val = drug.get(field)
-                    # pipeline_data 有值且后端没有 → 保留 pipeline_data
                     if existing_val and not new_val:
                         drug[field] = existing_val
-                    # 两者都有值 → pipeline_data 优先（更完整/更准确）
                     elif existing_val and new_val:
                         drug[field] = existing_val
+                # MySQL数据中有pipeline_data没有的字段 → 补充进去
+                for key, val in drug.items():
+                    if key not in existing or not existing[key]:
+                        existing[key] = val
+            # 不在已有列表中的药品：直接加入map（后端新增药品）
 
-        self.drugs_data = drugs
+        # 将传入药品中不在已有列表中的添加到map
+        for drug in drugs:
+            name = drug.get('generic_name', drug.get('name', ''))
+            if name not in existing_drug_map:
+                existing_drug_map[name] = drug
+
+        # 更新 self.drugs_data 为合并后的完整列表
+        self.drugs_data = list(existing_drug_map.values())
         logger.info(f"Drugs data updated: {len(drugs)} drugs")
 
-        # 构建药物名翻译缓存
+        # 构建药物名翻译缓存（基于合并后的完整药品列表）
         try:
-            self._drug_name_translation_map = build_translation_cache(drugs)
+            self._drug_name_translation_map = build_translation_cache(self.drugs_data)
             translated_count = sum(
                 1 for k, v in self._drug_name_translation_map.items() if k != v
             )
@@ -604,7 +641,11 @@ class RecommendationPredictor:
                         rec['crossDdiDetails'] = pairs
 
                 # 重新排序（降级后可能改变排名）
-                top_recommendations.sort(key=lambda x: x['score'], reverse=True)
+                top_recommendations.sort(key=lambda x: (
+                    1 if x.get('matchedDisease') else 0,
+                    x['score'],
+                    x.get('rawScore', 0),
+                ), reverse=True)
 
             # ===== 排序质量门控 =====
             MIN_RELIABLE_SCORE = 0.3
@@ -796,8 +837,9 @@ class RecommendationPredictor:
                 interaction_map=self.interaction_map,
             )
 
+            drug_id = hash(drug_name) % 100000  # 稳定唯一ID（基于药物名hash）
             results.append({
-                'drugId': drug.get('id', 0),
+                'drugId': drug_id,
                 'drugName': drug_name,
                 'category': drug.get('category', drug.get('drug_class_en', '')),
                 'dosage': drug.get('typical_dosage', drug.get('strength', '')),
@@ -816,8 +858,13 @@ class RecommendationPredictor:
                 'dpAnomaly': dp_anomaly,
             })
 
-        # 按score排序
-        results.sort(key=lambda x: x['score'], reverse=True)
+        # 多维度排序: 适应症匹配 > DP评分 > 原始评分
+        # 确保有疾病匹配的药物优先推荐, 防止DP噪声将无适应症药物推到首位
+        results.sort(key=lambda x: (
+            1 if x.get('matchedDisease') else 0,
+            x['score'],
+            x['rawScore'],
+        ), reverse=True)
         return results
 
     def _rule_rank(
@@ -892,8 +939,9 @@ class RecommendationPredictor:
                 interaction_map=self.interaction_map,
             )
 
+            drug_id = hash(drug_name) % 100000  # 稳定唯一ID（基于药物名hash）
             results.append({
-                'drugId': drug.get('id', 0),
+                'drugId': drug_id,
                 'drugName': drug_name,
                 'category': drug.get('category', drug.get('drug_class_en', '')),
                 'dosage': drug.get('typical_dosage', drug.get('strength', '')),
@@ -912,7 +960,12 @@ class RecommendationPredictor:
                 'dpAnomaly': dp_anomaly,
             })
 
-        results.sort(key=lambda x: x['score'], reverse=True)
+        # 多维度排序: 适应症匹配 > DP评分 > 原始评分
+        results.sort(key=lambda x: (
+            1 if x.get('matchedDisease') else 0,
+            x['score'],
+            x['rawScore'],
+        ), reverse=True)
         return results
 
     def _merge_rank_and_flags(

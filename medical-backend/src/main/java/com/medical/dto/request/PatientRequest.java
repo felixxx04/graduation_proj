@@ -19,7 +19,7 @@ public class PatientRequest {
     @Max(value = 150, message = "年龄不能超过150")
     private Integer age;
 
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    @Pattern(regexp = "^$|1[3-9]\\d{9}$", message = "手机号格式不正确")
     private String phone;
 
     @DecimalMin(value = "0.1", message = "身高必须大于0")

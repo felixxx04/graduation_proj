@@ -11,6 +11,7 @@ export interface Patient {
   gender: PatientGender
   height: number
   weight: number
+  phone: string
   allergies: string[]
   chronicDiseases: string[]
   currentMedications: string[]
@@ -37,6 +38,7 @@ type BackendPatient = {
   gender: 'MALE' | 'FEMALE' | 'UNKNOWN'
   height: number
   weight: number
+  phone: string | null
   allergies: string[]
   chronicDiseases: string[]
   currentMedications: string[]
@@ -50,6 +52,7 @@ type BackendPatientRequest = {
   gender: 'MALE' | 'FEMALE' | 'UNKNOWN'
   height: number
   weight: number
+  phone: string
   allergies: string[]
   chronicDiseases: string[]
   currentMedications: string[]
@@ -78,6 +81,7 @@ function normalizePatient(patient: BackendPatient): Patient {
     gender: toFrontendGender(patient.gender),
     height: patient.height,
     weight: patient.weight,
+    phone: patient.phone ?? '',
     allergies: patient.allergies ?? [],
     chronicDiseases: patient.chronicDiseases ?? [],
     currentMedications: patient.currentMedications ?? [],
@@ -93,6 +97,7 @@ function toRequest(patient: Partial<PatientDraft>): BackendPatientRequest {
     gender: toBackendGender(patient.gender ?? '男'),
     height: patient.height ?? 0,
     weight: patient.weight ?? 0,
+    phone: patient.phone?.trim() ?? '',
     allergies: (patient.allergies ?? []).map((item) => item.trim()).filter(Boolean),
     chronicDiseases: (patient.chronicDiseases ?? []).map((item) => item.trim()).filter(Boolean),
     currentMedications: (patient.currentMedications ?? []).map((item) => item.trim()).filter(Boolean),
@@ -107,7 +112,7 @@ export function PatientStoreProvider({ children }: { children: React.ReactNode }
   const [error, setError] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
-    if (!isAuthenticated || user?.role !== 'admin') {
+    if (!isAuthenticated || (user?.role !== 'admin' && user?.role !== 'doctor')) {
       setPatients([])
       setError(null)
       setIsLoading(false)

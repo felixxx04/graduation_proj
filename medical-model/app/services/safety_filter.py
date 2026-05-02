@@ -216,8 +216,10 @@ class SafetyFilter:
 
             # 6. 严重肝/肾功能不全硬排除（特定药物）
             if not exclusion_reason:
-                renal_severe = renal_function in ('severe', 'failure', 'esrd')
-                hepatic_severe = hepatic_function in ('severe', 'failure')
+                renal_severe = renal_function in ('severe', 'severe_impairment', 'failure', 'esrd')
+                hepatic_severe = hepatic_function in ('severe', 'severe_impairment', 'failure')
+                renal_impaired = renal_function in ('mild', 'mild_impairment', 'moderate', 'moderate_impairment', 'severe', 'severe_impairment', 'failure', 'esrd')
+                hepatic_impaired = hepatic_function in ('mild', 'mild_impairment', 'moderate', 'moderate_impairment', 'severe', 'severe_impairment', 'failure')
                 contra_types = {c.get('contraindication_type', '') for c in contraindications}
                 if renal_severe and 'physiological_condition' in contra_types:
                     for contra in contraindications:
@@ -351,19 +353,19 @@ class RuleMarker:
                     requires_review = True
 
             # 肾功能不全药物特异性提示
-            if renal_function in ('mild', 'moderate', 'severe'):
+            if renal_function in ('mild', 'mild_impairment', 'moderate', 'moderate_impairment', 'severe', 'severe_impairment'):
                 renal_warning = _check_renal_warning(drug_name, renal_function, contraindications)
                 if renal_warning:
                     warnings.append(renal_warning)
-                    if renal_function == 'severe':
+                    if renal_function in ('severe', 'severe_impairment'):
                         requires_review = True
 
             # 肝功能不全药物特异性提示
-            if hepatic_function in ('mild', 'moderate', 'severe'):
+            if hepatic_function in ('mild', 'mild_impairment', 'moderate', 'moderate_impairment', 'severe', 'severe_impairment'):
                 hepatic_warning = _check_hepatic_warning(drug_name, hepatic_function, contraindications)
                 if hepatic_warning:
                     warnings.append(hepatic_warning)
-                    if hepatic_function == 'severe':
+                    if hepatic_function in ('severe', 'severe_impairment'):
                         requires_review = True
 
             # 育龄女性预防性提示 (gender=F, age 18-45)

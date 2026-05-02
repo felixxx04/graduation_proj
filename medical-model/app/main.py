@@ -110,6 +110,23 @@ class PredictRequest(BaseModel):
     dpConfig: Optional[DPConfig] = None
     userId: Optional[str] = None
 
+    # v2: 患者器官功能与生理指标（由后端自动补充，前端不手动填写）
+    renal_function: Optional[str] = None     # normal/mild/moderate/severe/unknown
+    hepatic_function: Optional[str] = None   # normal/mild/moderate/severe/unknown
+    bmi: Optional[float] = None
+    bmi_group: Optional[str] = None          # underweight/normal/overweight/obese/unknown
+    pregnancy_status: Optional[str] = None   # pregnant/not_pregnant/unknown
+    breastfeeding_status: Optional[str] = None  # breastfeeding/not_breastfeeding/unknown
+    smoking_status: Optional[str] = None     # never/former/current/unknown
+    drinking_status: Optional[str] = None    # none/occasional/regular/heavy/unknown
+    blood_pressure_systolic: Optional[int] = None
+    blood_pressure_diastolic: Optional[int] = None
+    fasting_glucose: Optional[float] = None
+    hba1c: Optional[float] = None
+    cholesterol_total: Optional[float] = None
+    cholesterol_ldl: Optional[float] = None
+    heart_rate: Optional[int] = None
+
     @field_validator('topK')
     @classmethod
     def validate_top_k(cls, v: int) -> int:
@@ -284,6 +301,30 @@ def predict(request: PredictRequest):
         'allergies': request.allergies.split('，') if request.allergies else [],
         'current_medications': request.currentMedications.split('，') if request.currentMedications else []
     }
+
+    # v2: 患者器官功能与生理指标（由后端自动补充）
+    v2_fields = {
+        'renal_function': request.renal_function,
+        'hepatic_function': request.hepatic_function,
+        'bmi': request.bmi,
+        'bmi_group': request.bmi_group,
+        'pregnancy_status': request.pregnancy_status,
+        'pregnancy': request.pregnancy_status,  # 别名（safety_filter兼容）
+        'breastfeeding_status': request.breastfeeding_status,
+        'smoking_status': request.smoking_status,
+        'drinking_status': request.drinking_status,
+        'blood_pressure_systolic': request.blood_pressure_systolic,
+        'blood_pressure_diastolic': request.blood_pressure_diastolic,
+        'fasting_glucose': request.fasting_glucose,
+        'hba1c': request.hba1c,
+        'cholesterol_total': request.cholesterol_total,
+        'cholesterol_ldl': request.cholesterol_ldl,
+        'heart_rate': request.heart_rate,
+    }
+    # 仅将非None的v2字段加入patient_data（None会覆盖record_builder的默认值）
+    for key, val in v2_fields.items():
+        if val is not None:
+            patient_data[key] = val
 
     dp_config = None
     if request.dpEnabled:

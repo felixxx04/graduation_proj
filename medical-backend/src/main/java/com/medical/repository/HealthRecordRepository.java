@@ -16,9 +16,15 @@ public interface HealthRecordRepository {
     @Insert("""
         INSERT INTO patient_health_record
         (patient_id, record_date, age, height, weight, blood_type,
-         chronic_diseases, allergies, current_medications, medical_history, symptoms, is_latest)
+         chronic_diseases, allergies, current_medications, medical_history, symptoms, is_latest,
+         smoking_status, drinking_status, renal_function, hepatic_function,
+         blood_pressure_systolic, blood_pressure_diastolic, fasting_glucose, hba1c,
+         cholesterol_total, cholesterol_ldl, heart_rate)
         VALUES (#{patientId}, #{recordDate}, #{age}, #{height}, #{weight}, #{bloodType},
-                #{chronicDiseases}, #{allergies}, #{currentMedications}, #{medicalHistory}, #{symptoms}, #{isLatest})
+                #{chronicDiseases}, #{allergies}, #{currentMedications}, #{medicalHistory}, #{symptoms}, #{isLatest},
+                #{smokingStatus}, #{drinkingStatus}, #{renalFunction}, #{hepaticFunction},
+                #{bloodPressureSystolic}, #{bloodPressureDiastolic}, #{fastingGlucose}, #{hba1c},
+                #{cholesterolTotal}, #{cholesterolLdl}, #{heartRate})
         """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(HealthRecord record);

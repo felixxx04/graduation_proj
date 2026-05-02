@@ -39,7 +39,7 @@ function normalizeUser(user: BackendUser): AuthUser {
   return {
     id: user.id,
     username: user.username,
-    role: user.role === 'admin' ? 'admin' : 'user',
+    role: user.role === 'admin' ? 'admin' : user.role === 'doctor' ? 'doctor' : 'user',
     status: user.status,
   }
 }

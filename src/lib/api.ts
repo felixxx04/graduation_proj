@@ -113,7 +113,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     ) {
       body = options.body
     } else {
-      headers.set('Content-Type', 'application/json')
+      headers.set('Content-Type', 'application/json; charset=utf-8')
       body = JSON.stringify(options.body)
     }
   }
