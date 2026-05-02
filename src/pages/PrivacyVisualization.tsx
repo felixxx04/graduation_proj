@@ -319,7 +319,7 @@ export default function PrivacyVisualization() {
                     <XAxis type="number" dataKey="utility" name="数据效用" domain={[55, 100]} label={{ value: '数据效用 (%)', position: 'insideBottom', offset: -5, fontSize: 11 }} stroke="#94a3b8" tick={{ fontSize: 10 }} />
                     <YAxis type="number" dataKey="privacy" name="隐私保护强度" domain={[30, 100]} label={{ value: '隐私保护强度 (%)', angle: -90, position: 'insideLeft', fontSize: 11 }} stroke="#94a3b8" tick={{ fontSize: 10 }} />
                     <ZAxis range={[50, 50]} />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={CHART_TOOLTIP_STYLE} formatter={(value: number, name: string) => [`${value}%`, name]} />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={CHART_TOOLTIP_STYLE} itemStyle={{ color: '#f8fafc' }} labelStyle={{ color: '#cbd5e1' }} formatter={(value: number, name: string) => [`${value}%`, name]} />
                     <Legend layout="horizontal" align="center" verticalAlign="top" wrapperStyle={{ color: '#cbd5e1', fontSize: '11px', marginTop: '-10px' }} />
                     {['ε=0.1', 'ε=0.5', 'ε=1.0', 'ε=2.0', 'ε=5.0', 'ε=10.0'].map((epsilonName, idx) => {
                       const colors = ['#0ea5e9', '#0891b2', '#0d6b7d', '#14b8a6', '#22c55e', '#4ade80']
