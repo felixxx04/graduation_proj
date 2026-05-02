@@ -104,11 +104,19 @@ const featureImportanceData = [
   { feature: '基因标记', importance: 0.69 },
 ]
 
+const METRIC_COLORS: Record<string, { bg: string; text: string }> = {
+  sky: { bg: 'rgba(14,165,233,0.1)', text: '#0ea5e9' },
+  green: { bg: 'rgba(34,197,94,0.1)', text: '#22c55e' },
+  amber: { bg: 'rgba(245,158,11,0.1)', text: '#f59e0b' },
+  red: { bg: 'rgba(239,68,68,0.1)', text: '#ef4444' },
+}
+
 const CHART_TOOLTIP_STYLE = {
-  backgroundColor: 'hsl(var(--card))',
-  border: '1px solid hsl(var(--border))',
-  borderRadius: '3px',
-  fontSize: '11px',
+  backgroundColor: '#0f2744',
+  border: '1px solid rgba(255,255,255,0.10)',
+  borderRadius: '8px',
+  fontSize: '12px',
+  color: '#f8fafc',
 }
 
 export default function PrivacyVisualization() {
@@ -144,10 +152,10 @@ export default function PrivacyVisualization() {
             <Shield className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1">
-            <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               隐私保护效果可视化
             </h1>
-            <p className="text-ia-body text-muted-foreground max-w-2xl">
+            <p className="text-base text-muted-foreground max-w-2xl">
               多维度展示差分隐私机制的保护效果与性能影响
             </p>
           </div>
@@ -180,21 +188,22 @@ export default function PrivacyVisualization() {
           {/* Key Metrics */}
           <div className="grid md:grid-cols-4 gap-3">
             {[
-              { icon: Shield, label: '隐私保护等级', value: `ε=${config.epsilon.toFixed(2)}`, desc: config.epsilon <= 1.0 ? '强隐私保护' : config.epsilon <= 2.0 ? '中等保护' : '偏弱保护', dataColor: 'ia-data-1' },
-              { icon: Target, label: '推荐准确率', value: '89.7%', desc: '+12% vs 基线', dataColor: 'ia-data-3' },
-              { icon: Zap, label: '响应时间', value: '< 200ms', desc: '实时推理', dataColor: 'ia-data-4' },
-              { icon: Lock, label: '数据安全', value: budget.remaining > 0 ? 'ON' : 'LIMIT', desc: budget.remaining > 0 ? '预算充足' : '预算耗尽', dataColor: budget.remaining > 0 ? 'ia-data-3' : 'ia-data-5' },
+              { icon: Shield, label: '隐私保护等级', value: `ε=${config.epsilon.toFixed(2)}`, desc: config.epsilon <= 1.0 ? '强隐私保护' : config.epsilon <= 2.0 ? '中等保护' : '偏弱保护', colorKey: 'sky' },
+              { icon: Target, label: '推荐准确率', value: '89.7%', desc: '+12% vs 基线', colorKey: 'green' },
+              { icon: Zap, label: '响应时间', value: '< 200ms', desc: '实时推理', colorKey: 'amber' },
+              { icon: Lock, label: '数据安全', value: budget.remaining > 0 ? 'ON' : 'LIMIT', desc: budget.remaining > 0 ? '预算充足' : '预算耗尽', colorKey: budget.remaining > 0 ? 'green' : 'red' },
             ].map((metric) => {
+              const colors = METRIC_COLORS[metric.colorKey]
               const Icon = metric.icon
               return (
                 <Card key={metric.label} hover="lift">
                   <CardContent className="pt-4 pb-4">
-                    <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-sm bg-${metric.dataColor}/10`}>
-                      <Icon className={`h-4 w-4 text-${metric.dataColor}`} />
+                    <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-sm" style={{ backgroundColor: colors.bg }}>
+                      <Icon className="h-4 w-4" style={{ color: colors.text }} />
                     </div>
-                    <div className="text-2xl font-heading font-bold text-foreground mb-0.5">{metric.value}</div>
-                    <div className="text-ia-label font-heading font-semibold text-foreground">{metric.label}</div>
-                    <div className="text-ia-label text-muted-foreground">{metric.desc}</div>
+                    <div className="text-2xl font-semibold font-bold text-foreground mb-0.5">{metric.value}</div>
+                    <div className="text-xs font-semibold text-foreground">{metric.label}</div>
+                    <div className="text-xs text-muted-foreground">{metric.desc}</div>
                   </CardContent>
                 </Card>
               )
@@ -220,25 +229,25 @@ export default function PrivacyVisualization() {
                   <AreaChart data={privacyAccuracyData} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
                     <defs>
                       <linearGradient id="colorAccuracy" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorUtility" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--secondary))" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(var(--secondary))" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="epsilon" label={{ value: '隐私预算 ε', position: 'bottom', offset: 40 }} stroke="hsl(var(--muted-foreground))" />
-                    <YAxis label={{ value: '百分比 (%)', angle: -90, position: 'insideLeft' }} stroke="hsl(var(--muted-foreground))" domain={[0, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis dataKey="epsilon" label={{ value: '隐私预算 ε', position: 'bottom', offset: 40 }} stroke="#94a3b8" />
+                    <YAxis label={{ value: '百分比 (%)', angle: -90, position: 'insideLeft' }} stroke="#94a3b8" domain={[0, 100]} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                     <Legend layout="horizontal" align="center" verticalAlign="bottom" />
-                    <Area type="monotone" dataKey="accuracy" name="推荐准确率" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorAccuracy)" strokeWidth={2} />
-                    <Area type="monotone" dataKey="utility" name="数据效用" stroke="hsl(var(--secondary))" fillOpacity={1} fill="url(#colorUtility)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="accuracy" name="推荐准确率" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorAccuracy)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="utility" name="数据效用" stroke="#14b8a6" fillOpacity={1} fill="url(#colorUtility)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-ia-caption text-muted-foreground mt-3 text-center">
+              <p className="text-sm text-muted-foreground mt-3 text-center">
                 随着隐私预算 ε 增大，隐私保护减弱但模型性能提升。本系统默认 ε=1.0，在保护与效用间取得良好平衡。
               </p>
             </CardContent>
@@ -248,7 +257,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
                   <Layers className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -261,11 +270,11 @@ export default function PrivacyVisualization() {
               <div className="h-[280px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={featureImportanceData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis type="number" domain={[0, 1]} stroke="hsl(var(--muted-foreground))" />
-                    <YAxis dataKey="feature" type="category" width={90} stroke="hsl(var(--muted-foreground))" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis type="number" domain={[0, 1]} stroke="#94a3b8" />
+                    <YAxis dataKey="feature" type="category" width={90} stroke="#94a3b8" />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                    <Bar dataKey="importance" name="重要性得分" fill="hsl(var(--primary))" radius={[0, 2, 2, 0]} />
+                    <Bar dataKey="importance" name="重要性得分" fill="#0ea5e9" radius={[0, 2, 2, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -276,7 +285,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
                   <Eye className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -289,23 +298,23 @@ export default function PrivacyVisualization() {
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart margin={{ top: 20, right: 20, bottom: 40, left: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis type="number" dataKey="utility" name="数据效用" domain={[55, 100]} label={{ value: '数据效用 (%)', position: 'insideBottom', offset: -5, fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 10 }} />
-                    <YAxis type="number" dataKey="privacy" name="隐私保护强度" domain={[30, 100]} label={{ value: '隐私保护强度 (%)', angle: -90, position: 'insideLeft', fontSize: 11 }} stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 10 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis type="number" dataKey="utility" name="数据效用" domain={[55, 100]} label={{ value: '数据效用 (%)', position: 'insideBottom', offset: -5, fontSize: 11 }} stroke="#94a3b8" tick={{ fontSize: 10 }} />
+                    <YAxis type="number" dataKey="privacy" name="隐私保护强度" domain={[30, 100]} label={{ value: '隐私保护强度 (%)', angle: -90, position: 'insideLeft', fontSize: 11 }} stroke="#94a3b8" tick={{ fontSize: 10 }} />
                     <ZAxis range={[50, 50]} />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={CHART_TOOLTIP_STYLE} formatter={(value: number, name: string) => [`${value}%`, name]} />
                     <Legend layout="horizontal" align="center" verticalAlign="top" wrapperStyle={{ fontSize: '11px', marginTop: '-10px' }} />
                     {['ε=0.1', 'ε=0.5', 'ε=1.0', 'ε=2.0', 'ε=5.0', 'ε=10.0'].map((epsilonName, idx) => {
-                      const colors = ['hsl(var(--ia-data-1))', 'hsl(var(--ia-data-2))', 'hsl(var(--ia-data-3))', 'hsl(var(--ia-data-4))', 'hsl(var(--ia-data-5))', 'hsl(var(--destructive))']
+                      const colors = ['#0ea5e9', '#14b8a6', '#22c55e', '#f59e0b', '#ef4444', '#ef4444']
                       return (
                         <Scatter key={epsilonName} name={epsilonName} data={scatterData.filter((d) => d.name === epsilonName)} fill={colors[idx]} opacity={0.8} />
                       )
                     })}
-                    <ReferenceDot x={Math.min(98, 60 + config.epsilon * 4)} y={Math.max(30, 98 - config.epsilon * 6)} r={8} fill="hsl(var(--secondary))" stroke="white" strokeWidth={2} label={{ value: '当前', position: 'top', fontSize: 10, fill: 'hsl(var(--secondary))' }} />
+                    <ReferenceDot x={Math.min(98, 60 + config.epsilon * 4)} y={Math.max(30, 98 - config.epsilon * 6)} r={8} fill="#14b8a6" stroke="white" strokeWidth={2} label={{ value: '当前', position: 'top', fontSize: 10, fill: '#14b8a6' }} />
                   </ScatterChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-ia-caption text-muted-foreground mt-3 text-center">
+              <p className="text-sm text-muted-foreground mt-3 text-center">
                 标记为当前 ε={config.epsilon.toFixed(2)} 的估算位置。左上角为最优权衡区域（高隐私+高效用）。
               </p>
             </CardContent>
@@ -332,22 +341,22 @@ export default function PrivacyVisualization() {
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={noiseMechanismData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="mechanism" stroke="hsl(var(--muted-foreground))" />
-                    <YAxis stroke="hsl(var(--muted-foreground))" domain={[0, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis dataKey="mechanism" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" domain={[0, 100]} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                     <Legend />
-                    <Bar dataKey="accuracy" name="准确率 (%)" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="privacy" name="隐私保护" fill="hsl(var(--secondary))" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="speed" name="计算速度" fill="hsl(var(--warning))" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="accuracy" name="准确率 (%)" fill="#0ea5e9" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="privacy" name="隐私保护" fill="#14b8a6" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="speed" name="计算速度" fill="#f59e0b" radius={[2, 2, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
               <div className="grid md:grid-cols-3 gap-3 mt-4">
                 {noiseMechanismData.map((item) => (
                   <div key={item.mechanism} className="p-3 rounded-sm bg-surface border border-white/[0.06]">
-                    <h4 className="font-heading font-semibold text-ia-caption mb-1.5">{item.mechanism} 机制</h4>
-                    <ul className="space-y-0.5 text-ia-label text-muted-foreground">
+                    <h4 className="font-semibold text-sm mb-1.5">{item.mechanism} 机制</h4>
+                    <ul className="space-y-0.5 text-xs text-muted-foreground">
                       <li>准确率：{item.accuracy}%</li>
                       <li>隐私保护：{item.privacy}/100</li>
                       <li>计算速度：{item.speed}/100</li>
@@ -361,7 +370,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
                   <Layers className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -374,20 +383,20 @@ export default function PrivacyVisualization() {
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stageComparisonData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="stage" stroke="hsl(var(--muted-foreground))" />
-                    <YAxis stroke="hsl(var(--muted-foreground))" domain={[0, 100]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis dataKey="stage" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" domain={[0, 100]} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                     <Legend />
-                    <Bar dataKey="accuracy" name="准确率 (%)" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="privacy" name="隐私保护" fill="hsl(var(--secondary))" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="overhead" name="计算开销 (%)" fill="hsl(var(--destructive))" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="accuracy" name="准确率 (%)" fill="#0ea5e9" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="privacy" name="隐私保护" fill="#14b8a6" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="overhead" name="计算开销 (%)" fill="#ef4444" radius={[2, 2, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
               <div className="mt-4 p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
-                <p className="text-ia-caption text-muted-foreground">
-                  <strong className="text-brand-sky font-heading">梯度层扰动</strong>（本系统采用）在准确率和隐私保护之间取得最佳平衡，
+                <p className="text-sm text-muted-foreground">
+                  <strong className="text-brand-sky font-semibold">梯度层扰动</strong>（本系统采用）在准确率和隐私保护之间取得最佳平衡，
                   虽然计算开销略高（+25%），但能有效保护训练过程中的梯度信息，适用于深度学习场景。
                 </p>
               </div>
@@ -397,7 +406,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
                   <Target className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -410,29 +419,29 @@ export default function PrivacyVisualization() {
               <div className="h-[340px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
-                    <PolarGrid stroke="hsl(var(--border))" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                    <PolarGrid stroke="rgba(255,255,255,0.08)" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#94a3b8' }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9 }} />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                     <Legend wrapperStyle={{ fontSize: '12px' }} />
-                    <Radar name="Laplace" dataKey="Laplace" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.1} strokeWidth={1.5} />
-                    <Radar name="Gaussian" dataKey="Gaussian" stroke="hsl(var(--secondary))" fill="hsl(var(--secondary))" fillOpacity={0.1} strokeWidth={1.5} />
-                    <Radar name="Geometric" dataKey="Geometric" stroke="hsl(var(--warning))" fill="hsl(var(--warning))" fillOpacity={0.1} strokeWidth={1.5} />
+                    <Radar name="Laplace" dataKey="Laplace" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.1} strokeWidth={1.5} />
+                    <Radar name="Gaussian" dataKey="Gaussian" stroke="#14b8a6" fill="#14b8a6" fillOpacity={0.1} strokeWidth={1.5} />
+                    <Radar name="Geometric" dataKey="Geometric" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.1} strokeWidth={1.5} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-3 grid md:grid-cols-3 gap-3 text-ia-caption">
+              <div className="mt-3 grid md:grid-cols-3 gap-3 text-sm">
                 <div className="p-2.5 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
-                  <div className="font-heading font-semibold text-brand-sky mb-0.5">Laplace 机制</div>
-                  <p className="text-ia-label text-muted-foreground">隐私保护最强，适用于低维数值查询</p>
+                  <div className="font-semibold text-brand-sky mb-0.5">Laplace 机制</div>
+                  <p className="text-xs text-muted-foreground">隐私保护最强，适用于低维数值查询</p>
                 </div>
                 <div className="p-2.5 rounded-sm border border-secondary/20 bg-secondary/4">
-                  <div className="font-heading font-semibold text-secondary mb-0.5">Gaussian 机制</div>
-                  <p className="text-ia-label text-muted-foreground">高维适用性最优，准确率最高</p>
+                  <div className="font-semibold text-secondary mb-0.5">Gaussian 机制</div>
+                  <p className="text-xs text-muted-foreground">高维适用性最优，准确率最高</p>
                 </div>
                 <div className="p-2.5 rounded-sm border border-warning/20 bg-warning/4">
-                  <div className="font-heading font-semibold text-warning mb-0.5">Geometric 机制</div>
-                  <p className="text-ia-label text-muted-foreground">离散数据计算速度最快</p>
+                  <div className="font-semibold text-warning mb-0.5">Geometric 机制</div>
+                  <p className="text-xs text-muted-foreground">离散数据计算速度最快</p>
                 </div>
               </div>
             </CardContent>
@@ -446,7 +455,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
                   <Target className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -459,13 +468,13 @@ export default function PrivacyVisualization() {
               <div className="h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={budgetSeries}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="epoch" label={{ value: '操作序号', position: 'insideBottom', offset: -5 }} stroke="hsl(var(--muted-foreground))" />
-                    <YAxis label={{ value: '预算值', angle: -90, position: 'insideLeft' }} stroke="hsl(var(--muted-foreground))" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis dataKey="epoch" label={{ value: '操作序号', position: 'insideBottom', offset: -5 }} stroke="#94a3b8" />
+                    <YAxis label={{ value: '预算值', angle: -90, position: 'insideLeft' }} stroke="#94a3b8" />
                     <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
                     <Legend />
-                    <Line type="monotone" dataKey="consumed" name="已消耗预算" stroke="hsl(var(--destructive))" strokeWidth={2} dot={{ fill: 'hsl(var(--destructive))', r: 4 }} />
-                    <Line type="monotone" dataKey="remaining" name="剩余预算" stroke="hsl(var(--secondary))" strokeWidth={2} dot={{ fill: 'hsl(var(--secondary))', r: 4 }} />
+                    <Line type="monotone" dataKey="consumed" name="已消耗预算" stroke="#ef4444" strokeWidth={2} dot={{ fill: '#ef4444', r: 4 }} />
+                    <Line type="monotone" dataKey="remaining" name="剩余预算" stroke="#14b8a6" strokeWidth={2} dot={{ fill: '#14b8a6', r: 4 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -473,25 +482,25 @@ export default function PrivacyVisualization() {
               {events.length > 0 && (
                 <div className="mt-4 grid md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
-                    <div className="text-ia-caption font-heading font-semibold mb-2">最近操作</div>
+                    <div className="text-sm font-semibold mb-2">最近操作</div>
                     <div className="space-y-1.5">
                       {events.slice(0, 5).map((e) => (
-                        <div key={e.id} className="flex items-start justify-between gap-2 text-ia-caption">
+                        <div key={e.id} className="flex items-start justify-between gap-2 text-sm">
                           <div className="min-w-0">
-                            <div className="font-heading font-semibold truncate">{formatEventType(e.type)}</div>
-                            <div className="text-ia-label text-muted-foreground truncate">{e.note ?? '—'}</div>
+                            <div className="font-semibold truncate">{formatEventType(e.type)}</div>
+                            <div className="text-xs text-muted-foreground truncate">{e.note ?? '—'}</div>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <div className="font-heading font-semibold text-brand-sky">+ε {e.epsilonSpent.toFixed(2)}</div>
-                            <div className="text-ia-label text-muted-foreground">{new Date(e.ts).toLocaleTimeString()}</div>
+                            <div className="font-semibold text-brand-sky">+ε {e.epsilonSpent.toFixed(2)}</div>
+                            <div className="text-xs text-muted-foreground">{new Date(e.ts).toLocaleTimeString()}</div>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div className="p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
-                    <div className="text-ia-caption font-heading font-semibold mb-2">当前配置快照</div>
-                    <ul className="text-ia-caption text-muted-foreground space-y-0.5">
+                    <div className="text-sm font-semibold mb-2">当前配置快照</div>
+                    <ul className="text-sm text-muted-foreground space-y-0.5">
                       <li>机制：{config.noiseMechanism}</li>
                       <li>阶段：{config.applicationStage}</li>
                       <li>ε={config.epsilon.toFixed(3)}{config.noiseMechanism === 'gaussian' ? `，δ=${config.delta.toExponential(2)}` : ''}</li>
@@ -502,21 +511,21 @@ export default function PrivacyVisualization() {
               )}
               <div className="mt-4 grid md:grid-cols-2 gap-3">
                 <div className="p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
-                  <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2 text-brand-sky">
+                  <h4 className="font-semibold text-sm mb-1.5 flex items-center gap-2 text-brand-sky">
                     <Eye className="h-3.5 w-3.5" />
                     组合定理应用
                   </h4>
-                  <p className="text-ia-label text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     根据串行组合定理，k 次ε-差分隐私操作的总隐私开销为 k×ε。
                     本系统采用高级组合定理，通过隐私预算的智能分配，在 20 轮训练后仍保持有效隐私保护。
                   </p>
                 </div>
-                <div className="p-3 rounded-sm border border-ia-data-3/20 bg-ia-data-3/4">
-                  <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2 text-ia-data-3">
+                <div className="p-3 rounded-sm border border-green-500/20 bg-green-500/10">
+                  <h4 className="font-semibold text-sm mb-1.5 flex items-center gap-2 text-green-400">
                     <Shield className="h-3.5 w-3.5" />
                     预算优化策略
                   </h4>
-                  <p className="text-ia-label text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     采用自适应预算分配算法，早期轮次分配较少预算，后期逐步增加，使隐私投入集中在模型收敛关键阶段，提升整体效用。
                   </p>
                 </div>
@@ -528,7 +537,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
                   <Zap className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -554,7 +563,7 @@ export default function PrivacyVisualization() {
                     { label: '噪声规模 b', value: 1.0, max: 5 },
                     { label: '重识别风险降低', value: 95, max: 100 },
                   ]},
-                  { title: '系统效率', icon: Activity, iconColor: 'text-ia-data-4', metrics: [
+                  { title: '系统效率', icon: Activity, iconColor: 'text-amber-400', metrics: [
                     { label: '平均响应时间', value: 185, unit: 'ms', max: 500 },
                     { label: '吞吐量', value: 92, unit: '请求/秒', max: 200 },
                     { label: '内存占用', value: 2.3, unit: 'GB', max: 8 },
@@ -565,7 +574,7 @@ export default function PrivacyVisualization() {
                   const SectionIcon = section.icon
                   return (
                     <div key={section.title} className="space-y-3">
-                      <h4 className="font-heading font-semibold text-ia-caption flex items-center gap-2">
+                      <h4 className="font-semibold text-sm flex items-center gap-2">
                         <SectionIcon className={`h-3.5 w-3.5 ${section.iconColor}`} />
                         {section.title}
                       </h4>
@@ -575,9 +584,9 @@ export default function PrivacyVisualization() {
                           const percentage = maxVal ? (metric.value / maxVal) * 100 : metric.value
                           return (
                             <div key={metric.label}>
-                              <div className="flex justify-between text-ia-label mb-0.5">
+                              <div className="flex justify-between text-xs mb-0.5">
                                 <span className="text-muted-foreground">{metric.label}</span>
-                                <span className="font-heading font-semibold">
+                                <span className="font-semibold">
                                   {'unit' in metric ? `${metric.value}${metric.unit}` : ('isExp' in metric && metric.isExp) ? metric.value.toExponential(1) : `${metric.value}%`}
                                 </span>
                               </div>
@@ -604,10 +613,10 @@ export default function PrivacyVisualization() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-ia-caption text-muted-foreground leading-relaxed mb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                 本课题通过实验验证了<strong className="text-foreground">差分隐私技术在医疗用药推荐场景中的可行性与有效性</strong>。实验结果表明：
               </p>
-              <ul className="space-y-2 text-ia-caption text-muted-foreground">
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-brand-sky mt-0.5 flex-shrink-0" />
                   <span>在<strong className="text-foreground">ε = 1.0</strong>的强隐私保护下，DeepFM 模型仍能达到<strong className="text-foreground">89.7%</strong>的推荐准确率</span>
@@ -625,7 +634,7 @@ export default function PrivacyVisualization() {
                   <span><strong className="text-foreground">Gaussian 噪声机制</strong>在高维医疗特征场景下表现最优，优于 Laplace 和 Geometric 机制</span>
                 </li>
               </ul>
-              <p className="text-ia-caption text-muted-foreground mt-4 leading-relaxed">
+              <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
                 以上可视化为毕设课题提供了直观的实验数据支撑，验证了所提方法的有效性。
               </p>
             </CardContent>
