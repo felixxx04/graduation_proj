@@ -40,6 +40,7 @@ type FormState = {
   gender: PatientGender
   height: string
   weight: string
+  phone: string
   allergies: string
   chronicDiseases: string
   currentMedications: string
@@ -52,6 +53,7 @@ const INITIAL_FORM: FormState = {
   gender: '男',
   height: '',
   weight: '',
+  phone: '',
   allergies: '',
   chronicDiseases: '',
   currentMedications: '',
@@ -144,6 +146,7 @@ export default function PatientRecords() {
     const payload = {
       name: formData.name.trim(), age: Number.parseInt(formData.age, 10) || 0, gender: formData.gender,
       height: Number.parseFloat(formData.height) || 0, weight: Number.parseFloat(formData.weight) || 0,
+      phone: formData.phone.trim(),
       allergies: splitList(formData.allergies), chronicDiseases: splitList(formData.chronicDiseases),
       currentMedications: splitList(formData.currentMedications), medicalHistory: formData.medicalHistory.trim(),
     }
@@ -157,7 +160,8 @@ export default function PatientRecords() {
   const handleEdit = (patient: Patient) => {
     setFormData({
       name: patient.name, age: String(patient.age), gender: patient.gender, height: String(patient.height),
-      weight: String(patient.weight), allergies: patient.allergies.join(', '), chronicDiseases: patient.chronicDiseases.join(', '),
+      weight: String(patient.weight), phone: patient.phone ?? '',
+      allergies: patient.allergies.join(', '), chronicDiseases: patient.chronicDiseases.join(', '),
       currentMedications: patient.currentMedications.join(', '), medicalHistory: patient.medicalHistory,
     })
     setEditingId(patient.id); setShowAddForm(true); setPageError(null)
@@ -170,15 +174,20 @@ export default function PatientRecords() {
 
   const handleGoToRecommendation = (patient: Patient) => {
     navigate('/recommendation', {
-      state: { prefill: { age: String(patient.age), gender: patient.gender, diseases: patient.chronicDiseases.join('，'), symptoms: patient.medicalHistory, allergies: patient.allergies.join('，'), currentMedications: patient.currentMedications.join('，') } },
+      state: { prefill: {
+        name: patient.name, age: String(patient.age), gender: patient.gender,
+        height: String(patient.height), weight: String(patient.weight), phone: patient.phone ?? '',
+        diseases: patient.chronicDiseases.join('，'), symptoms: patient.medicalHistory,
+        allergies: patient.allergies.join('，'), currentMedications: patient.currentMedications.join('，'),
+      } },
     })
   }
 
   const SortButton = ({ label, keyName }: { label: string; keyName: SortKey }) => (
     <button
       onClick={() => toggleSort(keyName)}
-      className={`flex items-center gap-1 rounded-standard px-2.5 py-1 text-ia-label font-heading font-semibold transition-colors duration-150 cursor-pointer ${
-        sortKey === keyName ? 'bg-primary/8 text-primary border border-primary/20' : 'text-muted-foreground hover:bg-muted border border-transparent'
+      className={`flex items-center gap-1 rounded-sm px-2.5 py-1 text-ia-label font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+        sortKey === keyName ? 'bg-brand-sky/8 text-brand-sky border border-brand-sky/20' : 'text-muted-foreground hover:bg-surface border border-transparent'
       }`}
     >
       {label}
@@ -190,11 +199,11 @@ export default function PatientRecords() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <section className="border-l-4 border-l-primary bg-card px-6 py-8">
+      <section className="border-l-4 border-l-primary bg-surface-elevated px-6 py-8">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-standard bg-primary flex-shrink-0">
-              <Users className="h-5 w-5 text-primary-foreground" />
+            <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 flex-shrink-0">
+              <Users className="h-5 w-5 text-white" />
             </div>
             <div>
               <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">患者档案管理</h1>
@@ -209,7 +218,7 @@ export default function PatientRecords() {
       </section>
 
       {(error || pageError) && (
-        <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+        <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
           {pageError || error}
         </div>
       )}
@@ -226,9 +235,9 @@ export default function PatientRecords() {
             ].map((item) => {
               const Icon = item.icon
               return (
-                <Card key={item.label} hover="border">
+                <Card key={item.label} hover="lift">
                   <CardContent className="pb-3 pt-4">
-                    <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-standard bg-${item.dataColor}/10`}>
+                    <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-sm bg-${item.dataColor}/10`}>
                       <Icon className={`h-4 w-4 text-${item.dataColor}`} />
                     </div>
                     <div className="text-xl font-heading font-bold">{item.value}</div>
@@ -267,7 +276,7 @@ export default function PatientRecords() {
       <AnimatePresence>
         {showAddForm && (
           <div className="animate-fade-in">
-            <Card ref={addFormRef} hover="none" className="border-primary/20 scroll-mt-[60px]">
+            <Card ref={addFormRef} hover="none" className="border-brand-sky/20 scroll-mt-[60px]">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -292,7 +301,7 @@ export default function PatientRecords() {
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="p-gender" className="text-ia-caption font-heading font-semibold">性别 *</Label>
-                      <select id="p-gender" value={formData.gender} onChange={(event) => setFormData({ ...formData, gender: event.target.value as PatientGender })} className="flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary">
+                      <select id="p-gender" value={formData.gender} onChange={(event) => setFormData({ ...formData, gender: event.target.value as PatientGender })} className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky">
                         <option value="男">男</option>
                         <option value="女">女</option>
                         <option value="未知">未知</option>
@@ -308,6 +317,10 @@ export default function PatientRecords() {
                         <Input id="p-weight" type="number" value={formData.weight} onChange={(event) => setFormData({ ...formData, weight: event.target.value })} />
                       </div>
                     </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="p-phone" className="text-ia-caption font-heading font-semibold">联系电话 <span className="text-ia-label text-muted-foreground">（可选）</span></Label>
+                      <Input id="p-phone" value={formData.phone} onChange={(event) => setFormData({ ...formData, phone: event.target.value })} placeholder="13800138000" />
+                    </div>
                   </div>
 
                   <div className="space-y-1.5"><Label htmlFor="p-allergies" className="text-ia-caption font-heading font-semibold">过敏史（逗号分隔）</Label><Input id="p-allergies" value={formData.allergies} onChange={(event) => setFormData({ ...formData, allergies: event.target.value })} /></div>
@@ -315,7 +328,7 @@ export default function PatientRecords() {
                   <div className="space-y-1.5"><Label htmlFor="p-meds" className="text-ia-caption font-heading font-semibold">当前用药（逗号分隔）</Label><Input id="p-meds" value={formData.currentMedications} onChange={(event) => setFormData({ ...formData, currentMedications: event.target.value })} /></div>
                   <div className="space-y-1.5">
                     <Label htmlFor="p-history" className="text-ia-caption font-heading font-semibold">既往病史</Label>
-                    <textarea id="p-history" value={formData.medicalHistory} onChange={(event) => setFormData({ ...formData, medicalHistory: event.target.value })} className="flex min-h-[80px] w-full resize-none rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary" />
+                    <textarea id="p-history" value={formData.medicalHistory} onChange={(event) => setFormData({ ...formData, medicalHistory: event.target.value })} className="flex min-h-[80px] w-full resize-none rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky" />
                   </div>
 
                   <div className="flex gap-2 pt-3">
@@ -351,13 +364,13 @@ export default function PatientRecords() {
 
             return (
               <div key={patient.id} className="animate-fade-in">
-                <Card hover="border" className="overflow-hidden">
+                <Card hover="lift" className="overflow-hidden">
                   <CardContent className="p-0">
                     <div className="cursor-pointer p-4" onClick={() => setExpandedPatient(isExpanded ? null : patient.id)}>
                       <div className="flex items-start justify-between">
                         <div className="flex min-w-0 flex-1 items-start gap-3">
-                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-standard bg-primary">
-                            <User className="h-5 w-5 text-primary-foreground" />
+                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                            <User className="h-5 w-5 text-white" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="mb-1.5 flex flex-wrap items-center gap-2">
@@ -387,7 +400,7 @@ export default function PatientRecords() {
                         </div>
 
                         <div className="ml-2 flex flex-shrink-0 items-center gap-0.5">
-                          <Button variant="ghost" size="sm" className="gap-1 text-ia-label text-primary hover:text-primary cursor-pointer" onClick={(event) => { event.stopPropagation(); handleGoToRecommendation(patient) }}>
+                          <Button variant="ghost" size="sm" className="gap-1 text-ia-label text-brand-sky hover:text-brand-sky cursor-pointer" onClick={(event) => { event.stopPropagation(); handleGoToRecommendation(patient) }}>
                             <Stethoscope className="h-3.5 w-3.5" />
                             推荐
                           </Button>
@@ -400,15 +413,15 @@ export default function PatientRecords() {
 
                     <AnimatePresence>
                       {isExpanded && (
-                        <div className="animate-fade-in overflow-hidden border-t border-ia-border">
+                        <div className="animate-fade-in overflow-hidden border-t border-white/[0.06]">
                           <div className="px-4 pb-4">
                             <div className="mt-4 grid gap-4 md:grid-cols-3">
                               <div>
-                                <h4 className="mb-2 text-ia-caption font-heading font-semibold text-primary">当前用药</h4>
+                                <h4 className="mb-2 text-ia-caption font-heading font-semibold text-brand-sky">当前用药</h4>
                                 <div className="space-y-1.5">
                                   {patient.currentMedications.length > 0 ? patient.currentMedications.map((medication) => (
-                                    <div key={medication} className="flex items-center gap-2 rounded-standard bg-primary/4 border border-primary/10 p-2">
-                                      <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+                                    <div key={medication} className="flex items-center gap-2 rounded-sm bg-brand-sky/4 border border-brand-sky/10 p-2">
+                                      <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-br from-brand-sky to-sky-600" />
                                       <span className="text-ia-caption">{medication}</span>
                                     </div>
                                   )) : <p className="text-ia-label text-muted-foreground">无</p>}
@@ -418,7 +431,7 @@ export default function PatientRecords() {
                                 <h4 className="mb-2 text-ia-caption font-heading font-semibold text-secondary">过敏史</h4>
                                 <div className="space-y-1.5">
                                   {patient.allergies.length > 0 ? patient.allergies.map((allergy) => (
-                                    <div key={allergy} className="flex items-center gap-2 rounded-standard border border-destructive/20 bg-destructive/4 p-2">
+                                    <div key={allergy} className="flex items-center gap-2 rounded-sm border border-destructive/20 bg-destructive/4 p-2">
                                       <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 text-destructive" />
                                       <span className="text-ia-caption text-destructive">{allergy}</span>
                                     </div>
@@ -428,15 +441,15 @@ export default function PatientRecords() {
                               <div>
                                 <h4 className="mb-2 text-ia-caption font-heading font-semibold">体格信息</h4>
                                 <div className="space-y-1.5 text-ia-caption">
-                                  <div className="flex justify-between rounded-standard bg-muted p-2">
+                                  <div className="flex justify-between rounded-sm bg-surface p-2">
                                     <span className="text-muted-foreground">身高</span>
                                     <span className="font-heading font-semibold">{patient.height} cm</span>
                                   </div>
-                                  <div className="flex justify-between rounded-standard bg-muted p-2">
+                                  <div className="flex justify-between rounded-sm bg-surface p-2">
                                     <span className="text-muted-foreground">体重</span>
                                     <span className="font-heading font-semibold">{patient.weight} kg</span>
                                   </div>
-                                  <div className="flex justify-between rounded-standard bg-muted p-2">
+                                  <div className="flex justify-between rounded-sm bg-surface p-2">
                                     <span className="text-muted-foreground">BMI</span>
                                     <span className={`font-heading font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
                                   </div>
@@ -444,7 +457,7 @@ export default function PatientRecords() {
                               </div>
                             </div>
                             {patient.medicalHistory && (
-                              <div className="mt-4 border-t border-ia-border pt-4">
+                              <div className="mt-4 border-t border-white/[0.06] pt-4">
                                 <h4 className="mb-1.5 text-ia-caption font-heading font-semibold">既往病史</h4>
                                 <TextExpander text={patient.medicalHistory} maxLines={3} />
                               </div>

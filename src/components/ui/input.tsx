@@ -8,36 +8,21 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, icon, ...props }, ref) => {
+    const classes = cn(
+      'flex h-10 w-full rounded-sm border border-white/10 bg-surface px-3 py-2 text-sm text-secondary-foreground placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:border-brand-sky focus-visible:shadow-glow-sm disabled:cursor-not-allowed disabled:opacity-40 transition-all duration-150',
+      className
+    )
+
     if (icon) {
       return (
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-            {icon}
-          </div>
-          <input
-            type={type}
-            className={cn(
-              'flex h-10 w-full rounded-standard border border-ia-border bg-card pl-10 pr-3 py-2 text-ia-body font-body placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150',
-              className
-            )}
-            ref={ref}
-            {...props}
-          />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</div>
+          <input type={type} className={cn(classes, 'pl-10')} ref={ref} {...props} />
         </div>
       )
     }
 
-    return (
-      <input
-        type={type}
-        className={cn(
-          'flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body placeholder:text-muted-foreground/50 focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150',
-          className
-        )}
-        ref={ref}
-        {...props}
-      />
-    )
+    return <input type={type} className={classes} ref={ref} {...props} />
   }
 )
 Input.displayName = 'Input'

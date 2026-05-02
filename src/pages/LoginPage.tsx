@@ -51,8 +51,8 @@ export default function LoginPage() {
         <Card hover="none">
           <CardHeader>
             <div className="flex items-center gap-3 mb-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-standard bg-primary">
-                <Shield className="h-5 w-5 text-primary-foreground" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 shadow-btn-primary">
+                <Shield className="h-5 w-5 text-white" />
               </div>
               <div>
                 <CardTitle>智医荐药</CardTitle>
@@ -95,7 +95,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+                <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
                   {error}
                 </div>
               )}
@@ -114,20 +114,20 @@ export default function LoginPage() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-ia-border" />
+                <span className="w-full border-t border-white/[0.06]" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-card px-2 text-ia-label text-muted-foreground">测试账号</span>
+                <span className="bg-surface-elevated px-2 text-ia-label text-muted-foreground">测试账号</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-standard border border-ia-border p-2.5">
+              <div className="rounded-sm border border-white/[0.06] p-2.5">
                 <div className="text-ia-label text-muted-foreground mb-1">医生账号</div>
                 <div className="text-ia-caption font-heading font-semibold">doctor1</div>
                 <div className="text-ia-label text-muted-foreground">admin123</div>
               </div>
-              <div className="rounded-standard border border-ia-border p-2.5">
+              <div className="rounded-sm border border-white/[0.06] p-2.5">
                 <div className="text-ia-label text-muted-foreground mb-1">管理员</div>
                 <div className="text-ia-caption font-heading font-semibold">admin</div>
                 <div className="text-ia-label text-muted-foreground">admin123</div>
@@ -137,7 +137,7 @@ export default function LoginPage() {
             <div className="text-center">
               <Link
                 to="/"
-                className="inline-flex items-center gap-1 text-ia-caption text-primary hover:underline hover:underline-offset-4 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-ia-caption text-brand-sky hover:underline hover:underline-offset-4 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 返回首页

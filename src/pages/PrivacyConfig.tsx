@@ -63,10 +63,10 @@ export default function PrivacyConfig() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <section className="border-l-4 border-l-primary bg-card px-6 py-8">
+      <section className="border-l-4 border-l-primary bg-surface-elevated px-6 py-8">
         <div className="flex items-start gap-4">
-          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-standard bg-primary flex-shrink-0">
-            <Shield className="h-5 w-5 text-primary-foreground" />
+          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 flex-shrink-0">
+            <Shield className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1">
             <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">差分隐私配置</h1>
@@ -76,29 +76,29 @@ export default function PrivacyConfig() {
       </section>
 
       {/* Algorithm Explanation */}
-      <Card hover="none" className="border-primary/20">
+      <Card hover="none" className="border-brand-sky/20">
         <CardHeader>
           <div className="flex items-center gap-2.5 mb-1">
-            <BookOpen className="h-4 w-4 text-primary" />
+            <BookOpen className="h-4 w-4 text-brand-sky" />
             <CardTitle>差分隐私算法原理</CardTitle>
           </div>
           <CardDescription>理解核心概念与数学基础</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-2 gap-3">
-            <div className="p-3 rounded-standard bg-card border border-ia-border">
+            <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
               <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2">
-                <Shield className="h-3.5 w-3.5 text-primary" />
+                <Shield className="h-3.5 w-3.5 text-brand-sky" />
                 ε-差分隐私定义
               </h4>
               <p className="text-ia-label text-muted-foreground leading-relaxed">
                 对于任意两个相邻数据集 D₁ 和 D₂，以及任意输出 S：
-                <code className="block mt-1.5 p-1.5 bg-muted rounded-micro text-ia-data overflow-x-auto">
+                <code className="block mt-1.5 p-1.5 bg-surface rounded-xs text-ia-data overflow-x-auto">
                   Pr[M(D₁) ∈ S] ≤ e^ε × Pr[M(D₂) ∈ S] + δ
                 </code>
               </p>
             </div>
-            <div className="p-3 rounded-standard bg-card border border-ia-border">
+            <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
               <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2">
                 <Lock className="h-3.5 w-3.5 text-secondary" />
                 隐私预算 ε
@@ -115,15 +115,15 @@ export default function PrivacyConfig() {
               <AccordionTrigger>噪声机制详解</AccordionTrigger>
               <AccordionContent>
                 <div className="grid md:grid-cols-3 gap-2 pt-3">
-                  <div className="p-2.5 rounded-standard border border-primary/20 bg-primary/4">
+                  <div className="p-2.5 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
                     <h5 className="font-heading font-semibold text-ia-caption mb-1">Laplace 机制</h5>
                     <p className="text-ia-label text-muted-foreground">添加 Laplace 噪声：Noise ~ Lap(Δf/ε)。适用于数值型查询，提供纯ε-DP 保证</p>
                   </div>
-                  <div className="p-2.5 rounded-standard border border-secondary/20 bg-secondary/4">
+                  <div className="p-2.5 rounded-sm border border-secondary/20 bg-secondary/4">
                     <h5 className="font-heading font-semibold text-ia-caption mb-1">Gaussian 机制</h5>
                     <p className="text-ia-label text-muted-foreground">添加高斯噪声：Noise ~ N(0, σ²)。适用于高维数据，提供 (ε,δ)-DP 保证</p>
                   </div>
-                  <div className="p-2.5 rounded-standard border border-ia-data-3/20 bg-ia-data-3/4">
+                  <div className="p-2.5 rounded-sm border border-ia-data-3/20 bg-ia-data-3/4">
                     <h5 className="font-heading font-semibold text-ia-caption mb-1">Geometric 机制</h5>
                     <p className="text-ia-label text-muted-foreground">离散版本的 Laplace 机制。适用于计数查询和离散数据</p>
                   </div>
@@ -134,15 +134,15 @@ export default function PrivacyConfig() {
               <AccordionTrigger>应用场景说明</AccordionTrigger>
               <AccordionContent>
                 <div className="grid md:grid-cols-3 gap-2 pt-3">
-                  <div className="p-2.5 rounded-standard bg-card border border-ia-border">
+                  <div className="p-2.5 rounded-sm bg-surface-elevated border border-white/[0.06]">
                     <h5 className="font-heading font-semibold text-ia-caption mb-1 flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" />数据层扰动</h5>
                     <p className="text-ia-label text-muted-foreground">在原始数据发布前添加噪声，适用于数据共享场景</p>
                   </div>
-                  <div className="p-2.5 rounded-standard bg-card border border-ia-border">
+                  <div className="p-2.5 rounded-sm bg-surface-elevated border border-white/[0.06]">
                     <h5 className="font-heading font-semibold text-ia-caption mb-1 flex items-center gap-1.5"><Sliders className="h-3.5 w-3.5" />梯度扰动</h5>
                     <p className="text-ia-label text-muted-foreground">在深度学习训练过程中对梯度添加噪声，适用于联邦学习</p>
                   </div>
-                  <div className="p-2.5 rounded-standard bg-card border border-ia-border">
+                  <div className="p-2.5 rounded-sm bg-surface-elevated border border-white/[0.06]">
                     <h5 className="font-heading font-semibold text-ia-caption mb-1 flex items-center gap-1.5"><Settings className="h-3.5 w-3.5" />模型层扰动</h5>
                     <p className="text-ia-label text-muted-foreground">对训练完成的模型参数添加噪声，适用于模型发布</p>
                   </div>
@@ -160,8 +160,8 @@ export default function PrivacyConfig() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-primary">
-                  <Shield className="h-4 w-4 text-primary-foreground" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                  <Shield className="h-4 w-4 text-white" />
                 </div>
                 <div>
                   <CardTitle>隐私参数配置</CardTitle>
@@ -173,7 +173,7 @@ export default function PrivacyConfig() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <Label className="text-ia-caption font-heading font-semibold flex items-center gap-2"><Key className="h-3.5 w-3.5" />隐私预算 ε (Epsilon)</Label>
-                  <span className="text-xl font-heading font-bold text-primary">{config.epsilon.toFixed(3)}</span>
+                  <span className="text-xl font-heading font-bold text-brand-sky">{config.epsilon.toFixed(3)}</span>
                 </div>
                 <Slider value={config.epsilon} min={0.1} max={10} step={0.1} onChange={(value) => setConfig({ ...config, epsilon: value })} showTooltip={false} />
                 <div className="flex justify-between text-ia-label text-muted-foreground">
@@ -181,10 +181,10 @@ export default function PrivacyConfig() {
                   <span>平衡 (1.0)</span>
                   <span>高效用 (10.0)</span>
                 </div>
-                <div className="p-2.5 rounded-standard border border-primary/20 bg-primary/4">
+                <div className="p-2.5 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
                   <div className="flex items-start gap-2">
-                    <Info className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
-                    <p className="text-ia-label text-primary/80">
+                    <Info className="h-3.5 w-3.5 text-brand-sky mt-0.5 flex-shrink-0" />
+                    <p className="text-ia-label text-brand-sky/80">
                       当前 ε = {config.epsilon.toFixed(2)}，属于
                       {config.epsilon < 0.5 ? '强隐私保护级别，数据效用较低' : config.epsilon < 2 ? '中等隐私保护级别，平衡性较好' : '弱隐私保护级别，数据效用较高'}
                     </p>
@@ -195,7 +195,7 @@ export default function PrivacyConfig() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <Label className="text-ia-caption font-heading font-semibold flex items-center gap-2"><Lock className="h-3.5 w-3.5" />松弛参数 δ (Delta)</Label>
-                  <span className="text-xl font-heading font-bold text-primary">{config.delta.toExponential(2)}</span>
+                  <span className="text-xl font-heading font-bold text-brand-sky">{config.delta.toExponential(2)}</span>
                 </div>
                 <Slider value={config.delta} min={0.000001} max={0.001} step={0.000001} onChange={(value) => setConfig({ ...config, delta: value })} showTooltip={false} />
                 <p className="text-ia-label text-muted-foreground">δ 表示隐私保护失败的概率，应远小于 1/数据库大小</p>
@@ -204,7 +204,7 @@ export default function PrivacyConfig() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <Label className="text-ia-caption font-heading font-semibold flex items-center gap-2"><TrendingDown className="h-3.5 w-3.5" />全局敏感度 Δf</Label>
-                  <span className="text-xl font-heading font-bold text-primary">{config.sensitivity.toFixed(2)}</span>
+                  <span className="text-xl font-heading font-bold text-brand-sky">{config.sensitivity.toFixed(2)}</span>
                 </div>
                 <Slider value={config.sensitivity} min={0.01} max={1.0} step={0.01} onChange={(value) => setConfig({ ...config, sensitivity: value })} showTooltip={false} />
                 <p className="text-ia-label text-muted-foreground">敏感度衡量单个记录变化对查询结果的最大影响（sigmoid输出范围[0,1]，上限1.0）</p>
@@ -213,10 +213,10 @@ export default function PrivacyConfig() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <Label className="text-ia-caption font-heading font-semibold flex items-center gap-2"><BarChart3 className="h-3.5 w-3.5" />总隐私预算 (会话级 ε_total)</Label>
-                  <span className="text-xl font-heading font-bold text-primary">{config.privacyBudget.toFixed(1)}</span>
+                  <span className="text-xl font-heading font-bold text-brand-sky">{config.privacyBudget.toFixed(1)}</span>
                 </div>
                 <Slider value={config.privacyBudget} min={0} max={50} step={0.5} onChange={(value) => setConfig({ ...config, privacyBudget: value })} showTooltip={false} />
-                <div className="p-2.5 rounded-standard bg-muted border border-ia-border">
+                <div className="p-2.5 rounded-sm bg-surface border border-white/[0.06]">
                   <p className="text-ia-label text-muted-foreground">
                     Demo 采用「串行组合」的直观记账方式：每次推荐推理消耗约 ε，累计不超过 ε_total。你可以在"用药推荐/可视化"页面看到实时消耗曲线。
                   </p>
@@ -229,7 +229,7 @@ export default function PrivacyConfig() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-secondary">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-secondary">
                   <Settings className="h-4 w-4 text-secondary-foreground" />
                 </div>
                 <div>
@@ -251,12 +251,12 @@ export default function PrivacyConfig() {
                     <button
                       key={mechanism.id}
                       onClick={() => setConfig({ ...config, noiseMechanism: mechanism.id as any })}
-                      className={`p-3 rounded-standard border transition-colors duration-150 text-left cursor-pointer ${
-                        isActive ? 'border-primary bg-primary/4 ia-border-3' : 'border-ia-border hover:border-primary/40'
+                      className={`p-3 rounded-sm border transition-colors duration-150 text-left cursor-pointer ${
+                        isActive ? 'border-brand-sky bg-brand-sky/4 ia-border-3' : 'border-white/[0.06] hover:border-brand-sky/40'
                       }`}
                     >
-                      <Icon className={`h-5 w-5 mb-1.5 ${isActive ? 'text-primary' : 'text-foreground'}`} />
-                      <div className={`font-heading font-semibold text-ia-caption ${isActive ? 'text-primary' : 'text-foreground'}`}>{mechanism.name}</div>
+                      <Icon className={`h-5 w-5 mb-1.5 ${isActive ? 'text-brand-sky' : 'text-foreground'}`} />
+                      <div className={`font-heading font-semibold text-ia-caption ${isActive ? 'text-brand-sky' : 'text-foreground'}`}>{mechanism.name}</div>
                       <div className="text-ia-label text-muted-foreground mt-0.5">{mechanism.desc}</div>
                     </button>
                   )
@@ -269,7 +269,7 @@ export default function PrivacyConfig() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
                   <Eye className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -288,8 +288,8 @@ export default function PrivacyConfig() {
                   <button
                     key={stage.id}
                     onClick={() => setConfig({ ...config, applicationStage: stage.id as any })}
-                    className={`p-3 rounded-standard border transition-colors duration-150 text-left cursor-pointer ${
-                      config.applicationStage === stage.id ? 'border-primary bg-primary/4 ia-border-3' : 'border-ia-border hover:border-primary/40'
+                    className={`p-3 rounded-sm border transition-colors duration-150 text-left cursor-pointer ${
+                      config.applicationStage === stage.id ? 'border-brand-sky bg-brand-sky/4 ia-border-3' : 'border-white/[0.06] hover:border-brand-sky/40'
                     }`}
                   >
                     <div className="font-heading font-semibold text-ia-caption">{stage.name}</div>
@@ -303,27 +303,27 @@ export default function PrivacyConfig() {
 
         {/* Real-time Metrics */}
         <div className="space-y-5">
-          <Card hover="none" className="sticky top-20 border-primary/20">
+          <Card hover="none" className="sticky top-20 border-brand-sky/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Activity className="h-4 w-4 text-primary" />
+                <Activity className="h-4 w-4 text-brand-sky" />
                 实时指标分析
               </CardTitle>
               <CardDescription>基于当前配置的评估结果</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-3 rounded-standard bg-card border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <TrendingDown className="h-3.5 w-3.5 text-primary" />
+                  <TrendingDown className="h-3.5 w-3.5 text-brand-sky" />
                   <span className="text-ia-caption font-heading font-semibold">噪声规模 ({config.noiseMechanism === 'gaussian' ? 'σ' : 'b'})</span>
                 </div>
-                <div className="text-2xl font-heading font-bold text-primary mb-0.5">{noiseScale === Infinity ? '∞' : noiseScale.toFixed(4)}</div>
+                <div className="text-2xl font-heading font-bold text-brand-sky mb-0.5">{noiseScale === Infinity ? '∞' : noiseScale.toFixed(4)}</div>
                 <p className="text-ia-label text-muted-foreground">
                   {config.noiseMechanism === 'gaussian' ? 'σ = Δf * sqrt(2 ln(1.25/δ)) / ε' : `b = Δf / ε = ${config.sensitivity} / ${config.epsilon}`}
                 </p>
               </div>
 
-              <div className="p-3 rounded-standard bg-card border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
                     <Key className="h-3.5 w-3.5 text-secondary" />
@@ -349,7 +349,7 @@ export default function PrivacyConfig() {
                 </p>
               </div>
 
-              <div className="p-3 rounded-standard bg-card border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Shield className="h-3.5 w-3.5 text-secondary" />
                   <span className="text-ia-caption font-heading font-semibold">隐私保护强度</span>
@@ -366,7 +366,7 @@ export default function PrivacyConfig() {
                 </p>
               </div>
 
-              <div className="p-3 rounded-standard bg-card border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-1.5">
                   <AlertTriangle className="h-3.5 w-3.5 text-ia-data-4" />
                   <span className="text-ia-caption font-heading font-semibold">预估效用损失</span>
@@ -381,7 +381,7 @@ export default function PrivacyConfig() {
               </div>
 
               {/* Trade-off Visualization */}
-              <div className="p-3 rounded-standard bg-card border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
                 <div className="text-ia-caption font-heading font-semibold mb-2">隐私 - 效用权衡</div>
                 <div className="relative h-28">
                   <svg viewBox="0 0 200 100" className="w-full h-full">
@@ -405,7 +405,7 @@ export default function PrivacyConfig() {
               </Button>
 
               {savedConfig && (
-                <div className="p-2.5 rounded-standard border border-ia-data-3/30 bg-ia-data-3/6">
+                <div className="p-2.5 rounded-sm border border-ia-data-3/30 bg-ia-data-3/6">
                   <div className="flex items-center gap-2 text-ia-data-3 text-ia-caption">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     <span className="font-heading font-semibold">配置已保存！ε={savedConfig.epsilon.toFixed(2)}</span>
@@ -427,14 +427,14 @@ export default function PrivacyConfig() {
           <div className="grid md:grid-cols-2 gap-5">
             <div className="space-y-2.5">
               <h4 className="font-heading font-semibold text-ia-caption flex items-center gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-brand-sky" />
                 研究重点
               </h4>
               <ul className="space-y-1.5 text-ia-caption text-muted-foreground">
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" /><span>医疗数据稀疏性下的隐私预算优化分配策略</span></li>
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" /><span>深度学习梯度更新过程中的自适应噪声注入机制</span></li>
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" /><span>多阶段差分隐私组合定理的应用与隐私开销累积分析</span></li>
-                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" /><span>药物特征向量化过程中的局部差分隐私保护</span></li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-brand-sky to-sky-600 mt-1.5" /><span>医疗数据稀疏性下的隐私预算优化分配策略</span></li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-brand-sky to-sky-600 mt-1.5" /><span>深度学习梯度更新过程中的自适应噪声注入机制</span></li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-brand-sky to-sky-600 mt-1.5" /><span>多阶段差分隐私组合定理的应用与隐私开销累积分析</span></li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-brand-sky to-sky-600 mt-1.5" /><span>药物特征向量化过程中的局部差分隐私保护</span></li>
               </ul>
             </div>
             <div className="space-y-2.5">

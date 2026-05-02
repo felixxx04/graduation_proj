@@ -212,10 +212,10 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <section className="border-l-4 border-l-primary bg-card px-6 py-8">
+      <section className="border-l-4 border-l-primary bg-surface-elevated px-6 py-8">
         <div className="flex items-start gap-4">
-          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-standard bg-primary flex-shrink-0">
-            <Shield className="h-5 w-5 text-primary-foreground" />
+          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 flex-shrink-0">
+            <Shield className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1">
             <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">后台管理</h1>
@@ -224,11 +224,11 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <Card hover="none" className="border-primary/20">
+      <Card hover="none" className="border-brand-sky/20">
         <CardContent className="flex flex-wrap items-center justify-between gap-4 pt-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-standard bg-primary">
-              <UserIcon className="h-4 w-4 text-primary-foreground" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+              <UserIcon className="h-4 w-4 text-white" />
             </div>
             <div>
               <div className="font-heading font-semibold text-ia-body">{user?.username ?? '管理员'}</div>
@@ -243,14 +243,14 @@ export default function AdminDashboard() {
       </Card>
 
       {(dashboardError || usersError || trainingError || actionError) && (
-        <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+        <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
           {dashboardError || usersError || trainingError || actionError}
         </div>
       )}
 
       <section>
         <h2 className="mb-3 flex items-center gap-2 text-ia-card-title font-heading font-bold">
-          <BarChart3 className="h-4 w-4 text-primary" />
+          <BarChart3 className="h-4 w-4 text-brand-sky" />
           系统总览
         </h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -263,9 +263,9 @@ export default function AdminDashboard() {
           ].map((item) => {
             const Icon = item.icon
             return (
-              <Card key={item.label} hover="border">
+              <Card key={item.label} hover="lift">
                 <CardContent className="pb-3 pt-4">
-                  <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-standard bg-${item.dataColor}/10`}>
+                  <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-sm bg-${item.dataColor}/10`}>
                     <Icon className={`h-4 w-4 text-${item.dataColor}`} />
                   </div>
                   <div className="text-xl font-heading font-bold">{item.value}</div>
@@ -283,12 +283,12 @@ export default function AdminDashboard() {
 
       <section>
         <h2 className="mb-3 flex items-center gap-2 text-ia-card-title font-heading font-bold">
-          <Users className="h-4 w-4 text-primary" />
+          <Users className="h-4 w-4 text-brand-sky" />
           用户管理
         </h2>
         <Card hover="none">
           <CardContent className="pt-4">
-            <div className="overflow-x-auto rounded-standard border border-ia-border">
+            <div className="overflow-x-auto rounded-sm border border-white/[0.06]">
               <table className="data-table">
                 <thead>
                   <tr>
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
 
       <section>
         <h2 className="mb-3 flex items-center gap-2 text-ia-card-title font-heading font-bold">
-          <Brain className="h-4 w-4 text-primary" />
+          <Brain className="h-4 w-4 text-brand-sky" />
           模型训练
         </h2>
         <div className="grid gap-5 lg:grid-cols-2">
@@ -341,19 +341,19 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-2 text-ia-caption">
-                <div className="rounded-standard border border-ia-border bg-card p-2.5">
+                <div className="rounded-sm border border-white/[0.06] bg-surface-elevated p-2.5">
                   <div className="text-ia-label text-muted-foreground">当前机制</div>
                   <div className="font-heading font-semibold capitalize">{config.noiseMechanism}</div>
                 </div>
-                <div className="rounded-standard border border-ia-border bg-card p-2.5">
+                <div className="rounded-sm border border-white/[0.06] bg-surface-elevated p-2.5">
                   <div className="text-ia-label text-muted-foreground">注入阶段</div>
                   <div className="font-heading font-semibold">{config.applicationStage}</div>
                 </div>
-                <div className="rounded-standard border border-ia-border bg-card p-2.5">
+                <div className="rounded-sm border border-white/[0.06] bg-surface-elevated p-2.5">
                   <div className="text-ia-label text-muted-foreground">每轮预算(估算)</div>
-                  <div className="font-heading font-semibold text-primary">{(config.epsilon / Math.max(startEpochs, 1)).toFixed(4)}</div>
+                  <div className="font-heading font-semibold text-brand-sky">{(config.epsilon / Math.max(startEpochs, 1)).toFixed(4)}</div>
                 </div>
-                <div className="rounded-standard border border-ia-border bg-card p-2.5">
+                <div className="rounded-sm border border-white/[0.06] bg-surface-elevated p-2.5">
                   <div className="text-ia-label text-muted-foreground">预算剩余</div>
                   <div className="font-heading font-semibold text-secondary">{budget.remaining.toFixed(2)}</div>
                 </div>
@@ -361,7 +361,7 @@ export default function AdminDashboard() {
 
               <div className="space-y-1.5">
                 <label className="text-ia-caption font-heading font-semibold">训练轮次 (1-50)</label>
-                <input type="number" min={1} max={50} value={startEpochs} onChange={(event) => setStartEpochs(Number(event.target.value) || 1)} className="flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary" />
+                <input type="number" min={1} max={50} value={startEpochs} onChange={(event) => setStartEpochs(Number(event.target.value) || 1)} className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky" />
               </div>
 
               <div className="flex gap-2">
@@ -375,7 +375,7 @@ export default function AdminDashboard() {
               {trainingRuns.length > 0 && (
                 <div className="space-y-1.5">
                   <label className="text-ia-caption font-heading font-semibold">选择训练任务</label>
-                  <select value={selectedRun?.id ?? ''} onChange={(event) => setSelectedTrainingId(Number(event.target.value))} className="flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary">
+                  <select value={selectedRun?.id ?? ''} onChange={(event) => setSelectedTrainingId(Number(event.target.value))} className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky">
                     {trainingRuns.map((run) => (
                       <option key={run.id} value={run.id}>#{run.id} · {run.status} · {new Date(run.startedAt).toLocaleString()}</option>
                     ))}
@@ -419,7 +419,7 @@ export default function AdminDashboard() {
 
       <section>
         <h2 className="mb-3 flex items-center gap-2 text-ia-card-title font-heading font-bold">
-          <Shield className="h-4 w-4 text-primary" />
+          <Shield className="h-4 w-4 text-brand-sky" />
           隐私预算账本
         </h2>
         <Card hover="none">
@@ -436,8 +436,8 @@ export default function AdminDashboard() {
                     <button
                       key={item}
                       onClick={() => setLedgerFilter(item)}
-                      className={`rounded-standard px-2 py-1 text-ia-label font-heading font-semibold transition-colors duration-150 cursor-pointer ${
-                        ledgerFilter === item ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      className={`rounded-sm px-2 py-1 text-ia-label font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+                        ledgerFilter === item ? 'bg-gradient-to-br from-brand-sky to-sky-600 text-white' : 'bg-surface text-muted-foreground hover:bg-surface/80'
                       }`}
                     >
                       {item === 'all' ? '全部' : item === 'recommendation_inference' ? '推荐推理' : '训练轮次'}
@@ -453,15 +453,15 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-2 text-ia-caption">
-              <div className="rounded-standard border border-ia-border bg-card p-2.5 text-center">
+              <div className="rounded-sm border border-white/[0.06] bg-surface-elevated p-2.5 text-center">
                 <div className="text-ia-label text-muted-foreground mb-0.5">总预算</div>
                 <div className="text-ia-body font-heading font-bold">{config.privacyBudget.toFixed(1)}</div>
               </div>
-              <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-center">
+              <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-center">
                 <div className="text-ia-label text-muted-foreground mb-0.5">已消耗</div>
                 <div className="text-ia-body font-heading font-bold text-destructive">{budget.spent.toFixed(2)}</div>
               </div>
-              <div className="rounded-standard border border-ia-data-3/30 bg-ia-data-3/6 p-2.5 text-center">
+              <div className="rounded-sm border border-ia-data-3/30 bg-ia-data-3/6 p-2.5 text-center">
                 <div className="text-ia-label text-muted-foreground mb-0.5">剩余</div>
                 <div className="text-ia-body font-heading font-bold text-ia-data-3">{budget.remaining.toFixed(2)}</div>
               </div>
@@ -480,7 +480,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="overflow-x-auto rounded-standard border border-ia-border">
+            <div className="overflow-x-auto rounded-sm border border-white/[0.06]">
               <table className="data-table">
                 <thead>
                   <tr>
@@ -495,7 +495,7 @@ export default function AdminDashboard() {
                     <tr key={event.id}>
                       <td className="whitespace-nowrap text-muted-foreground">{new Date(event.ts).toLocaleString()}</td>
                       <td><span className={event.type === 'recommendation_inference' ? 'ia-badge ia-badge-primary' : 'ia-badge ia-badge-info'}>{formatEventType(event.type)}</span></td>
-                      <td className="font-heading font-semibold text-primary">+ε {event.epsilonSpent.toFixed(4)}</td>
+                      <td className="font-heading font-semibold text-brand-sky">+ε {event.epsilonSpent.toFixed(4)}</td>
                       <td className="max-w-[200px] truncate text-muted-foreground">{event.note ?? '-'}</td>
                     </tr>
                   ))}

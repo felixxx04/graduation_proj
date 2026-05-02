@@ -30,7 +30,7 @@ import { Label } from '@/components/ui/label'
 import { usePrivacyStore } from '@/lib/privacyStore'
 import { api, getErrorMessage } from '@/lib/api'
 import { gaussianSigma, laplaceScale } from '@/lib/privacy'
-import { usePatientStore } from '@/lib/patientStore'
+import { usePatientStore, PatientGender } from '@/lib/patientStore'
 import { TextExpander } from '@/components/ui/text-expander'
 import {
   BarChart,
@@ -82,6 +82,7 @@ interface RecommendationResultItem {
 
 interface ExcludedDrug {
   drugName: string
+  englishName?: string
   reason: string
   category: string
 }
@@ -107,6 +108,7 @@ interface GenerateResponse {
   totalCandidates: number
   totalExcluded: number
   totalSafe: number
+  dataGaps?: string[]  // v2: 数据缺失提示（由后端返回）
 }
 
 interface DrugResult {
@@ -134,9 +136,15 @@ interface DrugResult {
   matchedDisease?: string
 }
 
+type InputMode = 'db' | 'manual'
+
 interface PatientData {
+  name: string
   age: string
   gender: string
+  height: string
+  weight: string
+  phone: string
   diseases: string
   symptoms: string
   allergies: string
@@ -145,12 +153,18 @@ interface PatientData {
 
 export default function DrugRecommendation() {
   const { config, budget, refresh } = usePrivacyStore()
-  const { patients } = usePatientStore()
+  const { patients, addPatient } = usePatientStore()
   const location = useLocation()
 
+  const [inputMode, setInputMode] = useState<InputMode>('manual')
+
   const [patientData, setPatientData] = useState<PatientData>({
+    name: '',
     age: '',
     gender: '男',
+    height: '',
+    weight: '',
+    phone: '',
     diseases: '',
     symptoms: '',
     allergies: '',
@@ -186,22 +200,74 @@ export default function DrugRecommendation() {
   const [excludedDrugs, setExcludedDrugs] = useState<ExcludedDrug[]>([])
   const [budgetInfo, setBudgetInfo] = useState<PrivacyBudgetInfo | null>(null)
   const [totalCandidateInfo, setTotalCandidateInfo] = useState<{ total: number; excluded: number; safe: number } | null>(null)
+  const [dataGaps, setDataGaps] = useState<string[]>([])
+  const [privacyPanelCollapsed, setPrivacyPanelCollapsed] = useState(false)
 
   const handleSelectPatient = (id: string) => {
     setSelectedPatientId(id)
-    if (!id) return
+    if (!id) {
+      setInputMode('manual')
+      setPatientData({
+        name: '', age: '', gender: '男', height: '', weight: '',
+        phone: '', diseases: '', symptoms: '', allergies: '', currentMedications: '',
+      })
+      return
+    }
 
     const patient = patients.find((item) => item.id === id)
     if (!patient) return
 
+    setInputMode('db')
     setPatientData({
+      name: patient.name,
       age: String(patient.age),
       gender: patient.gender,
+      height: patient.height ? String(patient.height) : '',
+      weight: patient.weight ? String(patient.weight) : '',
+      phone: patient.phone ?? '',
       diseases: patient.chronicDiseases.join('，'),
       symptoms: patient.medicalHistory,
       allergies: patient.allergies.join('，'),
       currentMedications: patient.currentMedications.join('，'),
     })
+  }
+
+  function splitList(value: string) {
+    return value.split(/[,，、]/).map((s) => s.trim()).filter(Boolean)
+  }
+
+  const autoSaveNewPatient = async () => {
+    const trimmedName = patientData.name.trim()
+    if (!trimmedName) return
+
+    // 同名患者已存在→切换到DB模式（不创建重复）
+    const existing = patients.find((p) => p.name.trim() === trimmedName)
+    if (existing) {
+      setSelectedPatientId(existing.id)
+      setInputMode('db')
+      return
+    }
+
+    try {
+      const newPatient = await addPatient({
+        name: trimmedName,
+        age: Number(patientData.age) || 0,
+        gender: (patientData.gender || '男') as PatientGender,
+        height: Number(patientData.height) || 0,
+        weight: Number(patientData.weight) || 0,
+        phone: patientData.phone?.trim() ?? '',
+        allergies: splitList(patientData.allergies),
+        chronicDiseases: splitList(patientData.diseases),
+        currentMedications: splitList(patientData.currentMedications),
+        medicalHistory: patientData.symptoms?.trim() ?? '',
+      })
+      // 下次推荐自动使用DB模式（含临床指标补充）
+      setSelectedPatientId(newPatient.id)
+      setInputMode('db')
+    } catch (e) {
+      // 自动保存失败不影响推荐结果
+      console.warn('Auto-save patient failed:', e)
+    }
   }
 
   const handleAnalyze = async () => {
@@ -216,13 +282,15 @@ export default function DrugRecommendation() {
 
     try {
       const response = await api.post<GenerateResponse>('/api/recommendations/generate', {
-        patientId: selectedPatientId ? Number(selectedPatientId) : undefined,
+        patientId: inputMode === 'db' && selectedPatientId ? Number(selectedPatientId) : undefined,
         age: patientData.age || undefined,
         gender: patientData.gender || undefined,
         diseases: patientData.diseases || undefined,
         symptoms: patientData.symptoms || undefined,
         allergies: patientData.allergies || undefined,
         currentMedications: patientData.currentMedications || undefined,
+        height: patientData.height ? Number(patientData.height) : undefined,
+        weight: patientData.weight ? Number(patientData.weight) : undefined,
         dpEnabled,
         dpConfig: dpEnabled ? {
           enabled: true,
@@ -237,6 +305,7 @@ export default function DrugRecommendation() {
 
       setComparison({ base: response.base, dp: response.dp })
       setExcludedDrugs(response.excludedDrugs ?? [])
+      setDataGaps(response.dataGaps ?? [])
       setBudgetInfo(response.privacyBudget ?? null)
       setTotalCandidateInfo({
         total: response.totalCandidates,
@@ -273,6 +342,11 @@ export default function DrugRecommendation() {
       setSelectedDrug(null)
       setShowExplainability(false)
       await refresh()
+
+      // 手动模式推荐成功后自动保存新患者到档案
+      if (inputMode === 'manual' && patientData.name.trim()) {
+        await autoSaveNewPatient()
+      }
     } catch (error) {
       setAnalyzeError(getErrorMessage(error, '智能分析失败，请稍后重试'))
       setShowResults(false)
@@ -282,6 +356,7 @@ export default function DrugRecommendation() {
       setExcludedDrugs([])
       setBudgetInfo(null)
       setTotalCandidateInfo(null)
+      setDataGaps([])
     } finally {
       setIsAnalyzing(false)
     }
@@ -290,7 +365,7 @@ export default function DrugRecommendation() {
   const getConfidenceColor = (confidence: number | null) => {
     if (confidence == null) return 'text-muted-foreground'
     if (confidence >= 90) return 'text-ia-data-3'
-    if (confidence >= 80) return 'text-primary'
+    if (confidence >= 80) return 'text-brand-sky'
     return 'text-ia-data-4'
   }
 
@@ -309,7 +384,7 @@ export default function DrugRecommendation() {
       {/* 知情同意弹窗 */}
       {showConsentDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-card rounded-standard p-6 max-w-md shadow-lg border border-border">
+          <div className="bg-surface-elevated rounded-sm p-6 max-w-md shadow-lg border border-border">
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <h2 className="text-ia-card-title font-heading font-bold text-foreground">知情同意</h2>
@@ -336,13 +411,13 @@ export default function DrugRecommendation() {
                   }).catch(() => {})
                   setShowConsentDialog(false)
                 }}
-                className="px-4 py-2 rounded-standard bg-primary text-primary-foreground font-heading font-semibold text-ia-label hover:bg-primary/90"
+                className="px-4 py-2 rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 text-white font-heading font-semibold text-ia-label hover:bg-brand-sky/90"
               >
                 我已了解，继续使用
               </button>
               <button
                 onClick={() => setShowConsentDialog(false)}
-                className="px-4 py-2 rounded-standard bg-muted text-muted-foreground font-heading font-semibold text-ia-label hover:bg-muted/80"
+                className="px-4 py-2 rounded-sm bg-surface text-muted-foreground font-heading font-semibold text-ia-label hover:bg-surface/80"
               >
                 取消
               </button>
@@ -361,10 +436,10 @@ export default function DrugRecommendation() {
       </div>
 
       {/* Page Header — Border-left editorial */}
-      <section className="border-l-4 border-l-primary bg-card px-6 py-8">
+      <section className="border-l-4 border-l-primary bg-surface-elevated px-6 py-8">
         <div className="flex items-start gap-4">
-          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-standard bg-primary flex-shrink-0">
-            <Stethoscope className="h-5 w-5 text-primary-foreground" />
+          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 flex-shrink-0">
+            <Stethoscope className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1">
             <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">
@@ -391,8 +466,8 @@ export default function DrugRecommendation() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-standard bg-primary">
-                  <FileText className="h-4 w-4 text-primary-foreground" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                  <FileText className="h-4 w-4 text-white" />
                 </div>
                 <div>
                   <CardTitle>患者信息录入</CardTitle>
@@ -401,50 +476,143 @@ export default function DrugRecommendation() {
               </div>
             </CardHeader>
             <CardContent className="space-y-5">
-              {/* Patient quick select */}
-              {patients.length > 0 && (
-                <div className="p-3 rounded-standard bg-muted border border-ia-border">
-                  <Label htmlFor="quick-select" className="flex items-center gap-2 mb-2 text-ia-caption font-heading font-semibold">
-                    <Users className="h-3.5 w-3.5 text-primary" />
-                    从患者档案快速填充
-                  </Label>
-                  <select
-                    id="quick-select"
-                    value={selectedPatientId}
-                    onChange={(e) => handleSelectPatient(e.target.value)}
-                    className="flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
-                  >
-                    <option value="">-- 选择已有患者（可选）--</option>
-                    {patients.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
-                      </option>
-                    ))}
-                  </select>
+              {/* Mode toggle */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (inputMode !== 'db') {
+                      setInputMode('db')
+                      if (selectedPatientId) handleSelectPatient(selectedPatientId)
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-ia-caption font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+                    inputMode === 'db'
+                      ? 'bg-gradient-to-br from-brand-sky to-sky-600 text-white border-brand-sky'
+                      : 'bg-surface-elevated text-foreground border-white/[0.06] hover:bg-surface'
+                  }`}
+                >
+                  <Users className="h-3.5 w-3.5" />
+                  从档案选择
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputMode('manual')
+                    setSelectedPatientId('')
+                    setPatientData({
+                      name: '', age: '', gender: '男', height: '', weight: '',
+                      phone: '', diseases: '', symptoms: '', allergies: '', currentMedications: '',
+                    })
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-ia-caption font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+                    inputMode === 'manual'
+                      ? 'bg-gradient-to-br from-brand-sky to-sky-600 text-white border-brand-sky'
+                      : 'bg-surface-elevated text-foreground border-white/[0.06] hover:bg-surface'
+                  }`}
+                >
+                  <FileText className="h-3.5 w-3.5" />
+                  手动填写
+                </button>
+              </div>
+
+              {/* Patient dropdown (always visible) */}
+              <div className="p-3 rounded-sm bg-surface border border-white/[0.06]">
+                <Label htmlFor="quick-select" className="flex items-center gap-2 mb-2 text-ia-caption font-heading font-semibold">
+                  <Users className="h-3.5 w-3.5 text-brand-sky" />
+                  患者档案
+                </Label>
+                <select
+                  id="quick-select"
+                  value={selectedPatientId}
+                  onChange={(e) => handleSelectPatient(e.target.value)}
+                  className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky"
+                >
+                  <option value="">-- 选择已有患者（可选）--</option>
+                  {patients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} · {p.gender} · {p.age}岁 · {p.chronicDiseases.slice(0, 2).join('、')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Mode info banner */}
+              {inputMode === 'db' && selectedPatientId && (
+                <div className="p-2.5 rounded-sm bg-brand-sky/5 border border-brand-sky/10 text-ia-caption text-brand-sky flex items-center gap-2">
+                  <Info className="h-3.5 w-3.5" />
+                  已从患者档案自动填充。临床指标（肾功能、肝功能、妊娠状态等）将由系统从健康档案自动补充。
+                </div>
+              )}
+              {inputMode === 'manual' && (
+                <div className="p-2.5 rounded-sm bg-secondary/5 border border-secondary/10 text-ia-caption text-secondary flex items-center gap-2">
+                  <Info className="h-3.5 w-3.5" />
+                  推荐完成后，患者信息将自动保存到档案。下次推荐即可使用完整的临床指标数据。
                 </div>
               )}
 
+              {/* Patient info form */}
+              <div className="space-y-1.5">
+                <Label htmlFor="name" className="text-ia-caption font-heading font-semibold">
+                  姓名 {inputMode === 'manual' && <span className="text-destructive">*</span>}
+                </Label>
+                <Input
+                  id="name"
+                  value={patientData.name}
+                  onChange={(e) => setPatientData({ ...patientData, name: e.target.value })}
+                  placeholder={inputMode === 'db' ? '（自动填充）' : '患者姓名'}
+                  className={`placeholder:text-muted-foreground/40 placeholder:text-sm ${inputMode === 'db' && patientData.name ? 'bg-surface/50' : ''}`}
+                />
+              </div>
+
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="age" className="text-ia-caption font-heading font-semibold">年龄</Label>
+                  <Label htmlFor="age" className="text-ia-caption font-heading font-semibold">年龄 *</Label>
                   <Input id="age" type="number" value={patientData.age} onChange={(e) => setPatientData({ ...patientData, age: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="65" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="gender" className="text-ia-caption font-heading font-semibold">性别</Label>
+                  <Label htmlFor="gender" className="text-ia-caption font-heading font-semibold">性别 *</Label>
                   <select
                     id="gender"
                     value={patientData.gender}
                     onChange={(e) => setPatientData({ ...patientData, gender: e.target.value })}
-                    className="flex h-10 w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary"
+                    className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky"
                   >
                     <option value="男">男</option>
                     <option value="女">女</option>
+                    <option value="未知">未知</option>
                   </select>
                 </div>
               </div>
 
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="height" className="text-ia-caption font-heading font-semibold">
+                    身高 (cm)
+                    {inputMode === 'manual' && <span className="text-ia-label text-muted-foreground ml-1">推荐补充，用于BMI计算</span>}
+                  </Label>
+                  <Input id="height" type="number" value={patientData.height} onChange={(e) => setPatientData({ ...patientData, height: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="170" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="weight" className="text-ia-caption font-heading font-semibold">
+                    体重 (kg)
+                    {inputMode === 'manual' && <span className="text-ia-label text-muted-foreground ml-1">推荐补充，用于BMI计算</span>}
+                  </Label>
+                  <Input id="weight" type="number" value={patientData.weight} onChange={(e) => setPatientData({ ...patientData, weight: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="65" />
+                </div>
+              </div>
+
+              {inputMode === 'manual' && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-ia-caption font-heading font-semibold">
+                    联系电话 <span className="text-ia-label text-muted-foreground">（可选）</span>
+                  </Label>
+                  <Input id="phone" value={patientData.phone} onChange={(e) => setPatientData({ ...patientData, phone: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="13800138000" />
+                </div>
+              )}
+
               <div className="space-y-1.5">
-                <Label htmlFor="diseases" className="text-ia-caption font-heading font-semibold">确诊疾病（逗号分隔）</Label>
+                <Label htmlFor="diseases" className="text-ia-caption font-heading font-semibold">确诊疾病（逗号分隔）*</Label>
                 <Input id="diseases" value={patientData.diseases} onChange={(e) => setPatientData({ ...patientData, diseases: e.target.value })} className="placeholder:text-muted-foreground/40 placeholder:text-sm" placeholder="高血压，2型糖尿病" />
               </div>
 
@@ -454,7 +622,7 @@ export default function DrugRecommendation() {
                   id="symptoms"
                   value={patientData.symptoms}
                   onChange={(e) => setPatientData({ ...patientData, symptoms: e.target.value })}
-                  className="flex min-h-[80px] w-full rounded-standard border border-ia-border bg-card px-3 py-2 text-ia-body font-body placeholder:text-muted-foreground/40 placeholder:text-sm focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary resize-none"
+                  className="flex min-h-[80px] w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body font-body placeholder:text-muted-foreground/40 placeholder:text-sm focus-visible:outline-none focus-visible:border-brand-sky focus-visible:ring-1 focus-visible:ring-brand-sky resize-none"
                   placeholder="头晕、胸闷、多尿、口渴"
                 />
               </div>
@@ -471,11 +639,11 @@ export default function DrugRecommendation() {
               </div>
 
               {/* Privacy Level Control */}
-              <div className="pt-4 border-t border-ia-border">
+              <div className="pt-4 border-t border-white/[0.06]">
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
                     <Label className="text-ia-caption font-heading font-semibold flex items-center gap-2">
-                      <Shield className="h-3.5 w-3.5 text-primary" />
+                      <Shield className="h-3.5 w-3.5 text-brand-sky" />
                       差分隐私推理开关
                     </Label>
                     <p className="text-ia-label text-muted-foreground mt-1">
@@ -485,10 +653,10 @@ export default function DrugRecommendation() {
                   <button
                     type="button"
                     onClick={() => setDpEnabled((v) => !v)}
-                    className={`px-3 py-1.5 rounded-standard border text-ia-caption font-heading font-semibold transition-colors duration-150 cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-sm border text-ia-caption font-heading font-semibold transition-colors duration-150 cursor-pointer ${
                       dpEnabled
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-card text-foreground border-ia-border hover:bg-muted'
+                        ? 'bg-gradient-to-br from-brand-sky to-sky-600 text-white border-brand-sky'
+                        : 'bg-surface-elevated text-foreground border-white/[0.06] hover:bg-surface'
                     }`}
                   >
                     {dpEnabled ? '已开启' : '已关闭'}
@@ -496,17 +664,17 @@ export default function DrugRecommendation() {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-2">
-                  <div className="p-2.5 rounded-standard bg-muted border border-ia-border">
+                  <div className="p-2.5 rounded-sm bg-surface border border-white/[0.06]">
                     <div className="text-ia-label text-muted-foreground">当前 ε</div>
-                    <div className="text-ia-body font-heading font-bold text-primary">{config.epsilon.toFixed(3)}</div>
+                    <div className="text-ia-body font-heading font-bold text-brand-sky">{config.epsilon.toFixed(3)}</div>
                   </div>
-                  <div className="p-2.5 rounded-standard bg-muted border border-ia-border">
+                  <div className="p-2.5 rounded-sm bg-surface border border-white/[0.06]">
                     <div className="text-ia-label text-muted-foreground">噪声规模</div>
                     <div className="text-ia-body font-heading font-bold">
                       {config.noiseMechanism === 'gaussian' ? 'σ' : 'b'} = {noiseScale.toFixed(3)}
                     </div>
                   </div>
-                  <div className="p-2.5 rounded-standard bg-muted border border-ia-border">
+                  <div className="p-2.5 rounded-sm bg-surface border border-white/[0.06]">
                     <div className="text-ia-label text-muted-foreground">预算剩余</div>
                     <div className="text-ia-body font-heading font-bold text-secondary">ε_rem = {budget.remaining.toFixed(2)}</div>
                   </div>
@@ -514,7 +682,7 @@ export default function DrugRecommendation() {
               </div>
 
               {analyzeError && (
-                <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+                <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
                   {analyzeError}
                 </div>
               )}
@@ -524,7 +692,7 @@ export default function DrugRecommendation() {
                 className="w-full gap-2"
                 size="lg"
                 loading={isAnalyzing}
-                disabled={isAnalyzing || !patientData.diseases}
+                disabled={isAnalyzing || !patientData.diseases || (inputMode === 'manual' && !patientData.name.trim())}
               >
                 <Sparkles className="h-4 w-4" />
                 开始智能推荐
@@ -533,21 +701,22 @@ export default function DrugRecommendation() {
           </Card>
         </div>
 
-        {/* Right: Privacy panel */}
+        {/* Right: Privacy panel (collapsible) */}
         <div className="space-y-6">
           <Card hover="none" className="sticky top-20">
-            <div className="h-0.5 bg-primary" />
-            <CardHeader>
+            <div className="h-0.5 bg-gradient-to-br from-brand-sky to-sky-600" />
+            <CardHeader className="cursor-pointer" onClick={() => setPrivacyPanelCollapsed(!privacyPanelCollapsed)}>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Shield className="h-4 w-4 text-primary" />
+                <Shield className="h-4 w-4 text-brand-sky" />
                 隐私保护状态
+                {privacyPanelCollapsed ? <ChevronDown className="h-3.5 w-3.5 ml-auto" /> : <ChevronUp className="h-3.5 w-3.5 ml-auto" />}
               </CardTitle>
-              <CardDescription>当前会话的隐私指标</CardDescription>
+              {!privacyPanelCollapsed && <CardDescription>当前会话的隐私指标</CardDescription>}
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="p-3 rounded-standard bg-muted border border-ia-border">
+            {!privacyPanelCollapsed && <CardContent className="space-y-3">
+              <div className="p-3 rounded-sm bg-surface border border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <Lock className="h-3.5 w-3.5 text-primary" />
+                  <Lock className="h-3.5 w-3.5 text-brand-sky" />
                   <span className="text-ia-caption font-heading font-semibold">差分隐私机制</span>
                 </div>
                 <div className="text-ia-body font-heading font-bold">
@@ -558,7 +727,7 @@ export default function DrugRecommendation() {
                 </p>
               </div>
 
-              <div className="p-3 rounded-standard bg-muted border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface border border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Key className="h-3.5 w-3.5 text-secondary" />
                   <span className="text-ia-caption font-heading font-semibold">隐私预算消耗</span>
@@ -575,7 +744,7 @@ export default function DrugRecommendation() {
                 </p>
               </div>
 
-              <div className="p-3 rounded-standard bg-muted border border-ia-border">
+              <div className="p-3 rounded-sm bg-surface border border-white/[0.06]">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Activity className="h-3.5 w-3.5 text-ia-data-4" />
                   <span className="text-ia-caption font-heading font-semibold">噪声规模</span>
@@ -588,7 +757,7 @@ export default function DrugRecommendation() {
                 </p>
               </div>
 
-              <div className="p-3 rounded-standard border border-ia-data-3/30 bg-ia-data-3/6">
+              <div className="p-3 rounded-sm border border-ia-data-3/30 bg-ia-data-3/6">
                 <div className="flex items-center gap-2 text-ia-data-3">
                   <Info className="h-3.5 w-3.5" />
                   <span className="text-ia-caption font-heading font-semibold">隐私保护说明</span>
@@ -597,7 +766,7 @@ export default function DrugRecommendation() {
                   差分隐私噪声机制已应用于推荐评分，降低个体推断风险。DP仅保护排序隐私，不影响安全排除结果。计算在本地服务器环境中进行。
                 </p>
               </div>
-            </CardContent>
+            </CardContent>}
           </Card>
         </div>
       </div>
@@ -606,12 +775,12 @@ export default function DrugRecommendation() {
       <AnimatePresence>
         {showResults && (
           <div className="animate-fade-in print-area">
-            <Card hover="none" className="border-primary/20">
+            <Card hover="none" className="border-brand-sky/20">
               <CardHeader>
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-standard bg-primary">
-                      <Stethoscope className="h-4 w-4 text-primary-foreground" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                      <Stethoscope className="h-4 w-4 text-white" />
                     </div>
                     <div>
                       <CardTitle>推荐结果</CardTitle>
@@ -629,10 +798,10 @@ export default function DrugRecommendation() {
               <CardContent>
                 {/* DP comparison */}
                 {comparison && (
-                  <div className="mb-5 p-3 rounded-standard bg-muted border border-ia-border">
+                  <div className="mb-5 p-3 rounded-sm bg-surface border border-white/[0.06]">
                     <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
                       <div className="flex items-center gap-2">
-                        <GitCompare className="h-3.5 w-3.5 text-primary" />
+                        <GitCompare className="h-3.5 w-3.5 text-brand-sky" />
                         <span className="text-ia-caption font-heading font-semibold">有/无 DP 结果对比（Top-4）</span>
                       </div>
                       <div className="text-ia-label text-muted-foreground">
@@ -640,22 +809,22 @@ export default function DrugRecommendation() {
                       </div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-2 text-ia-caption">
-                      <div className="p-2.5 rounded-standard bg-card border border-ia-border">
+                      <div className="p-2.5 rounded-sm bg-surface-elevated border border-white/[0.06]">
                         <div className="text-ia-label text-muted-foreground mb-1.5">无 DP（基线）</div>
                         <ol className="space-y-0.5">
                           {comparison.base.map((r, idx) => (
-                            <li key={r.drugId} className="flex justify-between gap-2">
+                            <li key={`${r.drugId}-${idx}`} className="flex justify-between gap-2">
                               <span className="truncate">{idx + 1}. {r.drugName}</span>
                               <span className="text-muted-foreground">score {r.score.toFixed(2)}</span>
                             </li>
                           ))}
                         </ol>
                       </div>
-                      <div className="p-2.5 rounded-standard border border-primary/20 bg-primary/4">
+                      <div className="p-2.5 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
                         <div className="text-ia-label text-muted-foreground mb-1.5">差分隐私（噪声后）</div>
                         <ol className="space-y-0.5">
                           {comparison.dp.map((r, idx) => (
-                            <li key={r.drugId} className="flex justify-between gap-2">
+                            <li key={`${r.drugId}-${idx}`} className="flex justify-between gap-2">
                               <span className="truncate">{idx + 1}. {r.drugName}</span>
                               <span className="text-muted-foreground">
                                 score {r.score.toFixed(2)}
@@ -669,30 +838,64 @@ export default function DrugRecommendation() {
                   </div>
                 )}
 
+                {/* Data Gaps Warning */}
+                {dataGaps.length > 0 && (
+                  <div className="mb-5 p-3 rounded-sm bg-amber-50 border border-amber-200">
+                    <div className="flex items-center gap-2 text-amber-700">
+                      <AlertTriangle className="h-3.5 w-3.5" />
+                      <span className="text-ia-caption font-heading font-semibold">患者数据缺失提示</span>
+                    </div>
+                    <p className="text-ia-label text-amber-600 mt-1">
+                      以下数据缺失，相关安全过滤未启用。建议补充完整信息以获得更精准推荐：
+                    </p>
+                    <ul className="mt-2 space-y-1">
+                      {dataGaps.map((gap) => (
+                        <li key={`gap-${gap}`} className="text-ia-caption text-amber-700 flex items-center gap-1.5">
+                          <span className="text-amber-500">·</span>
+                          {gap}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Empty State */}
+                {recommendations.length === 0 && showResults && (
+                  <div className="mb-5 p-4 rounded-sm bg-surface border border-white/[0.06] text-center">
+                    <div className="flex items-center justify-center gap-2 mb-2 text-muted-foreground">
+                      <AlertTriangle className="h-4 w-4" />
+                      <span className="font-heading font-semibold">无法给出可信推荐</span>
+                    </div>
+                    <p className="text-ia-label text-muted-foreground">
+                      当前条件下所有候选药物均被安全排除，或模型未返回有效推荐。建议补充患者信息后重新分析。
+                    </p>
+                  </div>
+                )}
+
                 {/* Drug Cards */}
                 <div className="grid md:grid-cols-2 gap-3 mb-5">
                   {recommendations.map((rec) => (
                     <div
                       key={rec.id}
                       onClick={() => setSelectedDrug(selectedDrug?.id === rec.id ? null : rec)}
-                      className={`p-4 rounded-standard border cursor-pointer transition-colors duration-150 bg-card ${
+                      className={`rounded-lg border border-white/[0.06] bg-surface-elevated p-4 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:shadow-sm hover:border-brand-sky/15 cursor-pointer ${
                         selectedDrug?.id === rec.id
-                          ? 'border-primary ia-border-3'
-                          : 'border-ia-border hover:border-primary/40'
+                          ? 'border-brand-sky ia-border-3'
+                          : ''
                       } ${rec.dpAnomaly ? 'border-ia-data-4/50' : ''}`}
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1.5">
-                            <Pill className="h-4 w-4 text-primary" />
+                            <Pill className="h-4 w-4 text-brand-sky" />
                             <h4 className="font-heading font-semibold text-ia-card-title">{rec.drugName}</h4>
                             {rec.englishName && (
                               <span className="text-xs text-muted-foreground font-mono">{rec.englishName}</span>
                             )}
                             <span className={`ia-badge text-[10px] px-1.5 py-0.5 ${
                               rec.mode === 'model'
-                                ? 'bg-primary/10 text-primary border-primary/20'
-                                : 'bg-muted text-muted-foreground border-ia-border'
+                                ? 'bg-brand-sky/10 text-brand-sky border-brand-sky/20'
+                                : 'bg-surface text-muted-foreground border-white/[0.06]'
                             }`}>
                               {rec.mode === 'model' ? '模型推理' : '演示模式'}
                             </span>
@@ -722,7 +925,7 @@ export default function DrugRecommendation() {
                               </span>
                             )}
                             {rec.matchedDisease && (
-                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary border-primary/20">
+                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-brand-sky/10 text-brand-sky border-brand-sky/20">
                                 匹配疾病: {rec.matchedDisease}
                               </span>
                             )}
@@ -749,7 +952,7 @@ export default function DrugRecommendation() {
                             <>
                               <span>→</span>
                               <span>DP评分: {rec.score.toFixed(3)}</span>
-                              <span className={`text-[10px] ${rec.dpNoise >= 0 ? 'text-primary' : 'text-ia-data-4'}`}>
+                              <span className={`text-[10px] ${rec.dpNoise >= 0 ? 'text-brand-sky' : 'text-ia-data-4'}`}>
                                 (噪声 {rec.dpNoise >= 0 ? '+' : ''}{rec.dpNoise.toFixed(3)})
                               </span>
                             </>
@@ -759,16 +962,16 @@ export default function DrugRecommendation() {
                               <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                                 置信区间
                               </span>
-                              <div className="relative h-2 w-24 bg-muted rounded-full overflow-hidden">
+                              <div className="relative h-2 w-24 bg-surface rounded-full overflow-hidden">
                                 <div
-                                  className="absolute h-full bg-primary/40 rounded-full"
+                                  className="absolute h-full bg-brand-sky/40 rounded-full"
                                   style={{
                                     left: `${Math.max(0, rec.dpConfidence.low) * 100}%`,
                                     width: `${(Math.min(1, rec.dpConfidence.high) - Math.max(0, rec.dpConfidence.low)) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="absolute h-full w-1 bg-primary rounded"
+                                  className="absolute h-full w-1 bg-gradient-to-br from-brand-sky to-sky-600 rounded"
                                   style={{ left: `${rec.score * 100}%` }}
                                 />
                               </div>
@@ -813,7 +1016,7 @@ export default function DrugRecommendation() {
                   <div className="mb-5 grid md:grid-cols-2 gap-3">
                     {/* Excluded drugs section */}
                     {excludedDrugs.length > 0 && (
-                      <div className="p-3 rounded-standard bg-destructive/4 border border-destructive/20">
+                      <div className="p-3 rounded-sm bg-destructive/4 border border-destructive/20">
                         <div className="flex items-center gap-2 mb-2">
                           <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
                           <span className="text-ia-caption font-heading font-semibold text-destructive">
@@ -825,7 +1028,7 @@ export default function DrugRecommendation() {
                         </p>
                         <div className="max-h-40 overflow-y-auto space-y-1">
                           {excludedDrugs.map((d, i) => (
-                            <div key={i} className="flex items-start gap-2 text-ia-caption">
+                            <div key={d.englishName || d.drugName || String(i)} className="flex items-start gap-2 text-ia-caption">
                               <span className="text-destructive mt-0.5">·</span>
                               <div>
                                 <span className="font-heading font-semibold">{d.drugName}</span>
@@ -840,24 +1043,24 @@ export default function DrugRecommendation() {
 
                     {/* Candidate stats & budget info */}
                     {(totalCandidateInfo || budgetInfo) && (
-                      <div className="p-3 rounded-standard bg-muted border border-ia-border space-y-3">
+                      <div className="p-3 rounded-sm bg-surface border border-white/[0.06] space-y-3">
                         {totalCandidateInfo && (
                           <div>
                             <div className="flex items-center gap-2 mb-2">
-                              <Shield className="h-3.5 w-3.5 text-primary" />
+                              <Shield className="h-3.5 w-3.5 text-brand-sky" />
                               <span className="text-ia-caption font-heading font-semibold">候选药物筛选</span>
                             </div>
                             <div className="grid grid-cols-3 gap-2 text-ia-label">
-                              <div className="p-2 rounded-standard bg-card border border-ia-border text-center">
+                              <div className="p-2 rounded-sm bg-surface-elevated border border-white/[0.06] text-center">
                                 <div className="font-heading font-bold text-foreground">{totalCandidateInfo.total}</div>
                                 <div className="text-muted-foreground">总候选</div>
                               </div>
-                              <div className="p-2 rounded-standard bg-destructive/6 border border-destructive/20 text-center">
+                              <div className="p-2 rounded-sm bg-destructive/6 border border-destructive/20 text-center">
                                 <div className="font-heading font-bold text-destructive">{totalCandidateInfo.excluded}</div>
                                 <div className="text-muted-foreground">已排除</div>
                               </div>
-                              <div className="p-2 rounded-standard bg-primary/6 border border-primary/20 text-center">
-                                <div className="font-heading font-bold text-primary">{totalCandidateInfo.safe}</div>
+                              <div className="p-2 rounded-sm bg-brand-sky/6 border border-brand-sky/20 text-center">
+                                <div className="font-heading font-bold text-brand-sky">{totalCandidateInfo.safe}</div>
                                 <div className="text-muted-foreground">安全候选</div>
                               </div>
                             </div>
@@ -869,7 +1072,7 @@ export default function DrugRecommendation() {
                               <Lock className="h-3.5 w-3.5 text-secondary" />
                               <span className="text-ia-caption font-heading font-semibold">本次查询隐私预算</span>
                             </div>
-                            <div className="p-2 rounded-standard bg-card border border-ia-border text-ia-label">
+                            <div className="p-2 rounded-sm bg-surface-elevated border border-white/[0.06] text-ia-label">
                               <div className="flex justify-between mb-1">
                                 <span className="text-muted-foreground">ε 已消耗</span>
                                 <span className={`font-heading font-bold ${
@@ -904,10 +1107,10 @@ export default function DrugRecommendation() {
 
                 {/* Detailed Drug Information */}
                 {selectedDrug && (
-                  <div className="border-t border-ia-border pt-5">
-                    <div className="p-5 rounded-standard bg-muted border border-ia-border space-y-5">
+                  <div className="border-t border-white/[0.06] pt-5">
+                    <div className="p-5 rounded-sm bg-surface border border-white/[0.06] space-y-5">
                       <h4 className="font-heading font-semibold text-ia-card-title flex items-center gap-2">
-                        <Info className="h-4 w-4 text-primary" />
+                        <Info className="h-4 w-4 text-brand-sky" />
                         详细用药说明 — {selectedDrug.drugName}
                       </h4>
 
@@ -915,7 +1118,7 @@ export default function DrugRecommendation() {
                         <div className="space-y-4">
                           <div>
                             <h5 className="font-heading font-semibold text-ia-caption mb-2 flex items-center gap-2">
-                              <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                              <TrendingUp className="h-3.5 w-3.5 text-brand-sky" />
                               推荐理由
                             </h5>
                             <TextExpander text={selectedDrug.reason} maxLines={3} expandText="查看完整理由" collapseText="收起理由" />
@@ -926,7 +1129,7 @@ export default function DrugRecommendation() {
                               <Clock className="h-3.5 w-3.5 text-secondary" />
                               用法用量
                             </h5>
-                            <div className="p-2.5 rounded-standard bg-card border border-ia-border">
+                            <div className="p-2.5 rounded-sm bg-surface-elevated border border-white/[0.06]">
                               <p className="text-ia-caption"><strong>剂量：</strong>{selectedDrug.dosage}</p>
                               <p className="text-ia-caption"><strong>频率：</strong>{selectedDrug.frequency}</p>
                             </div>
@@ -941,7 +1144,7 @@ export default function DrugRecommendation() {
                             </h5>
                             <div className="space-y-1.5">
                               {selectedDrug.interactions.map((interaction, i) => (
-                                <div key={i} className="p-2.5 rounded-standard border border-ia-data-4/30 bg-ia-data-4/6">
+                                <div key={`int-${i}-${interaction.substring(0,20)}`} className="p-2.5 rounded-sm border border-ia-data-4/30 bg-ia-data-4/6">
                                   <p className="text-ia-caption text-ia-data-4">{interaction}</p>
                                 </div>
                               ))}
@@ -950,12 +1153,12 @@ export default function DrugRecommendation() {
 
                           <div>
                             <h5 className="font-heading font-semibold text-ia-caption mb-2 flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 text-primary" />
+                              <Info className="h-3.5 w-3.5 text-brand-sky" />
                               常见副作用
                             </h5>
                             <div className="flex flex-wrap gap-1.5">
-                              {selectedDrug.sideEffects.map((effect, i) => (
-                                <span key={i} className="ia-badge ia-badge-primary">
+                              {selectedDrug.sideEffects.map((effect) => (
+                                <span key={`se-${effect}`} className="ia-badge ia-badge-primary">
                                   {effect}
                                 </span>
                               ))}
@@ -966,14 +1169,14 @@ export default function DrugRecommendation() {
 
                       {/* Safety Warnings */}
                       {selectedDrug.explanation.warnings.length > 0 && (
-                        <div className="p-3 rounded-standard border border-destructive/30 bg-destructive/6">
+                        <div className="p-3 rounded-sm border border-destructive/30 bg-destructive/6">
                           <h5 className="font-heading font-semibold text-ia-caption mb-2 flex items-center gap-2 text-destructive">
                             <AlertTriangle className="h-3.5 w-3.5" />
                             安全警示
                           </h5>
                           <ul className="space-y-1">
                             {selectedDrug.explanation.warnings.map((w, i) => (
-                              <li key={i} className="text-ia-caption text-destructive flex items-start gap-2">
+                              <li key={`warn-${i}-${w.substring(0,20)}`} className="text-ia-caption text-destructive flex items-start gap-2">
                                 <span className="mt-0.5">·</span>
                                 <span>{w}</span>
                               </li>
@@ -986,7 +1189,7 @@ export default function DrugRecommendation() {
                       <div>
                         <button
                           onClick={() => setShowExplainability(!showExplainability)}
-                          className="flex items-center gap-2 text-ia-caption font-heading font-semibold text-primary hover:underline cursor-pointer mb-3"
+                          className="flex items-center gap-2 text-ia-caption font-heading font-semibold text-brand-sky hover:underline cursor-pointer mb-3"
                         >
                           <Brain className="h-3.5 w-3.5" />
                           模型可解释性分析
@@ -996,7 +1199,7 @@ export default function DrugRecommendation() {
                         <AnimatePresence>
                           {showExplainability && (
                             <div className="animate-fade-in overflow-hidden">
-                              <div className="p-4 rounded-standard bg-card border border-ia-border">
+                              <div className="p-4 rounded-sm bg-surface-elevated border border-white/[0.06]">
                                 <p className="text-ia-label text-muted-foreground mb-3">
                                   以下展示深度学习模型各特征维度对本次推荐评分的贡献（基于 DeepFM 注意力权重分析）
                                 </p>
@@ -1050,11 +1253,11 @@ export default function DrugRecommendation() {
                       </div>
 
                       {/* Privacy Notice */}
-                      <div className="pt-4 border-t border-ia-border">
-                        <div className="flex items-start gap-3 p-3 rounded-standard border border-primary/20 bg-primary/4">
-                          <Shield className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                      <div className="pt-4 border-t border-white/[0.06]">
+                        <div className="flex items-start gap-3 p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
+                          <Shield className="h-4 w-4 text-brand-sky flex-shrink-0 mt-0.5" />
                           <div>
-                            <h5 className="font-heading font-semibold text-ia-caption mb-1 text-primary">
+                            <h5 className="font-heading font-semibold text-ia-caption mb-1 text-brand-sky">
                               隐私保护说明
                             </h5>
                             <div className="text-ia-caption text-muted-foreground space-y-1">

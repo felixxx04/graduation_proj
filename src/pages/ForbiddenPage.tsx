@@ -9,7 +9,7 @@ export default function ForbiddenPage() {
       <Card hover="none" className="border-destructive/30">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-standard bg-destructive">
+            <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-destructive">
               <ShieldAlert className="h-5 w-5 text-destructive-foreground" />
             </div>
             <div>

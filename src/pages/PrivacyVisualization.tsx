@@ -138,10 +138,10 @@ export default function PrivacyVisualization() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <section className="border-l-4 border-l-primary bg-card px-6 py-8">
+      <section className="border-l-4 border-l-primary bg-surface-elevated px-6 py-8">
         <div className="flex items-start gap-4">
-          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-standard bg-primary flex-shrink-0">
-            <Shield className="h-5 w-5 text-primary-foreground" />
+          <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 flex-shrink-0">
+            <Shield className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1">
             <h1 className="text-ia-tile font-display font-bold text-foreground mb-2">
@@ -187,9 +187,9 @@ export default function PrivacyVisualization() {
             ].map((metric) => {
               const Icon = metric.icon
               return (
-                <Card key={metric.label} hover="border">
+                <Card key={metric.label} hover="lift">
                   <CardContent className="pt-4 pb-4">
-                    <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-standard bg-${metric.dataColor}/10`}>
+                    <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-sm bg-${metric.dataColor}/10`}>
                       <Icon className={`h-4 w-4 text-${metric.dataColor}`} />
                     </div>
                     <div className="text-2xl font-heading font-bold text-foreground mb-0.5">{metric.value}</div>
@@ -205,8 +205,8 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-primary">
-                  <Activity className="h-4 w-4 text-primary-foreground" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                  <Activity className="h-4 w-4 text-white" />
                 </div>
                 <div>
                   <CardTitle>隐私 - 效用权衡曲线</CardTitle>
@@ -248,7 +248,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
                   <Layers className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -276,7 +276,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-4">
                   <Eye className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -319,8 +319,8 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-primary">
-                  <GitCompare className="h-4 w-4 text-primary-foreground" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                  <GitCompare className="h-4 w-4 text-white" />
                 </div>
                 <div>
                   <CardTitle>噪声机制对比</CardTitle>
@@ -345,7 +345,7 @@ export default function PrivacyVisualization() {
               </div>
               <div className="grid md:grid-cols-3 gap-3 mt-4">
                 {noiseMechanismData.map((item) => (
-                  <div key={item.mechanism} className="p-3 rounded-standard bg-muted border border-ia-border">
+                  <div key={item.mechanism} className="p-3 rounded-sm bg-surface border border-white/[0.06]">
                     <h4 className="font-heading font-semibold text-ia-caption mb-1.5">{item.mechanism} 机制</h4>
                     <ul className="space-y-0.5 text-ia-label text-muted-foreground">
                       <li>准确率：{item.accuracy}%</li>
@@ -361,7 +361,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-5">
                   <Layers className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -385,9 +385,9 @@ export default function PrivacyVisualization() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-4 p-3 rounded-standard border border-primary/20 bg-primary/4">
+              <div className="mt-4 p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
                 <p className="text-ia-caption text-muted-foreground">
-                  <strong className="text-primary font-heading">梯度层扰动</strong>（本系统采用）在准确率和隐私保护之间取得最佳平衡，
+                  <strong className="text-brand-sky font-heading">梯度层扰动</strong>（本系统采用）在准确率和隐私保护之间取得最佳平衡，
                   虽然计算开销略高（+25%），但能有效保护训练过程中的梯度信息，适用于深度学习场景。
                 </p>
               </div>
@@ -397,7 +397,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
                   <Target className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -422,15 +422,15 @@ export default function PrivacyVisualization() {
                 </ResponsiveContainer>
               </div>
               <div className="mt-3 grid md:grid-cols-3 gap-3 text-ia-caption">
-                <div className="p-2.5 rounded-standard border border-primary/20 bg-primary/4">
-                  <div className="font-heading font-semibold text-primary mb-0.5">Laplace 机制</div>
+                <div className="p-2.5 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
+                  <div className="font-heading font-semibold text-brand-sky mb-0.5">Laplace 机制</div>
                   <p className="text-ia-label text-muted-foreground">隐私保护最强，适用于低维数值查询</p>
                 </div>
-                <div className="p-2.5 rounded-standard border border-secondary/20 bg-secondary/4">
+                <div className="p-2.5 rounded-sm border border-secondary/20 bg-secondary/4">
                   <div className="font-heading font-semibold text-secondary mb-0.5">Gaussian 机制</div>
                   <p className="text-ia-label text-muted-foreground">高维适用性最优，准确率最高</p>
                 </div>
-                <div className="p-2.5 rounded-standard border border-warning/20 bg-warning/4">
+                <div className="p-2.5 rounded-sm border border-warning/20 bg-warning/4">
                   <div className="font-heading font-semibold text-warning mb-0.5">Geometric 机制</div>
                   <p className="text-ia-label text-muted-foreground">离散数据计算速度最快</p>
                 </div>
@@ -446,7 +446,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-3">
                   <Target className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -472,7 +472,7 @@ export default function PrivacyVisualization() {
 
               {events.length > 0 && (
                 <div className="mt-4 grid md:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-standard bg-card border border-ia-border">
+                  <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
                     <div className="text-ia-caption font-heading font-semibold mb-2">最近操作</div>
                     <div className="space-y-1.5">
                       {events.slice(0, 5).map((e) => (
@@ -482,14 +482,14 @@ export default function PrivacyVisualization() {
                             <div className="text-ia-label text-muted-foreground truncate">{e.note ?? '—'}</div>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <div className="font-heading font-semibold text-primary">+ε {e.epsilonSpent.toFixed(2)}</div>
+                            <div className="font-heading font-semibold text-brand-sky">+ε {e.epsilonSpent.toFixed(2)}</div>
                             <div className="text-ia-label text-muted-foreground">{new Date(e.ts).toLocaleTimeString()}</div>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div className="p-3 rounded-standard border border-primary/20 bg-primary/4">
+                  <div className="p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
                     <div className="text-ia-caption font-heading font-semibold mb-2">当前配置快照</div>
                     <ul className="text-ia-caption text-muted-foreground space-y-0.5">
                       <li>机制：{config.noiseMechanism}</li>
@@ -501,8 +501,8 @@ export default function PrivacyVisualization() {
                 </div>
               )}
               <div className="mt-4 grid md:grid-cols-2 gap-3">
-                <div className="p-3 rounded-standard border border-primary/20 bg-primary/4">
-                  <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2 text-primary">
+                <div className="p-3 rounded-sm border border-brand-sky/20 bg-brand-sky/4">
+                  <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2 text-brand-sky">
                     <Eye className="h-3.5 w-3.5" />
                     组合定理应用
                   </h4>
@@ -511,7 +511,7 @@ export default function PrivacyVisualization() {
                     本系统采用高级组合定理，通过隐私预算的智能分配，在 20 轮训练后仍保持有效隐私保护。
                   </p>
                 </div>
-                <div className="p-3 rounded-standard border border-ia-data-3/20 bg-ia-data-3/4">
+                <div className="p-3 rounded-sm border border-ia-data-3/20 bg-ia-data-3/4">
                   <h4 className="font-heading font-semibold text-ia-caption mb-1.5 flex items-center gap-2 text-ia-data-3">
                     <Shield className="h-3.5 w-3.5" />
                     预算优化策略
@@ -528,7 +528,7 @@ export default function PrivacyVisualization() {
           <Card hover="none">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-ia-data-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-ia-data-2">
                   <Zap className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -540,7 +540,7 @@ export default function PrivacyVisualization() {
             <CardContent>
               <div className="grid md:grid-cols-3 gap-6">
                 {[
-                  { title: '推荐性能', icon: TrendingUp, iconColor: 'text-primary', metrics: [
+                  { title: '推荐性能', icon: TrendingUp, iconColor: 'text-brand-sky', metrics: [
                     { label: '准确率 (Accuracy)', value: 89.7, max: 100 },
                     { label: '精确率 (Precision)', value: 87.3, max: 100 },
                     { label: '召回率 (Recall)', value: 91.2, max: 100 },
@@ -596,10 +596,10 @@ export default function PrivacyVisualization() {
           </Card>
 
           {/* Research Summary */}
-          <Card hover="none" className="border-primary/20">
+          <Card hover="none" className="border-brand-sky/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-primary" />
+                <BookOpen className="h-4 w-4 text-brand-sky" />
                 研究总结
               </CardTitle>
             </CardHeader>
@@ -609,19 +609,19 @@ export default function PrivacyVisualization() {
               </p>
               <ul className="space-y-2 text-ia-caption text-muted-foreground">
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-brand-sky mt-0.5 flex-shrink-0" />
                   <span>在<strong className="text-foreground">ε = 1.0</strong>的强隐私保护下，DeepFM 模型仍能达到<strong className="text-foreground">89.7%</strong>的推荐准确率</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-brand-sky mt-0.5 flex-shrink-0" />
                   <span><strong className="text-foreground">梯度层扰动</strong>策略相比数据层和模型层扰动，在准确率和隐私保护之间取得最佳平衡</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-brand-sky mt-0.5 flex-shrink-0" />
                   <span>采用<strong className="text-foreground">自适应预算分配</strong>算法，相比均匀分配提升约<strong className="text-foreground">3.5%</strong>的模型性能</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-brand-sky mt-0.5 flex-shrink-0" />
                   <span><strong className="text-foreground">Gaussian 噪声机制</strong>在高维医疗特征场景下表现最优，优于 Laplace 和 Geometric 机制</span>
                 </li>
               </ul>

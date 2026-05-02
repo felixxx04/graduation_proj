@@ -3,27 +3,27 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-standard text-sm font-semibold font-heading tracking-tight transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 active:opacity-90 cursor-pointer',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold tracking-tight transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-sky/40 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground hover:bg-primary-hover',
+          'bg-gradient-to-br from-brand-sky to-sky-600 text-white shadow-btn-primary hover:shadow-btn-primary-hover hover:scale-[1.02]',
         destructive:
-          'bg-destructive text-destructive-foreground hover:opacity-90',
+          'bg-red-500/12 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/30',
         outline:
-          'border border-ia-border bg-transparent hover:bg-muted hover:border-primary/40 hover:text-primary',
+          'border border-white/10 bg-transparent text-secondary-foreground hover:bg-white/[0.06] hover:border-white/20 hover:text-foreground',
         secondary:
-          'bg-secondary text-secondary-foreground hover:bg-ia-border',
+          'bg-white/[0.06] text-secondary-foreground hover:bg-white/[0.10] hover:text-foreground',
         ghost:
-          'hover:bg-muted hover:text-primary',
+          'hover:bg-white/[0.06] hover:text-foreground text-muted-foreground',
         link:
           'text-primary underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-10 px-5 py-2',
-        sm: 'h-8 rounded-micro px-3 text-ia-caption',
-        lg: 'h-12 rounded-comfortable px-6 text-base',
+        sm: 'h-8 rounded-sm px-3 text-xs',
+        lg: 'h-12 rounded-lg px-6 text-base',
         icon: 'h-10 w-10',
       },
     },

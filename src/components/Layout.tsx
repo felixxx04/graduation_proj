@@ -17,7 +17,7 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '@/lib/authStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -37,6 +37,13 @@ export default function Layout() {
   const [loginError, setLoginError] = useState<string | null>(null)
   const [loginLoading, setLoginLoading] = useState(false)
   const [pendingPath, setPendingPath] = useState('/')
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const navigation = useMemo(
     () => [
@@ -102,12 +109,19 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header — Border-based, no glass */}
-      <header className="sticky top-0 z-50 w-full border-b border-ia-border bg-card/95">
+      <header
+        className={cn(
+          'sticky top-0 z-50 w-full backdrop-blur-xl transition-all duration-300',
+          scrolled
+            ? 'bg-[rgba(10,22,40,0.96)] border-b border-white/[0.10] shadow-sm'
+            : 'bg-[rgba(10,22,40,0.85)] border-b border-white/[0.06]'
+        )}
+      >
         <div className="container flex h-14 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 cursor-pointer group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-standard bg-primary">
-              <Heart className="h-4 w-4 text-primary-foreground" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 shadow-btn-primary">
+              <Heart className="h-4 w-4 text-white" />
             </div>
             <div>
               <span className="text-ia-body font-heading font-bold tracking-tight text-foreground">
@@ -129,9 +143,9 @@ export default function Layout() {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    'flex items-center gap-1.5 rounded-standard px-3 py-1.5 text-ia-caption font-heading font-medium transition-colors duration-150 cursor-pointer',
+                    'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-ia-caption font-heading font-medium transition-colors duration-150 cursor-pointer',
                     isActive
-                      ? 'bg-primary/8 text-primary border border-primary/20'
+                      ? 'bg-brand-sky/10 text-brand-sky border border-brand-sky/20'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent'
                   )}
                 >
@@ -198,8 +212,8 @@ export default function Layout() {
                 {user && (
                   <div className="flex items-center justify-between gap-2 rounded-standard border border-ia-border bg-card p-2.5 mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-standard bg-primary">
-                        <UserIcon className="h-4 w-4 text-primary-foreground" />
+                      <div className="flex items-center justify-center w-8 h-8 rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                        <UserIcon className="h-4 w-4 text-white" />
                       </div>
                       <div>
                         <div className="text-ia-body font-heading font-semibold">{user.username}</div>
@@ -225,7 +239,7 @@ export default function Layout() {
                       key={item.name}
                       to={item.href}
                       className={cn(
-                        'flex items-center gap-2.5 rounded-standard px-3 py-2 text-ia-body font-medium transition-colors duration-150 cursor-pointer',
+                        'flex items-center gap-2.5 rounded-md px-3 py-2 text-ia-body font-medium transition-colors duration-150 cursor-pointer',
                         isActive
                           ? 'bg-primary/8 text-primary border-l-2 border-l-primary'
                           : 'text-muted-foreground hover:bg-muted hover:text-foreground border-l-2 border-l-transparent'
@@ -348,16 +362,26 @@ export default function Layout() {
 
       {/* Main Content */}
       <main className="container py-6">
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer — Border top, no glass */}
-      <footer className="border-t border-ia-border bg-card mt-auto">
+      <footer className="border-t border-white/[0.06] bg-surface mt-auto">
         <div className="container py-6">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-standard bg-primary">
-                <Heart className="h-3.5 w-3.5 text-primary-foreground" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600">
+                <Heart className="h-3.5 w-3.5 text-white" />
               </div>
               <div>
                 <span className="text-ia-caption font-heading font-bold text-foreground">
