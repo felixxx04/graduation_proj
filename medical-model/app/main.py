@@ -287,6 +287,23 @@ def predict(request: PredictRequest):
         symptoms_str=request.symptoms or "",
     )
 
+    # 过滤：只保留 encoder primary_disease 词表中存在的疾病名
+    # 避免 "pyrexia"/"febrile illness" 等未登录词映射到 __unknown__ 导致模型退化
+    if predictor.encoder is not None and 'primary_disease' in predictor.encoder.vocab_maps:
+        pd_vocab = predictor.encoder.vocab_maps['primary_disease']
+        known = sorted([d for d in expanded_diseases if d in pd_vocab])
+        unknown = [d for d in expanded_diseases if d not in pd_vocab]
+        if known:
+            expanded_diseases = known  # 按字母排序，确保 deterministic primary_disease
+            if unknown:
+                logger.info(f"Filtered unknown disease synonyms: {unknown} (not in encoder vocab)")
+        elif unknown:
+            logger.warning(f"All expanded diseases unknown in encoder vocab: {unknown}, using as-is")
+            expanded_diseases = sorted(expanded_diseases)
+    else:
+        logger.warning("Encoder or primary_disease vocab not available, using expanded_diseases as-is")
+        expanded_diseases = sorted(expanded_diseases)
+
     # 基本疾病列表（从 diseases 字段分割）
     disease_list = _split_input(request.diseases or "")
 
@@ -294,9 +311,9 @@ def predict(request: PredictRequest):
         'id': request.patientId,
         'age': request.age,
         'gender': request.gender,
-        'diseases': list(expanded_diseases),  # 扩充后的英文疾病名集合
+        'diseases': expanded_diseases,  # 已过滤+去重的英文疾病名列表
         'disease_list': disease_list,  # 原始输入（用于解释）
-        'chronic_diseases': list(expanded_diseases),  # 同步扩充
+        'chronic_diseases': expanded_diseases,  # 同步
         'symptoms': request.symptoms,
         'allergies': request.allergies.split('，') if request.allergies else [],
         'current_medications': request.currentMedications.split('，') if request.currentMedications else []

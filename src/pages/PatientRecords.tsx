@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import {
@@ -24,7 +24,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { usePatientStore, calcBMI, bmiLabel, type Patient, type PatientGender } from '@/lib/patientStore'
+import { usePatientStore, calcBMI, bmiLabel, type Patient, type PatientGender, type RecommendationRecord, type ClinicalMetrics } from '@/lib/patientStore'
 import { getErrorMessage } from '@/lib/api'
 import { PatientCardSkeleton, StatCardSkeleton } from '@/components/ui/skeleton'
 import { TextExpander } from '@/components/ui/text-expander'
@@ -65,7 +65,7 @@ function splitList(value: string) {
 }
 
 export default function PatientRecords() {
-  const { patients, addPatient, updatePatient, deletePatient, isLoading, error } = usePatientStore()
+  const { patients, addPatient, updatePatient, deletePatient, isLoading, error, fetchRecommendationHistory, updateClinicalMetrics } = usePatientStore()
   const navigate = useNavigate()
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -77,6 +77,16 @@ export default function PatientRecords() {
   const [submitting, setSubmitting] = useState(false)
   const [pageError, setPageError] = useState<string | null>(null)
   const [formData, setFormData] = useState<FormState>(INITIAL_FORM)
+  const [activeTab, setActiveTab] = useState<Record<string, 'basic' | 'history' | 'clinical'>>({})
+  const [historyCache, setHistoryCache] = useState<Record<string, RecommendationRecord[]>>({})
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [clinicalForm, setClinicalForm] = useState<ClinicalMetrics>({
+    renalFunction: '', hepaticFunction: '', smokingStatus: '', drinkingStatus: '',
+    bloodPressureSystolic: null, bloodPressureDiastolic: null,
+    fastingGlucose: null, hba1c: null,
+    cholesterolTotal: null, cholesterolLdl: null, heartRate: null,
+  })
+  const [clinicalSaving, setClinicalSaving] = useState(false)
   const addFormRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -182,6 +192,27 @@ export default function PatientRecords() {
       } },
     })
   }
+
+  const handleTabChange = useCallback(async (patientId: string, tab: 'basic' | 'history' | 'clinical') => {
+    setActiveTab(prev => ({ ...prev, [patientId]: tab }))
+    if (tab === 'history' && !historyCache[patientId]) {
+      setHistoryLoading(true)
+      try {
+        const records = await fetchRecommendationHistory(patientId)
+        setHistoryCache(prev => ({ ...prev, [patientId]: records }))
+      } catch { /* silently fail */ }
+      setHistoryLoading(false)
+    }
+  }, [fetchRecommendationHistory, historyCache])
+
+  const handleClinicalSave = useCallback(async (patientId: string) => {
+    setClinicalSaving(true)
+    try {
+      await updateClinicalMetrics(patientId, clinicalForm)
+    } finally {
+      setClinicalSaving(false)
+    }
+  }, [clinicalForm, updateClinicalMetrics])
 
   const SortButton = ({ label, keyName }: { label: string; keyName: SortKey }) => (
     <button
@@ -414,49 +445,200 @@ export default function PatientRecords() {
                     <AnimatePresence>
                       {isExpanded && (
                         <div className="animate-fade-in overflow-hidden border-t border-white/[0.06]">
+                          {/* Tab bar */}
+                          <div className="flex border-b border-white/[0.06]">
+                            {(['basic', 'history', 'clinical'] as const).map((tab) => (
+                              <button
+                                key={tab}
+                                className={`px-4 py-2.5 text-xs font-medium transition-colors cursor-pointer ${
+                                  (activeTab[patient.id] || 'basic') === tab
+                                    ? 'text-brand-sky border-b-2 border-brand-sky'
+                                    : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
+                                }`}
+                                onClick={() => handleTabChange(patient.id, tab)}
+                              >
+                                {tab === 'basic' ? '基本信息' : tab === 'history' ? '推荐记录' : '临床指标'}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Tab content */}
                           <div className="px-4 pb-4">
-                            <div className="mt-4 grid gap-4 md:grid-cols-3">
-                              <div>
-                                <h4 className="mb-2 text-sm font-semibold text-brand-sky">当前用药</h4>
-                                <div className="space-y-1.5">
-                                  {patient.currentMedications.length > 0 ? patient.currentMedications.map((medication) => (
-                                    <div key={medication} className="flex items-center gap-2 rounded-sm bg-brand-sky/4 border border-brand-sky/10 p-2">
-                                      <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-br from-brand-sky to-sky-600" />
-                                      <span className="text-sm">{medication}</span>
+                            {(activeTab[patient.id] || 'basic') === 'basic' && (
+                              <div className="mt-4 grid gap-4 md:grid-cols-3">
+                                <div>
+                                  <h4 className="mb-2 text-sm font-semibold text-brand-sky">当前用药</h4>
+                                  <div className="space-y-1.5">
+                                    {patient.currentMedications.length > 0 ? patient.currentMedications.map((medication) => (
+                                      <div key={medication} className="flex items-center gap-2 rounded-sm bg-brand-sky/4 border border-brand-sky/10 p-2">
+                                        <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-br from-brand-sky to-sky-600" />
+                                        <span className="text-sm">{medication}</span>
+                                      </div>
+                                    )) : <p className="text-xs text-muted-foreground">无</p>}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h4 className="mb-2 text-sm font-semibold text-brand-teal">过敏史</h4>
+                                  <div className="space-y-1.5">
+                                    {patient.allergies.length > 0 ? patient.allergies.map((allergy) => (
+                                      <div key={allergy} className="flex items-center gap-2 rounded-sm border border-destructive/20 bg-destructive/4 p-2">
+                                        <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 text-destructive" />
+                                        <span className="text-sm text-destructive">{allergy}</span>
+                                      </div>
+                                    )) : <p className="text-xs text-muted-foreground">无过敏史</p>}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h4 className="mb-2 text-sm font-semibold">体格信息</h4>
+                                  <div className="space-y-1.5 text-sm">
+                                    <div className="flex justify-between rounded-sm bg-surface p-2">
+                                      <span className="text-muted-foreground">身高</span>
+                                      <span className="font-semibold">{patient.height} cm</span>
                                     </div>
-                                  )) : <p className="text-xs text-muted-foreground">无</p>}
-                                </div>
-                              </div>
-                              <div>
-                                <h4 className="mb-2 text-sm font-semibold text-brand-teal">过敏史</h4>
-                                <div className="space-y-1.5">
-                                  {patient.allergies.length > 0 ? patient.allergies.map((allergy) => (
-                                    <div key={allergy} className="flex items-center gap-2 rounded-sm border border-destructive/20 bg-destructive/4 p-2">
-                                      <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0 text-destructive" />
-                                      <span className="text-sm text-destructive">{allergy}</span>
+                                    <div className="flex justify-between rounded-sm bg-surface p-2">
+                                      <span className="text-muted-foreground">体重</span>
+                                      <span className="font-semibold">{patient.weight} kg</span>
                                     </div>
-                                  )) : <p className="text-xs text-muted-foreground">无过敏史</p>}
-                                </div>
-                              </div>
-                              <div>
-                                <h4 className="mb-2 text-sm font-semibold">体格信息</h4>
-                                <div className="space-y-1.5 text-sm">
-                                  <div className="flex justify-between rounded-sm bg-surface p-2">
-                                    <span className="text-muted-foreground">身高</span>
-                                    <span className="font-semibold">{patient.height} cm</span>
-                                  </div>
-                                  <div className="flex justify-between rounded-sm bg-surface p-2">
-                                    <span className="text-muted-foreground">体重</span>
-                                    <span className="font-semibold">{patient.weight} kg</span>
-                                  </div>
-                                  <div className="flex justify-between rounded-sm bg-surface p-2">
-                                    <span className="text-muted-foreground">BMI</span>
-                                    <span className={`font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
+                                    <div className="flex justify-between rounded-sm bg-surface p-2">
+                                      <span className="text-muted-foreground">BMI</span>
+                                      <span className={`font-semibold ${bmiColor}`}>{bmi.toFixed(1)} ({bmiText})</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                            {patient.medicalHistory && (
+                            )}
+
+                            {(activeTab[patient.id] || 'basic') === 'history' && (
+                              <div className="mt-4">
+                                {historyLoading ? (
+                                  <p className="text-sm text-muted-foreground">加载中...</p>
+                                ) : (historyCache[patient.id] || []).length === 0 ? (
+                                  <p className="text-sm text-muted-foreground">暂无推荐记录</p>
+                                ) : (
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full text-xs">
+                                      <thead>
+                                        <tr className="border-b border-white/[0.06] text-muted-foreground">
+                                          <th className="py-2 text-left font-medium">推荐药物</th>
+                                          <th className="py-2 text-left font-medium">疾病</th>
+                                          <th className="py-2 text-left font-medium">时间</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {(historyCache[patient.id] || []).map((rec) => (
+                                          <tr key={rec.id} className="border-b border-white/[0.03]">
+                                            <td className="py-2 pr-2">{rec.recommendedDrugs.slice(0, 3).join('、')}</td>
+                                            <td className="py-2 pr-2">{rec.primaryDisease || '-'}</td>
+                                            <td className="py-2 text-muted-foreground">{rec.createdAt ? rec.createdAt.replace('T', ' ').substring(0, 16) : '-'}</td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {(activeTab[patient.id] || 'basic') === 'clinical' && (
+                              <div className="mt-4 space-y-4">
+                                <div className="grid gap-3 md:grid-cols-2">
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">肾功能</Label>
+                                    <select value={clinicalForm.renalFunction} onChange={(e) => setClinicalForm({...clinicalForm, renalFunction: e.target.value})}
+                                      className="flex h-9 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-1 text-xs focus-visible:outline-none focus-visible:border-brand-sky">
+                                      <option value="">未知</option>
+                                      <option value="normal">正常</option>
+                                      <option value="mild_impairment">轻度受损</option>
+                                      <option value="moderate_impairment">中度受损</option>
+                                      <option value="severe_impairment">重度受损</option>
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">肝功能</Label>
+                                    <select value={clinicalForm.hepaticFunction} onChange={(e) => setClinicalForm({...clinicalForm, hepaticFunction: e.target.value})}
+                                      className="flex h-9 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-1 text-xs focus-visible:outline-none focus-visible:border-brand-sky">
+                                      <option value="">未知</option>
+                                      <option value="normal">正常</option>
+                                      <option value="mild_impairment">轻度受损</option>
+                                      <option value="moderate_impairment">中度受损</option>
+                                      <option value="severe_impairment">重度受损</option>
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">吸烟状态</Label>
+                                    <select value={clinicalForm.smokingStatus} onChange={(e) => setClinicalForm({...clinicalForm, smokingStatus: e.target.value})}
+                                      className="flex h-9 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-1 text-xs focus-visible:outline-none focus-visible:border-brand-sky">
+                                      <option value="">未知</option>
+                                      <option value="never">从不吸烟</option>
+                                      <option value="former">已戒烟</option>
+                                      <option value="current">吸烟</option>
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">饮酒状态</Label>
+                                    <select value={clinicalForm.drinkingStatus} onChange={(e) => setClinicalForm({...clinicalForm, drinkingStatus: e.target.value})}
+                                      className="flex h-9 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-1 text-xs focus-visible:outline-none focus-visible:border-brand-sky">
+                                      <option value="">未知</option>
+                                      <option value="none">不饮酒</option>
+                                      <option value="occasional">偶尔饮酒</option>
+                                      <option value="regular">经常饮酒</option>
+                                      <option value="heavy">大量饮酒</option>
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">收缩压 (mmHg)</Label>
+                                    <Input type="number" value={clinicalForm.bloodPressureSystolic ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, bloodPressureSystolic: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">舒张压 (mmHg)</Label>
+                                    <Input type="number" value={clinicalForm.bloodPressureDiastolic ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, bloodPressureDiastolic: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">空腹血糖 (mmol/L)</Label>
+                                    <Input type="number" step="0.1" value={clinicalForm.fastingGlucose ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, fastingGlucose: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">糖化血红蛋白 (%)</Label>
+                                    <Input type="number" step="0.1" value={clinicalForm.hba1c ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, hba1c: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">总胆固醇 (mmol/L)</Label>
+                                    <Input type="number" step="0.1" value={clinicalForm.cholesterolTotal ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, cholesterolTotal: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">LDL胆固醇 (mmol/L)</Label>
+                                    <Input type="number" step="0.1" value={clinicalForm.cholesterolLdl ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, cholesterolLdl: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold">心率 (bpm)</Label>
+                                    <Input type="number" value={clinicalForm.heartRate ?? ''}
+                                      onChange={(e) => setClinicalForm({...clinicalForm, heartRate: e.target.value ? Number(e.target.value) : null})}
+                                      className="h-9 text-xs" />
+                                  </div>
+                                </div>
+                                <div className="flex gap-2 pt-2">
+                                  <Button size="sm" className="gap-1.5 cursor-pointer" disabled={clinicalSaving}
+                                    onClick={() => handleClinicalSave(patient.id)}>
+                                    <Save className="h-3.5 w-3.5" />
+                                    {clinicalSaving ? '保存中...' : '保存临床指标'}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+
+                            {(activeTab[patient.id] || 'basic') === 'basic' && patient.medicalHistory && (
                               <div className="mt-4 border-t border-white/[0.06] pt-4">
                                 <h4 className="mb-1.5 text-sm font-semibold">既往病史</h4>
                                 <TextExpander text={patient.medicalHistory} maxLines={3} />

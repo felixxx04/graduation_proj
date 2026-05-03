@@ -1,5 +1,6 @@
 package com.medical.controller;
 
+import com.medical.dto.request.ClinicalMetricsRequest;
 import com.medical.dto.request.PatientRequest;
 import com.medical.dto.response.ApiResponse;
 import com.medical.dto.response.PatientProfile;
@@ -39,5 +40,13 @@ public class PatientController {
     public ApiResponse<Void> deletePatient(@PathVariable Long id) {
         patientService.deletePatient(id);
         return ApiResponse.success("删除成功", null);
+    }
+
+    @PutMapping("/{id}/clinical")
+    public ApiResponse<Void> updateClinicalMetrics(
+            @PathVariable Long id,
+            @RequestBody ClinicalMetricsRequest request) {
+        patientService.updateClinicalMetrics(id, request);
+        return ApiResponse.success("临床指标更新成功", null);
     }
 }

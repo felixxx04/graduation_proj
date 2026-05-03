@@ -165,8 +165,8 @@ export default function Layout() {
               </div>
             ) : user ? (
               <>
-                <div className="flex items-center gap-2 rounded-standard border border-ia-border bg-card px-3 py-1.5">
-                  <div className="flex items-center justify-center w-6 h-6 rounded-micro bg-primary">
+                <div className="flex items-center gap-2 rounded-xl border border-ia-border bg-card px-3 py-1.5">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary">
                     <UserIcon className="h-3.5 w-3.5 text-primary-foreground" />
                   </div>
                   <div className="min-w-0">
@@ -177,7 +177,7 @@ export default function Layout() {
                   </div>
                 </div>
                 <button
-                  className="flex items-center gap-1.5 rounded-standard px-2 py-1.5 text-ia-caption font-medium text-muted-foreground transition-colors duration-150 hover:bg-destructive/8 hover:text-destructive cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-ia-caption font-medium text-muted-foreground transition-colors duration-150 hover:bg-destructive/8 hover:text-destructive cursor-pointer"
                   onClick={onLogout}
                 >
                   <LogOut className="h-3.5 w-3.5" />
@@ -283,7 +283,7 @@ export default function Layout() {
               <Card hover="none">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-standard bg-primary">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
                       <Lock className="h-4 w-4 text-primary-foreground" />
                     </div>
                     <div>
@@ -321,7 +321,7 @@ export default function Layout() {
                     </div>
 
                     {loginError && (
-                      <div className="rounded-standard border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+                      <div className="rounded-md border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
                         {loginError}
                       </div>
                     )}
@@ -342,12 +342,12 @@ export default function Layout() {
                   </form>
 
                   <div className="grid grid-cols-2 gap-2 pt-1">
-                    <div className="rounded-standard border border-ia-border p-2.5">
+                    <div className="rounded-md border border-ia-border p-2.5">
                       <div className="text-ia-label text-muted-foreground mb-1">医生账号</div>
                       <div className="text-ia-caption font-heading font-semibold">doctor1</div>
                       <div className="text-ia-label text-muted-foreground">admin123</div>
                     </div>
-                    <div className="rounded-standard border border-ia-border p-2.5">
+                    <div className="rounded-md border border-ia-border p-2.5">
                       <div className="text-ia-label text-muted-foreground mb-1">管理员</div>
                       <div className="text-ia-caption font-heading font-semibold">admin</div>
                       <div className="text-ia-label text-muted-foreground">admin123</div>

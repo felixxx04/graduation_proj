@@ -69,10 +69,11 @@ interface DashboardResponse {
 type LedgerFilter = 'all' | 'recommendation_inference' | 'training_epoch'
 
 const CHART_TOOLTIP_STYLE = {
-  backgroundColor: 'hsl(var(--card))',
-  border: '1px solid hsl(var(--border))',
-  borderRadius: '3px',
-  fontSize: '11px',
+  backgroundColor: '#0f2744',
+  border: '1px solid rgba(255,255,255,0.12)',
+  borderRadius: '8px',
+  fontSize: '12px',
+  color: '#f8fafc',
 }
 
 export default function AdminDashboard() {
@@ -400,14 +401,14 @@ export default function AdminDashboard() {
                 <div className="h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={trainingSeries}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="epoch" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 10 }} />
-                      <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 10 }} />
-                      <YAxis yAxisId="right" orientation="right" domain={[50, 100]} stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 10 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                      <XAxis dataKey="epoch" stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                      <YAxis yAxisId="left" stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                      <YAxis yAxisId="right" orientation="right" domain={[50, 100]} stroke="#64748b" tick={{ fontSize: 11, fill: '#94a3b8' }} />
                       <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
-                      <Legend wrapperStyle={{ fontSize: '11px' }} />
-                      <Line yAxisId="left" type="monotone" dataKey="loss" name="Loss" stroke="hsl(var(--destructive))" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
-                      <Line yAxisId="right" type="monotone" dataKey="accuracy" name="Accuracy (%)" stroke="hsl(var(--secondary))" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
+                      <Legend wrapperStyle={{ fontSize: '11px', color: '#cbd5e1' }} />
+                      <Line yAxisId="left" type="monotone" dataKey="loss" name="Loss" stroke="#ef4444" strokeWidth={2} dot={{ r: 3, fill: '#ef4444' }} isAnimationActive={false} />
+                      <Line yAxisId="right" type="monotone" dataKey="accuracy" name="Accuracy (%)" stroke="#14b8a6" strokeWidth={2} dot={{ r: 3, fill: '#14b8a6' }} isAnimationActive={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

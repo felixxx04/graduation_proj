@@ -1,5 +1,6 @@
 package com.medical.service;
 
+import com.medical.dto.request.ClinicalMetricsRequest;
 import com.medical.dto.request.PatientRequest;
 import com.medical.dto.response.PatientProfile;
 import com.medical.entity.HealthRecord;
@@ -83,6 +84,45 @@ public class PatientService {
         patientRepository.deleteById(id);
     }
 
+    @Transactional
+    public void updateClinicalMetrics(Long patientId, ClinicalMetricsRequest request) {
+        HealthRecord latest = healthRecordRepository.findLatestByPatientId(patientId);
+        if (latest == null) {
+            latest = new HealthRecord();
+            latest.setPatientId(patientId);
+            latest.setRecordDate(LocalDate.now());
+            latest.setIsLatest(true);
+        }
+        if (request.getRenalFunction() != null)
+            latest.setRenalFunction(request.getRenalFunction());
+        if (request.getHepaticFunction() != null)
+            latest.setHepaticFunction(request.getHepaticFunction());
+        if (request.getSmokingStatus() != null)
+            latest.setSmokingStatus(request.getSmokingStatus());
+        if (request.getDrinkingStatus() != null)
+            latest.setDrinkingStatus(request.getDrinkingStatus());
+        if (request.getBloodPressureSystolic() != null)
+            latest.setBloodPressureSystolic(request.getBloodPressureSystolic());
+        if (request.getBloodPressureDiastolic() != null)
+            latest.setBloodPressureDiastolic(request.getBloodPressureDiastolic());
+        if (request.getFastingGlucose() != null)
+            latest.setFastingGlucose(request.getFastingGlucose());
+        if (request.getHba1c() != null)
+            latest.setHba1c(request.getHba1c());
+        if (request.getCholesterolTotal() != null)
+            latest.setCholesterolTotal(request.getCholesterolTotal());
+        if (request.getCholesterolLdl() != null)
+            latest.setCholesterolLdl(request.getCholesterolLdl());
+        if (request.getHeartRate() != null)
+            latest.setHeartRate(request.getHeartRate());
+
+        if (latest.getId() == null) {
+            healthRecordRepository.insert(latest);
+        } else {
+            healthRecordRepository.update(latest);
+        }
+    }
+
     private LocalDate calculateBirthDate(Integer age) {
         if (age == null || age <= 0) {
             return LocalDate.now().minusYears(45); // 默认45岁
@@ -104,6 +144,17 @@ public class PatientService {
         record.setMedicalHistory(request.getMedicalHistory());
         record.setSymptoms(request.getSymptoms());
         record.setIsLatest(true);
+        record.setRenalFunction(request.getRenalFunction());
+        record.setHepaticFunction(request.getHepaticFunction());
+        record.setSmokingStatus(request.getSmokingStatus());
+        record.setDrinkingStatus(request.getDrinkingStatus());
+        record.setBloodPressureSystolic(request.getBloodPressureSystolic());
+        record.setBloodPressureDiastolic(request.getBloodPressureDiastolic());
+        record.setFastingGlucose(request.getFastingGlucose());
+        record.setHba1c(request.getHba1c());
+        record.setCholesterolTotal(request.getCholesterolTotal());
+        record.setCholesterolLdl(request.getCholesterolLdl());
+        record.setHeartRate(request.getHeartRate());
         return record;
     }
 

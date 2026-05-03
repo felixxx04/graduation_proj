@@ -51,7 +51,7 @@ export default function LoginPage() {
         <Card hover="none">
           <CardHeader>
             <div className="flex items-center gap-3 mb-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-gradient-to-br from-brand-sky to-sky-600 shadow-btn-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-brand-sky to-sky-600 shadow-btn-primary">
                 <Shield className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -95,7 +95,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="rounded-sm border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
+                <div className="rounded-md border border-destructive/30 bg-destructive/6 p-2.5 text-ia-caption text-destructive">
                   {error}
                 </div>
               )}
@@ -122,12 +122,12 @@ export default function LoginPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-sm border border-white/[0.06] p-2.5">
+              <div className="rounded-md border border-white/[0.06] p-2.5">
                 <div className="text-ia-label text-muted-foreground mb-1">医生账号</div>
                 <div className="text-ia-caption font-heading font-semibold">doctor1</div>
                 <div className="text-ia-label text-muted-foreground">admin123</div>
               </div>
-              <div className="rounded-sm border border-white/[0.06] p-2.5">
+              <div className="rounded-md border border-white/[0.06] p-2.5">
                 <div className="text-ia-label text-muted-foreground mb-1">管理员</div>
                 <div className="text-ia-caption font-heading font-semibold">admin</div>
                 <div className="text-ia-label text-muted-foreground">admin123</div>

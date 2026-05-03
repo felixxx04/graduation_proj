@@ -33,6 +33,21 @@ COMMON_DISEASES = [
     'urinary tract infection', 'bacterial skin infection',
     'asthma', 'diabetes', 'epilepsy', 'arrhythmia',
     'heart failure', 'edema', 'joint pain', 'nerve pain',
+    # v2: 扩展疾病覆盖 — 增加高频门诊疾病
+    'migraine', 'allergic rhinitis', 'bronchitis', 'sinusitis',
+    'conjunctivitis', 'otitis media', 'peptic ulcer',
+    'irritable bowel syndrome', 'constipation', 'anemia',
+    'hypothyroidism', 'hyperthyroidism', 'obesity',
+    'chronic pain', 'fibromyalgia', 'insomnia disorder',
+    'panic disorder', 'bipolar disorder', 'schizophrenia',
+    'parkinson disease', 'benign prostatic hyperplasia',
+    'erectile dysfunction', 'menopause', 'dysmenorrhea',
+    'acne', 'eczema', 'psoriasis', 'rosacea',
+    'osteoarthritis', 'rheumatoid arthritis', 'osteoporosis',
+    'chronic kidney disease', 'atrial fibrillation',
+    'deep vein thrombosis', 'pulmonary embolism',
+    'tuberculosis', 'hiv infection', 'hepatitis b',
+    'glaucoma', 'cataract', 'age-related macular degeneration',
 ]
 
 # 慢性病候选 (需要长期用药)
@@ -218,7 +233,7 @@ def _find_drugs_for_condition(
 
 def generate_patients(
     pipeline_data: Dict[str, Any],
-    num_patients: int = 500,
+    num_patients: int = 1000,
     seed: int = 42,
 ) -> List[Dict[str, Any]]:
     """生成模拟患者数据
@@ -386,7 +401,7 @@ def main():
     )
 
     # 生成300患者
-    num_patients = 500
+    num_patients = 1000
     logger.info(f'Generating {num_patients} simulated patients...')
     patients = generate_patients(pipeline_data, num_patients=num_patients, seed=42)
 

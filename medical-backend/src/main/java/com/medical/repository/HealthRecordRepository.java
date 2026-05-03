@@ -32,6 +32,34 @@ public interface HealthRecordRepository {
     @Update("UPDATE patient_health_record SET is_latest = FALSE WHERE patient_id = #{patientId}")
     int markAllAsNotLatest(Long patientId);
 
+    @Update("""
+        UPDATE patient_health_record SET
+            record_date = #{recordDate},
+            age = #{age},
+            height = #{height},
+            weight = #{weight},
+            blood_type = #{bloodType},
+            chronic_diseases = #{chronicDiseases},
+            allergies = #{allergies},
+            current_medications = #{currentMedications},
+            medical_history = #{medicalHistory},
+            symptoms = #{symptoms},
+            is_latest = #{isLatest},
+            smoking_status = #{smokingStatus},
+            drinking_status = #{drinkingStatus},
+            renal_function = #{renalFunction},
+            hepatic_function = #{hepaticFunction},
+            blood_pressure_systolic = #{bloodPressureSystolic},
+            blood_pressure_diastolic = #{bloodPressureDiastolic},
+            fasting_glucose = #{fastingGlucose},
+            hba1c = #{hba1c},
+            cholesterol_total = #{cholesterolTotal},
+            cholesterol_ldl = #{cholesterolLdl},
+            heart_rate = #{heartRate}
+        WHERE id = #{id}
+        """)
+    int update(HealthRecord record);
+
     @Delete("DELETE FROM patient_health_record WHERE patient_id = #{patientId}")
     int deleteByPatientId(Long patientId);
 }

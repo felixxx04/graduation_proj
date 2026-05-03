@@ -312,7 +312,7 @@ def _build_safety_warnings(
             warnings.append('妊娠D级: 仅在获益大于风险时使用')
 
     # 育龄女性预防性提示
-    gender = patient_data.get('gender', '').upper()
+    gender = (patient_data.get('gender') or '').upper()
     age = patient_data.get('age', 0) or 0
     if gender in ('F', 'FEMALE') and 18 <= age <= 45:
         pregnancy_cat = drug.get('pregnancy_category', 'N')

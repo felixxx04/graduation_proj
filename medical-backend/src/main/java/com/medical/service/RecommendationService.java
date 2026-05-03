@@ -3,6 +3,7 @@ package com.medical.service;
 import com.medical.exception.ModelServiceException;
 import com.medical.exception.PrivacyBudgetExhaustedException;
 import com.medical.config.ModelServiceConfig;
+import com.medical.dto.response.RecommendationHistoryItem;
 import com.medical.entity.Drug;
 import com.medical.entity.HealthRecord;
 import com.medical.entity.Recommendation;
@@ -29,6 +30,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -497,6 +500,51 @@ public class RecommendationService {
         User user = userOptional.get();
         log.debug("Resolved user ID {} for username '{}'", user.getId(), username);
         return user.getId();
+    }
+
+    public List<RecommendationHistoryItem> getHistoryByPatientId(Long patientId) {
+        List<Recommendation> records = recommendationRepository.findByPatientId(patientId);
+        return records.stream().map(this::toHistoryItem).collect(Collectors.toList());
+    }
+
+    public List<RecommendationHistoryItem> getAllHistory() {
+        List<Recommendation> records = recommendationRepository.findAll();
+        return records.stream().map(this::toHistoryItem).collect(Collectors.toList());
+    }
+
+    private RecommendationHistoryItem toHistoryItem(Recommendation rec) {
+        List<String> drugNames = new ArrayList<>();
+        String primaryDisease = "";
+        try {
+            Map<String, Object> result = objectMapper.readValue(rec.getResultData(), Map.class);
+            Object selected = result.get("selected");
+            if (selected instanceof List) {
+                for (Object item : (List<?>) selected) {
+                    if (item instanceof Map) {
+                        Map<?, ?> m = (Map<?, ?>) item;
+                        Object name = m.get("drugName");
+                        if (name != null) drugNames.add(String.valueOf(name));
+                    }
+                }
+            }
+            Object inputData = rec.getInputData();
+            if (inputData != null) {
+                String inputStr = inputData instanceof String ? (String) inputData : String.valueOf(inputData);
+                Map<String, Object> input = objectMapper.readValue(inputStr, Map.class);
+                Object diseases = input.get("diseases");
+                if (diseases instanceof String) primaryDisease = (String) diseases;
+            }
+        } catch (Exception ignored) { }
+
+        return RecommendationHistoryItem.builder()
+            .id(rec.getId())
+            .patientId(rec.getPatientId())
+            .recommendedDrugs(drugNames)
+            .primaryDisease(primaryDisease)
+            .dpEnabled(rec.getDpEnabled())
+            .epsilonUsed(rec.getEpsilonUsed() != null ? rec.getEpsilonUsed().doubleValue() : null)
+            .createdAt(rec.getCreatedAt())
+            .build();
     }
 
     private String toJson(Object obj) {

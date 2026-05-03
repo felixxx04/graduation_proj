@@ -19,6 +19,30 @@ export interface Patient {
   createdAt: string
 }
 
+export interface RecommendationRecord {
+  id: number
+  patientId: number
+  recommendedDrugs: string[]
+  primaryDisease: string
+  dpEnabled: boolean
+  epsilonUsed: number | null
+  createdAt: string
+}
+
+export interface ClinicalMetrics {
+  renalFunction: string
+  hepaticFunction: string
+  smokingStatus: string
+  drinkingStatus: string
+  bloodPressureSystolic: number | null
+  bloodPressureDiastolic: number | null
+  fastingGlucose: number | null
+  hba1c: number | null
+  cholesterolTotal: number | null
+  cholesterolLdl: number | null
+  heartRate: number | null
+}
+
 type PatientDraft = Omit<Patient, 'id' | 'createdAt'>
 
 type PatientStoreState = {
@@ -29,6 +53,8 @@ type PatientStoreState = {
   addPatient: (patient: PatientDraft) => Promise<Patient>
   updatePatient: (id: string, updates: Partial<Omit<Patient, 'id' | 'createdAt'>>) => Promise<void>
   deletePatient: (id: string) => Promise<void>
+  fetchRecommendationHistory: (patientId: string) => Promise<RecommendationRecord[]>
+  updateClinicalMetrics: (patientId: string, metrics: ClinicalMetrics) => Promise<void>
 }
 
 type BackendPatient = {
@@ -163,9 +189,22 @@ export function PatientStoreProvider({ children }: { children: React.ReactNode }
     setError(null)
   }, [])
 
+  const fetchRecommendationHistory = useCallback<PatientStoreState['fetchRecommendationHistory']>(
+    async (patientId) => {
+      const data = await api.get<RecommendationRecord[]>(`/api/recommendations?patientId=${patientId}`)
+      return data
+    }, []
+  )
+
+  const updateClinicalMetrics = useCallback<PatientStoreState['updateClinicalMetrics']>(
+    async (patientId, metrics) => {
+      await api.put<void>(`/api/patients/${patientId}/clinical`, metrics)
+    }, []
+  )
+
   const value = useMemo<PatientStoreState>(
-    () => ({ patients, isLoading, error, refresh, addPatient, updatePatient, deletePatient }),
-    [addPatient, deletePatient, error, isLoading, patients, refresh, updatePatient]
+    () => ({ patients, isLoading, error, refresh, addPatient, updatePatient, deletePatient, fetchRecommendationHistory, updateClinicalMetrics }),
+    [addPatient, deletePatient, error, isLoading, patients, refresh, updatePatient, fetchRecommendationHistory, updateClinicalMetrics]
   )
 
   return (

@@ -381,21 +381,72 @@ export default function PrivacyConfig() {
               </div>
 
               {/* Trade-off Visualization */}
-              <div className="p-3 rounded-sm bg-surface-elevated border border-white/[0.06]">
-                <div className="text-ia-caption font-heading font-semibold mb-2">隐私 - 效用权衡</div>
-                <div className="relative h-28">
-                  <svg viewBox="0 0 200 100" className="w-full h-full">
-                    <line x1="20" y1="80" x2="180" y2="80" stroke="hsl(var(--border))" strokeWidth="1.5" />
-                    <line x1="20" y1="80" x2="20" y2="20" stroke="hsl(var(--border))" strokeWidth="1.5" />
-                    <text x="100" y="98" fontSize="9" fill="hsl(var(--muted-foreground))">隐私预算 ε</text>
-                    <text x="5" y="50" fontSize="9" fill="hsl(var(--muted-foreground))" transform="rotate(-90, 10, 50)">效用</text>
-                    <path d="M 20 30 Q 60 40, 100 55 T 180 75" fill="none" stroke="hsl(var(--primary))" strokeWidth="2" />
-                    <circle cx={20 + (config.epsilon / 10) * 160} cy={30 + (config.epsilon / 10) * 45} r="5" fill="hsl(var(--secondary))" stroke="white" strokeWidth="1.5" />
+              <div className="p-4 rounded-sm bg-surface border border-white/[0.06]">
+                <div className="text-ia-caption font-heading font-semibold mb-1">隐私 - 效用权衡</div>
+                <p className="text-ia-label text-muted-foreground mb-3">隐私保护越强（ε 越小），模型效用越低</p>
+                <div className="relative h-48">
+                  <svg viewBox="0 0 240 130" className="w-full h-full">
+                    {/* Grid lines */}
+                    <line x1="55" y1="15" x2="55" y2="105" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    <line x1="100" y1="15" x2="100" y2="105" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    <line x1="145" y1="15" x2="145" y2="105" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    <line x1="190" y1="15" x2="190" y2="105" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    <line x1="55" y1="40" x2="225" y2="40" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    <line x1="55" y1="65" x2="225" y2="65" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    <line x1="55" y1="85" x2="225" y2="85" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    {/* Axes */}
+                    <line x1="55" y1="105" x2="225" y2="105" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
+                    <line x1="55" y1="105" x2="55" y2="15" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" />
+                    {/* Y-axis ticks */}
+                    <text x="50" y="19" fontSize="8" fill="#94a3b8" textAnchor="end">100%</text>
+                    <text x="50" y="43" fontSize="8" fill="#94a3b8" textAnchor="end">75%</text>
+                    <text x="50" y="68" fontSize="8" fill="#94a3b8" textAnchor="end">50%</text>
+                    <text x="50" y="93" fontSize="8" fill="#94a3b8" textAnchor="end">25%</text>
+                    <text x="50" y="109" fontSize="8" fill="#94a3b8" textAnchor="end">0%</text>
+                    {/* Axis labels */}
+                    <text x="140" y="125" fontSize="9" fill="#cbd5e1" textAnchor="middle">隐私预算 ε（越小越强）</text>
+                    <text x="26" y="60" fontSize="9" fill="#cbd5e1" textAnchor="middle" transform="rotate(-90, 26, 60)">模型效用</text>
+                    {/* Area fill under curve */}
+                    <path d="M 55 105 L 55 25 Q 90 35, 140 58 T 225 100 L 225 105 Z" fill="rgba(14,165,233,0.08)" />
+                    {/* Curve */}
+                    <path d="M 55 25 Q 90 35, 140 58 T 225 100" fill="none" stroke="#0ea5e9" strokeWidth="2.5" strokeLinecap="round" />
+                    {/* Corner annotations */}
+                    <text x="62" y="16" fontSize="8" fill="rgba(203,213,225,0.6)">效用最高</text>
+                    <text x="58" y="100" fontSize="8" fill="rgba(203,213,225,0.6)">强隐私</text>
+                    <text x="175" y="100" fontSize="8" fill="rgba(203,213,225,0.6)">弱隐私</text>
+                    {/* Current point on bezier curve */}
+                    {(() => {
+                      // Bezier: M(55,25) Q(90,35)→(140,58) T(225,100) with implied ctrl=(190,81)
+                      const eps = config.epsilon
+                      let cx: number, cy: number
+                      if (eps <= 5) {
+                        const t = eps / 5  // segment 1: epsilon [0,5] → t [0,1]
+                        const t1 = 1 - t
+                        cx = t1*t1*55 + 2*t1*t*90 + t*t*140
+                        cy = t1*t1*25 + 2*t1*t*35 + t*t*58
+                      } else {
+                        const t = (eps - 5) / 5  // segment 2: epsilon [5,10] → t [0,1]
+                        const t1 = 1 - t
+                        cx = t1*t1*140 + 2*t1*t*190 + t*t*225
+                        cy = t1*t1*58 + 2*t1*t*81 + t*t*100
+                      }
+                      return (
+                        <g>
+                          <line x1={cx} y1={cy} x2={cx} y2="105" stroke="rgba(20,184,166,0.2)" strokeWidth="1" strokeDasharray="3,3" />
+                          <line x1="55" y1={cy} x2={cx} y2={cy} stroke="rgba(20,184,166,0.2)" strokeWidth="1" strokeDasharray="3,3" />
+                          <circle cx={cx} cy={cy} r="6" fill="#14b8a6" stroke="#0a1628" strokeWidth="2" />
+                          <circle cx={cx} cy={cy} r="2.5" fill="white" opacity="0.9" />
+                          <text x="220" y="20" fontSize="9" fill="#14b8a6" fontWeight="bold" textAnchor="end">
+                            当前 ε={eps.toFixed(1)}
+                          </text>
+                        </g>
+                      )
+                    })()}
                   </svg>
                 </div>
-                <div className="flex justify-between text-ia-label text-muted-foreground mt-1">
-                  <span>低 ε</span>
-                  <span>高 ε</span>
+                <div className="flex justify-between text-ia-label text-muted-foreground mt-2 px-2">
+                  <span>ε = 0.1 · 强隐私保护</span>
+                  <span>ε = 10 · 弱隐私 · 高精度</span>
                 </div>
               </div>
 

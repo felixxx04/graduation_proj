@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 def _apply_dp_noise(
     raw_score: float,
     dp_config: Optional[Dict[str, Any]],
+    has_indication: bool = False,
 ) -> Tuple[float, float, bool, Optional[Dict[str, Any]]]:
     """计算DP噪声并返回 (final_score, dp_noise, dp_anomaly, dp_confidence)
 
@@ -49,8 +50,9 @@ def _apply_dp_noise(
     """
     # 第一层防护: 临床安全阈值 (公开阈值, 不违反DP后处理定理)
     # raw_score < 0.15 说明药物几乎无适应症证据, 噪声不应将其推升为"推荐"
+    # 例外: 有适应症匹配的药物豁免此阈值 — 临床金标准优先于模型不确定
     CLINICAL_THRESHOLD = 0.15
-    if raw_score < CLINICAL_THRESHOLD:
+    if raw_score < CLINICAL_THRESHOLD and not has_indication:
         return 0.0, 0.0, False, None
 
     dp_noise = 0.0
@@ -418,9 +420,11 @@ class RecommendationPredictor:
         try:
             self.field_dims = field_dims
             self.model = DeepFM(field_dims)
-            self.model.load_state_dict(
-                torch.load(model_path, map_location=self.device, weights_only=True)
-            )
+            state_dict = torch.load(model_path, map_location=self.device, weights_only=True)
+            # Strip _module. prefix from Opacus/DP-trained checkpoints
+            if any(k.startswith('_module.') for k in state_dict):
+                state_dict = {k.removeprefix('_module.'): v for k, v in state_dict.items()}
+            self.model.load_state_dict(state_dict)
             self.model.to(self.device)
             self.model.eval()
             logger.info(f"Model loaded from {model_path}")
@@ -616,15 +620,28 @@ class RecommendationPredictor:
                 ranked_results, flag_result,
             )
 
-            # 取 top_k
+            # ===== 规则兜底增强: 有适应症匹配的药物权重提升 =====
+            # 必须在取top_k之前执行，确保低分匹配药物不被截掉
+            for rec in final_results:
+                if rec.get('matchedDisease') and rec.get('matchedDisease') != '未知':
+                    rec['score'] = round(min(1.0, rec['score'] * 1.3), 3)
+
+            # 匹配药物优先排序，然后取 top_k
+            final_results.sort(key=lambda x: (
+                1 if x.get('matchedDisease') and x.get('matchedDisease') != '未知' else 0,
+                x['score'],
+                x.get('rawScore', 0),
+            ), reverse=True)
+
             top_recommendations = final_results[:top_k]
 
             # ===== 跨候选药物 DDI 交叉检查 =====
+            # 仅标记警告信息供前端展示，不修改评分
+            # 理由: 患者实际只会选用一种药物，不应因"A和B不能联用"而同时惩罚两者
             ddi_warnings: List[Dict[str, str]] = []
             candidate_names = [r.get('drugName', '') for r in top_recommendations]
             if len(candidate_names) >= 2:
                 ddi_warnings = check_cross_candidate_ddi(candidate_names)
-                # 降级冲突药物：将存在致命交互的药物 score *= 0.05
                 conflict_drugs: Set[str] = set()
                 for ddi in ddi_warnings:
                     conflict_drugs.add(ddi['drug_a'])
@@ -633,19 +650,10 @@ class RecommendationPredictor:
                 for rec in top_recommendations:
                     name = rec.get('drugName', '')
                     if name in conflict_drugs:
-                        rec['score'] = round(rec.get('score', 0) * 0.05, 3)
                         rec['crossDdiWarning'] = True
-                        # 找到与此药物冲突的具体对
                         pairs = [d for d in ddi_warnings
                                  if d['drug_a'] == name or d['drug_b'] == name]
                         rec['crossDdiDetails'] = pairs
-
-                # 重新排序（降级后可能改变排名）
-                top_recommendations.sort(key=lambda x: (
-                    1 if x.get('matchedDisease') else 0,
-                    x['score'],
-                    x.get('rawScore', 0),
-                ), reverse=True)
 
             # ===== 排序质量门控 =====
             MIN_RELIABLE_SCORE = 0.3
@@ -655,9 +663,16 @@ class RecommendationPredictor:
             if top_recommendations:
                 scores = [r.get('score', 0) for r in top_recommendations]
                 max_score = max(scores)
-                if max_score < MIN_RELIABLE_SCORE:
+                # 检查是否有适应症匹配药物 — 有适应症匹配时即使模型分低也不清空
+                has_matched = any(
+                    r.get('matchedDisease') and r.get('matchedDisease') != '未知'
+                    for r in top_recommendations
+                )
+                if max_score < MIN_RELIABLE_SCORE and not has_matched:
                     quality_warning = "NO_RELIABLE_RECOMMENDATION"
                     top_recommendations = []
+                elif max_score < MIN_RELIABLE_SCORE and has_matched:
+                    quality_warning = "LOW_CONFIDENCE"  # 有适应症但模型分低
                 else:
                     # 计算 positive/negative 分数均值（使用 rawScore 避免噪声干扰）
                     pos_scores = [r.get('rawScore', 0) for r in final_results
@@ -795,6 +810,15 @@ class RecommendationPredictor:
         """DeepFM模型真实推理排序"""
         results: List[Dict[str, Any]] = []
 
+        # 提取患者疾病条件用于适应症匹配检查
+        patient_conditions = set()
+        for d in patient_data.get('diseases', []) or []:
+            if d and d != '__unknown__':
+                patient_conditions.add(str(d).lower())
+        for d in patient_data.get('chronic_diseases', []) or []:
+            if d and d != '__unknown__':
+                patient_conditions.add(str(d).lower())
+
         for drug in safe_candidates:
             # 构建特征记录
             record = self._build_record(patient_data, drug)
@@ -818,8 +842,19 @@ class RecommendationPredictor:
             prob = torch.sigmoid(logits).item()
             raw_score = prob
 
+            # 检查适应症匹配 — 用于豁免临床阈值
+            has_indication = False
+            drug_indications = drug.get('indications', []) or []
+            for ind in drug_indications:
+                ind_str = str(ind.get('condition', ind) if isinstance(ind, dict) else ind)
+                if match_indication(patient_conditions, ind_str):
+                    has_indication = True
+                    break
+
             # DP噪声（仅作用于排序层）
-            final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(raw_score, dp_config)
+            final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(
+                raw_score, dp_config, has_indication=has_indication
+            )
 
             drug_name = drug.get('generic_name', drug.get('name', ''))
 

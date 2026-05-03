@@ -2,6 +2,7 @@ package com.medical.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -42,4 +43,17 @@ public class PatientRequest {
 
     @Size(max = 2000, message = "症状描述不能超过2000字")
     private String symptoms;
+
+    // v2: 临床指标
+    private String renalFunction;
+    private String hepaticFunction;
+    private String smokingStatus;
+    private String drinkingStatus;
+    private Integer bloodPressureSystolic;
+    private Integer bloodPressureDiastolic;
+    private BigDecimal fastingGlucose;
+    private BigDecimal hba1c;
+    private BigDecimal cholesterolTotal;
+    private BigDecimal cholesterolLdl;
+    private Integer heartRate;
 }
