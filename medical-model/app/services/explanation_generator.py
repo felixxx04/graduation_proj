@@ -94,11 +94,21 @@ def generate_explanation(
 
 
 def _collect_conditions(patient_data: Dict[str, Any]) -> Set[str]:
-    """收集患者疾病集合(标准化后)"""
+    """收集患者疾病集合(标准化后)
+
+    优先使用 indication_match_conditions（包含所有映射结果，不受vocab过滤），
+    确保甲减等语义映射场景下 matchedDisease 正确显示实际疾病而非vocab代理词。
+    """
     conditions: Set[str] = set()
-    for d in patient_data.get('diseases', []) or []:
+    # 优先使用 indication_match_conditions（完整映射结果）
+    for d in patient_data.get('indication_match_conditions', []) or []:
         if d and d != '__unknown__':
             conditions.add(normalize_disease(str(d).lower()))
+    if not conditions:
+        # fallback: vocab过滤后的diseases
+        for d in patient_data.get('diseases', []) or []:
+            if d and d != '__unknown__':
+                conditions.add(normalize_disease(str(d).lower()))
     for d in patient_data.get('chronic_diseases', []) or []:
         if d and d != '__unknown__':
             conditions.add(normalize_disease(str(d).lower()))
@@ -113,12 +123,16 @@ def _build_indication_detail(
     """构建适应症匹配详情
 
     Returns:
-        {matched_indications: [...], evidence_level: str, matched_disease: str|None}
+        {matched_indications: [...], evidence_level: str, matched_disease: str|None,
+         matched_conditions: [str] — 此药物匹配了患者的哪些疾病]}
     """
     indications = drug.get('indications', []) or []
     matched: List[Dict[str, Any]] = []
     best_evidence = 'unknown'
     matched_disease = None
+
+    # 收集此药物匹配了哪些患者疾病(用于多疾病场景)
+    matched_patient_conditions: List[str] = []
 
     for ind in indications:
         if isinstance(ind, dict):
@@ -133,6 +147,11 @@ def _build_indication_detail(
                 'condition': ind_condition,
                 'evidence': ind_type,
             })
+            # 记录匹配的患者疾病(反向: 哪个患者疾病匹配了此适应症)
+            for pc in patient_conditions:
+                if match_indication({pc}, ind_condition):
+                    if pc not in matched_patient_conditions:
+                        matched_patient_conditions.append(pc)
             # 证据等级优先级: On Label > Off Label > Supportive
             if ind_type.lower() == 'on label':
                 best_evidence = 'on_label'
@@ -151,6 +170,7 @@ def _build_indication_detail(
         'matchedIndications': matched,
         'evidenceLevel': best_evidence,
         'matchedDisease': matched_disease,
+        'matchedConditions': matched_patient_conditions,
     }
 
 
@@ -236,9 +256,14 @@ def _build_contraindication_detail(
 
     # 收集患者风险状态关键词
     patient_risk_keywords: Set[str] = set()
-    for d in patient_data.get('diseases', []) or []:
+    # 优先使用 indication_match_conditions（完整映射结果）
+    for d in patient_data.get('indication_match_conditions', []) or []:
         if d and d != '__unknown__':
             patient_risk_keywords.add(str(d).lower())
+    if not patient_risk_keywords:
+        for d in patient_data.get('diseases', []) or []:
+            if d and d != '__unknown__':
+                patient_risk_keywords.add(str(d).lower())
     for d in patient_data.get('chronic_diseases', []) or []:
         if d and d != '__unknown__':
             patient_risk_keywords.add(str(d).lower())

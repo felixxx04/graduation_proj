@@ -626,14 +626,12 @@ class RecommendationPredictor:
                 if rec.get('matchedDisease') and rec.get('matchedDisease') != '未知':
                     rec['score'] = round(min(1.0, rec['score'] * 1.3), 3)
 
-            # 匹配药物优先排序，然后取 top_k
-            final_results.sort(key=lambda x: (
-                1 if x.get('matchedDisease') and x.get('matchedDisease') != '未知' else 0,
-                x['score'],
-                x.get('rawScore', 0),
-            ), reverse=True)
-
-            top_recommendations = final_results[:top_k]
+            # ===== 多疾病覆盖优先排序 =====
+            # DeepSeek验证发现: 原排序偏向单一疾病(通常高血压), 多病患者的推荐无法覆盖所有疾病
+            # 策略: 先为每个疾病选一个最佳匹配药物, 再用最高分药物填充剩余位置
+            top_recommendations = self._select_disease_balanced(
+                final_results, patient_data, top_k,
+            )
 
             # ===== 跨候选药物 DDI 交叉检查 =====
             # 仅标记警告信息供前端展示，不修改评分
@@ -811,13 +809,32 @@ class RecommendationPredictor:
         results: List[Dict[str, Any]] = []
 
         # 提取患者疾病条件用于适应症匹配检查
+        # 优先使用 indication_match_conditions（包含所有映射结果，不受vocab过滤）
+        # fallback 到 diseases（vocab过滤后的词）
         patient_conditions = set()
-        for d in patient_data.get('diseases', []) or []:
+        for d in patient_data.get('indication_match_conditions', []) or []:
             if d and d != '__unknown__':
                 patient_conditions.add(str(d).lower())
+        if not patient_conditions:
+            for d in patient_data.get('diseases', []) or []:
+                if d and d != '__unknown__':
+                    patient_conditions.add(str(d).lower())
         for d in patient_data.get('chronic_diseases', []) or []:
             if d and d != '__unknown__':
                 patient_conditions.add(str(d).lower())
+
+        # 识别"丢失疾病"：患者实际疾病中被vocab过滤掉的部分
+        # 这些疾病在模型编码中由vocab代理词替代，导致模型排序偏向代理疾病相关药物
+        # 匹配丢失疾病适应症的药物需要额外boost以弥补模型编码偏差
+        vocab_diseases = set(
+            str(d).lower() for d in patient_data.get('diseases', []) or []
+            if d and d != '__unknown__'
+        )
+        original_diseases = set(
+            str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+            if d and d != '__unknown__'
+        )
+        lost_diseases = original_diseases - vocab_diseases  # 真实疾病中被vocab过滤掉的
 
         for drug in safe_candidates:
             # 构建特征记录
@@ -844,12 +861,22 @@ class RecommendationPredictor:
 
             # 检查适应症匹配 — 用于豁免临床阈值
             has_indication = False
+            matches_lost_disease = False  # 是否匹配vocab丢失的真实疾病
             drug_indications = drug.get('indications', []) or []
             for ind in drug_indications:
                 ind_str = str(ind.get('condition', ind) if isinstance(ind, dict) else ind)
                 if match_indication(patient_conditions, ind_str):
                     has_indication = True
+                    # 检查是否匹配了"丢失疾病"（患者真实疾病，不在vocab中）
+                    if lost_diseases and match_indication(lost_diseases, ind_str):
+                        matches_lost_disease = True
                     break
+
+            # 对匹配丢失疾病的药物施加显著boost
+            # 模型编码使用vocab代理词，导致真实疾病相关药物排序偏低
+            # boost幅度=0.3，与DP噪声上限(0.35)相当，确保真实疾病药物超越代理疾病药物
+            if matches_lost_disease:
+                raw_score = min(1.0, raw_score + 0.3)
 
             # DP噪声（仅作用于排序层）
             final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(
@@ -917,9 +944,14 @@ class RecommendationPredictor:
 
         # 收集患者疾病
         patient_conditions = set()
-        for d in patient_data.get('diseases', []) or []:
+        # 优先使用 indication_match_conditions（包含所有映射结果，不受vocab过滤）
+        for d in patient_data.get('indication_match_conditions', []) or []:
             if d and d != '__unknown__':
                 patient_conditions.add(str(d).lower())
+        if not patient_conditions:
+            for d in patient_data.get('diseases', []) or []:
+                if d and d != '__unknown__':
+                    patient_conditions.add(str(d).lower())
         for d in patient_data.get('chronic_diseases', []) or []:
             if d and d != '__unknown__':
                 patient_conditions.add(str(d).lower())
@@ -1030,6 +1062,119 @@ class RecommendationPredictor:
 
             merged.append(merged_rec)
         return merged
+
+    def _select_disease_balanced(
+        self,
+        all_results: List[Dict[str, Any]],
+        patient_data: Dict[str, Any],
+        top_k: int,
+    ) -> List[Dict[str, Any]]:
+        """多疾病覆盖优先排序选择
+
+        DeepSeek验证发现: 原排序偏向单一疾病(通常高血压),
+        多病患者的推荐无法覆盖所有疾病。
+        策略:
+        1. 识别患者所有疾病
+        2. 为每个疾病选一个最佳匹配药物
+        3. 用最高分药物填充剩余位置
+        4. 如果某疾病无匹配药物, 用该疾病分数最高的药物代替
+        """
+        # 先按综合评分排序(适应症匹配 > DP评分 > 原始评分)
+        all_results.sort(key=lambda x: (
+            1 if x.get('matchedDisease') and x.get('matchedDisease') != '未知' else 0,
+            x['score'],
+            x.get('rawScore', 0),
+        ), reverse=True)
+
+        # 收集患者疾病集合
+        patient_diseases: List[str] = []
+        for d in patient_data.get('indication_match_conditions', []) or []:
+            if d and d != '__unknown__':
+                patient_diseases.append(str(d).lower())
+        if not patient_diseases:
+            for d in patient_data.get('diseases', []) or []:
+                if d and d != '__unknown__':
+                    patient_diseases.append(str(d).lower())
+        for d in patient_data.get('chronic_diseases', []) or []:
+            if d and d != '__unknown__':
+                patient_diseases.append(str(d).lower())
+
+        # 只有1种疾病时, 直接取top_k最高分
+        if len(patient_diseases) <= 1:
+            return all_results[:top_k]
+
+        # 为每个疾病找最佳匹配药物
+        selected: List[Dict[str, Any]] = []
+        selected_names: Set[str] = set()
+        covered_diseases: Set[str] = set()
+
+        for disease in patient_diseases:
+            # 在所有结果中找该疾病的最佳匹配
+            best_for_disease = None
+            for rec in all_results:
+                if rec.get('drugName', '') in selected_names:
+                    continue
+                # 检查药物是否匹配该疾病
+                if self._drug_matches_disease(rec, disease):
+                    if best_for_disease is None or rec['score'] > best_for_disease['score']:
+                        best_for_disease = rec
+
+            if not best_for_disease:
+                continue
+
+            if best_for_disease:
+                selected.append(best_for_disease)
+                selected_names.add(best_for_disease['drugName'])
+                covered_diseases.add(disease)
+
+        # 填充剩余位置: 从最高分药物中选取(排除已选)
+        remaining_slots = top_k - len(selected)
+        if remaining_slots > 0:
+            for rec in all_results:
+                if rec.get('drugName', '') not in selected_names:
+                    selected.append(rec)
+                    selected_names.add(rec['drugName'])
+                    remaining_slots -= 1
+                    if remaining_slots <= 0:
+                        break
+
+        return selected[:top_k]
+
+    def _drug_matches_disease(
+        self,
+        rec: Dict[str, Any],
+        disease: str,
+    ) -> bool:
+        """检查推荐药物是否匹配特定疾病
+
+        检查matchedDisease字段和explanation.indicationDetail中的匹配信息
+        """
+        matched_disease = rec.get('matchedDisease', '')
+        if matched_disease and matched_disease != '未知':
+            # 比较标准化后的疾病名
+            from app.utils.clinical_matcher import normalize_disease
+            if normalize_disease(disease) == normalize_disease(str(matched_disease).lower()):
+                return True
+            # whole-word匹配(允许"diabetes"匹配"diabetes mellitus"等)
+            if disease in str(matched_disease).lower() or str(matched_disease).lower() in disease:
+                return True
+
+        # 检查explanation中的匹配适应症列表
+        explanation = rec.get('explanation', {})
+        if isinstance(explanation, dict):
+            ind_detail = explanation.get('indicationDetail', {})
+            if isinstance(ind_detail, dict):
+                matched_inds = ind_detail.get('matchedIndications', [])
+                if isinstance(matched_inds, list):
+                    for ind in matched_inds:
+                        if isinstance(ind, dict):
+                            ind_cond = str(ind.get('condition', '')).lower()
+                        else:
+                            ind_cond = str(ind).lower()
+                        if disease in ind_cond or ind_cond in disease:
+                            return True
+
+        return False
 
     def _build_record(
         self, patient_data: Dict[str, Any], drug: Dict[str, Any]

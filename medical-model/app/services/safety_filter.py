@@ -25,11 +25,20 @@ logger = logging.getLogger(__name__)
 
 
 def _collect_patient_conditions(patient_data: Dict) -> Set[str]:
-    """收集患者疾病集合（标准化后）"""
+    """收集患者疾病集合（标准化后）
+
+    优先使用 indication_match_conditions（包含所有映射结果，不受vocab过滤），
+    确保PAH等关键疾病不被遗漏。
+    """
     conditions: Set[str] = set()
-    for d in patient_data.get('diseases', []) or []:
+    # 优先使用 indication_match_conditions（完整映射结果）
+    for d in patient_data.get('indication_match_conditions', []) or []:
         if d and d != '__unknown__':
             conditions.add(str(d).lower())
+    if not conditions:
+        for d in patient_data.get('diseases', []) or []:
+            if d and d != '__unknown__':
+                conditions.add(str(d).lower())
     for d in patient_data.get('chronic_diseases', []) or []:
         if d and d != '__unknown__':
             conditions.add(str(d).lower())
@@ -214,7 +223,52 @@ class SafetyFilter:
                             exclusion_reason = f"哺乳期禁忌: {contra.get('contraindication_name', '')}"
                             break
 
-            # 6. 严重肝/肾功能不全硬排除（特定药物）
+            # 6. MAOI+SSRI致命交互硬排除
+            # MAOI与SSRI联用可致5-羟色胺综合征(致命), 属于绝对禁忌
+            # 方向: 患者正在用MAOI → 排除所有SSRI候选; 患者正在用SSRI → 排除所有MAOI候选
+            if not exclusion_reason:
+                maoi_drugs = {
+                    'phenelzine', 'tranylcypromine', 'isocarboxazid',
+                    'selegiline', 'rasagiline', 'moclobemide',
+                }
+                ssri_drugs = {
+                    'fluoxetine', 'sertraline', 'paroxetine',
+                    'citalopram', 'escitalopram', 'fluvoxamine',
+                    'vilazodone', 'dapoxetine',
+                }
+                drug_lower = drug_name.lower()
+                current_meds_lower = {str(m).lower() for m in current_meds if m and m != '__unknown__'}
+                # 患者正在用MAOI → 排除SSRI候选
+                if drug_lower in ssri_drugs:
+                    for med in current_meds_lower:
+                        if med in maoi_drugs or any(maoi in med for maoi in maoi_drugs):
+                            exclusion_reason = f"致命交互: MAOI+SSRI(5-羟色胺综合征风险)"
+                            break
+                # 患者正在用SSRI → 排除MAOI候选
+                if drug_lower in maoi_drugs and not exclusion_reason:
+                    for med in current_meds_lower:
+                        if med in ssri_drugs or any(ssri in med for ssri in ssri_drugs):
+                            exclusion_reason = f"致命交互: SSRI+MAOI(5-羟色胺综合征风险)"
+                            break
+
+            # 7. PAH药物误用于普通高血压硬排除
+            # Bosentan等肺动脉高压(PAH)专用药不应推荐给普通高血压患者
+            # 仅当患者有PAH时才允许使用
+            if not exclusion_reason:
+                pah_specific_drugs = {
+                    'bosentan', 'ambrisentan', 'macitentan',
+                    'riociguat', 'selexipag', 'epoprostenol',
+                    'treprostinil', 'iloprost',
+                }
+                if drug_lower in pah_specific_drugs:
+                    patient_has_pah = any(
+                        kw in ' '.join(patient_conditions)
+                        for kw in ('pulmonary arterial hypertension', 'pah', 'pulmonary hypertension')
+                    )
+                    if not patient_has_pah:
+                        exclusion_reason = f"PAH专用药不可用于普通高血压: {drug_name}"
+
+            # 8. 严重肝/肾功能不全硬排除（特定药物）
             if not exclusion_reason:
                 renal_severe = renal_function in ('severe', 'severe_impairment', 'failure', 'esrd')
                 hepatic_severe = hepatic_function in ('severe', 'severe_impairment', 'failure')
