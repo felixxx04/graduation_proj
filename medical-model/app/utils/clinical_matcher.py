@@ -135,9 +135,15 @@ def _whole_word_match(short: str, long: str) -> bool:
     """Check if short appears as a whole word in long
 
     使用word boundary匹配，确保短词只作为独立词出现。
+    同时要求特异性比率: short至少占long的30%，防止"disease"匹配
+    "gastroesophageal reflux disease"这类过度宽泛匹配。
     """
     pattern = r'\b' + re.escape(short) + r'\b'
-    return bool(re.search(pattern, long))
+    if not re.search(pattern, long):
+        return False
+    # 特异性比率检查: 短词不能只占长词的一小部分
+    ratio = len(short) / len(long.replace(' ', ''))
+    return ratio >= 0.3
 
 
 def _is_specific_disease_name(name: str) -> bool:
@@ -151,10 +157,14 @@ def _is_specific_disease_name(name: str) -> bool:
     如果name是单个通用症状词 → 通用名（不允许匹配特定名）
     如果name是单个词但非通用症状 → 特定疾病名
     """
+    # 通用症状名 + 通用医学术语片段(不应单独匹配特定复合病名)
     generic_symptoms = {
         'fever', 'pain', 'headache', 'cough', 'nausea', 'vomiting',
         'diarrhea', 'rash', 'itching', 'dizziness', 'fatigue',
         'edema', 'swelling', 'anemia', 'infection', 'inflammation',
+        # 通用医学术语片段 — 这些词出现在很多复合病名中但本身不是特定疾病
+        'disease', 'disorder', 'syndrome', 'tract', 'attack',
+        'failure', 'deficiency', 'reaction', 'crisis',
     }
     words = name.strip().split()
     if len(words) <= 1 and name in generic_symptoms:

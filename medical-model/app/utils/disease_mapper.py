@@ -328,7 +328,7 @@ SYMPTOM_TO_DISEASE: Dict[str, List[str]] = {
 # 补充 clinical_matcher.py 之外的常见输入
 
 ENGLISH_DISEASE_EXPAND: Dict[str, List[str]] = {
-    "fever": ["fever", "pyrexia", "febrile illness", "hyperthermia"],
+    "fever": ["fever", "pyrexia", "febrile illness"],
     "headache": ["headache", "cephalalgia", "head pain", "migraine", "tension headache"],
     "pain": ["pain", "ache", "aching", "painful condition"],
     "inflammation": ["inflammation", "inflammatory condition"],
@@ -351,6 +351,7 @@ ENGLISH_DISEASE_EXPAND: Dict[str, List[str]] = {
     "acne": ["acne vulgaris", "acne"],
     "sinusitis": ["sinusitis", "acute bacterial sinusitis", "chronic sinusitis"],
     "gerd": ["gastroesophageal reflux disease", "gerd", "acid reflux", "heartburn"],
+    "acid reflux": ["acid reflux", "gastroesophageal reflux disease", "gerd", "heartburn"],
     "ckd": ["chronic kidney disease", "ckd", "renal disease", "renal impairment", "kidney disease"],
     "diverticulitis": ["diverticulitis", "diverticulitis of gastrointestinal tract"],
     "adenocarcinoma": ["adenocarcinoma", "adenocarcinoma of pancreas", "pancreatic cancer"],
@@ -436,10 +437,14 @@ def expand_english_disease(english_name: str) -> List[str]:
     if name in ENGLISH_DISEASE_EXPAND:
         return ENGLISH_DISEASE_EXPAND[name]
 
-    # 子串匹配
+    # Word-boundary子串匹配 — 防止"flu"匹配"acid reflux"(因为reflux含flu)
+    import re as _re
     results = []
     for en_key, en_values in ENGLISH_DISEASE_EXPAND.items():
-        if en_key in name or name in en_key:
+        # en_key作为完整词出现在name中，或name作为完整词出现在en_key中
+        if _re.search(r'\b' + _re.escape(en_key) + r'\b', name):
+            results.extend(en_values)
+        elif _re.search(r'\b' + _re.escape(name) + r'\b', en_key):
             results.extend(en_values)
 
     if results:
@@ -460,7 +465,7 @@ def _split_input(text: str) -> List[str]:
     """
     import re
     # 支持: 中文逗号，英文逗号, 顿号、, 分号;, 空格, 斜杠/, 全角空格
-    parts = re.split(r'[，,;；\s、/／\u3000]+', text)
+    parts = re.split(r'[，,;；、/／]+', text)
     return [p.strip() for p in parts if p.strip()]
 
 
