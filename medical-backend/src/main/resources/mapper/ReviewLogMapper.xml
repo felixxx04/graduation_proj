@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.repository.ReviewLogRepository">
+
+  <resultMap id="reviewLogMap" type="com.medical.entity.ReviewLog">
+    <id property="id" column="id"/>
+    <result property="recommendationId" column="recommendation_id"/>
+    <result property="patientId" column="patient_id"/>
+    <result property="diseaseCn" column="disease_cn"/>
+    <result property="diseaseStandardized" column="disease_standardized"/>
+    <result property="routingPath" column="routing_path"/>
+    <result property="systemDrugs" column="system_drugs"/>
+    <result property="doctorDecision" column="doctor_decision"/>
+    <result property="doctorSelectedDrug" column="doctor_selected_drug"/>
+    <result property="doctorReason" column="doctor_reason"/>
+    <result property="doctorId" column="doctor_id"/>
+    <result property="createdAt" column="created_at"/>
+  </resultMap>
+
+  <select id="getRejectionStats" resultType="map">
+    SELECT disease_cn, COUNT(*) as reject_count
+    FROM review_log
+    WHERE doctor_decision = 'reject'
+      AND created_at BETWEEN #{startDate} AND #{endDate}
+    GROUP BY disease_cn
+    ORDER BY reject_count DESC
+    LIMIT 10
+  </select>
+
+  <select id="getModificationStats" resultType="map">
+    SELECT disease_cn, doctor_selected_drug, COUNT(*) as modify_count
+    FROM review_log
+    WHERE doctor_decision = 'modify'
+      AND created_at BETWEEN #{startDate} AND #{endDate}
+    GROUP BY disease_cn, doctor_selected_drug
+    ORDER BY modify_count DESC
+    LIMIT 10
+  </select>
+
+</mapper>
