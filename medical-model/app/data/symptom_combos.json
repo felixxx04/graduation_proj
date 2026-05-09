@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "description": "Symptom combination patterns for L3 fallback matching in PatientInputEnhancer",
+  "combos": [
+    {
+      "keywords": ["头痛", "头疼", "发热", "发烧", "肌肉酸痛", "全身酸痛"],
+      "min_matches": 2,
+      "disease": "influenza-like illness",
+      "body_system": "respiratory",
+      "etiology": "viral"
+    },
+    {
+      "keywords": ["尿频", "尿急", "尿痛", "排尿痛", "下腹痛"],
+      "min_matches": 2,
+      "disease": "urinary tract infection",
+      "body_system": "renal",
+      "etiology": "bacterial"
+    },
+    {
+      "keywords": ["反酸", "烧心", "胃酸", "饭后加重", "胸骨后烧灼感"],
+      "min_matches": 2,
+      "disease": "gastroesophageal reflux disease",
+      "body_system": "gastrointestinal",
+      "etiology": "reflux"
+    },
+    {
+      "keywords": ["鼻塞", "流鼻涕", "打喷嚏", "鼻痒", "流涕"],
+      "min_matches": 2,
+      "disease": "allergic rhinitis",
+      "body_system": "respiratory",
+      "etiology": "allergic"
+    },
+    {
+      "keywords": ["咳嗽", "咳痰", "发热", "发烧", "胸痛"],
+      "min_matches": 3,
+      "disease": "pneumonia",
+      "body_system": "respiratory",
+      "etiology": "bacterial"
+    },
+    {
+      "keywords": ["关节痛", "关节疼", "晨僵", "对称性", "关节肿胀"],
+      "min_matches": 2,
+      "disease": "rheumatoid arthritis",
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune"
+    },
+    {
+      "keywords": ["胃痛", "胃疼", "上腹痛", "饭后痛", "空腹痛", "夜间痛"],
+      "min_matches": 2,
+      "disease": "gastric ulcer",
+      "body_system": "gastrointestinal",
+      "etiology": "erosive"
+    },
+    {
+      "keywords": ["腰痛", "腰疼", "下背痛", "腿麻", "坐骨神经"],
+      "min_matches": 2,
+      "disease": "low back pain",
+      "body_system": "musculoskeletal",
+      "etiology": "mechanical"
+    }
+  ]
+}
