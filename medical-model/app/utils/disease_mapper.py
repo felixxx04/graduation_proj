@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     # 心血管
     "高血压": ["hypertension", "high blood pressure"],
-    "低血压": ["hypotension", "low blood pressure", "hypertension"],  # vocab fallback: 近似心血管
+    "低血压": ["hypotension", "low blood pressure"],
     "冠心病": ["coronary artery disease", "coronary heart disease", "heart failure", "angina"],
     "心绞痛": ["angina", "angina pectoris"],
     "心肌梗死": ["myocardial infarction", "heart attack", "heart failure"],
@@ -39,7 +39,7 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "高血脂": ["hyperlipidemia", "high cholesterol", "hypercholesterolemia"],
     "高脂血症": ["hyperlipidemia", "high cholesterol", "hypercholesterolemia"],
     "高胆固醇": ["hypercholesterolemia", "high cholesterol"],
-    "胆固醇高": ["hypercholesterolemia"],
+    "胆固醇高": ["hypercholesterolemia", "high cholesterol"],
     # 内分泌
     "糖尿病": ["diabetes mellitus", "diabetes"],
     "2型糖尿病": ["type 2 diabetes mellitus", "type 2 diabetes", "diabetes mellitus"],
@@ -55,12 +55,12 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "哮喘": ["asthma", "bronchial asthma", "asthma exacerbation"],
     "慢阻肺": ["chronic obstructive pulmonary disease", "copd", "copd exacerbation"],
     "慢性阻塞性肺疾病": ["chronic obstructive pulmonary disease", "copd", "copd exacerbation"],
-    "支气管炎": ["bronchitis", "asthma"],
+    "支气管炎": ["bronchitis", "common cold", "cough"],
     "肺炎": ["pneumonia"],
-    "上呼吸道感染": ["upper respiratory infection", "upper respiratory tract infection", "bacterial infections"],
+    "上呼吸道感染": ["upper respiratory infection", "upper respiratory tract infection"],
     "感冒": ["upper respiratory infection", "common cold"],
     "肺结核": ["tuberculosis"],
-    "肺纤维化": ["pulmonary fibrosis", "asthma"],
+    "肺纤维化": ["pulmonary fibrosis", "idiopathic pulmonary fibrosis"],
     "肺动脉高压": ["pulmonary arterial hypertension", "hypertension"],
     # 消化系统
     "胃溃疡": ["peptic ulcer disease", "gastric ulcer", "stomach ulcer", "peptic ulcer", "stomach pain"],
@@ -80,8 +80,8 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "肝炎": ["hepatitis", "acid reflux"],
     "脂肪肝": ["nonalcoholic steatohepatitis", "fatty liver disease", "obesity", "acid reflux"],
     "肝硬化": ["liver cirrhosis", "acid reflux"],
-    "胆囊炎": ["cholecystitis", "stomach pain"],
-    "胆结石": ["cholelithiasis", "gallstones", "stomach pain"],
+    "胆囊炎": ["cholecystitis", "biliary colic"],
+    "胆结石": ["cholelithiasis", "gallstones", "biliary colic"],
     # 神经/精神
     "抑郁症": ["major depressive disorder", "depression", "depressive disorder", "endogenous depression"],
     "抑郁": ["depression"],
@@ -90,20 +90,21 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "失眠": ["insomnia", "sleep disorder"],
     "偏头痛": ["migraine"],
     "头痛": ["headache", "migraine", "tension headache", "cluster headache"],
+    "分簇性头痛": ["cluster headache", "headache", "migraine"],
     "癫痫": ["epilepsy", "seizure disorder", "seizures"],
-    "帕金森病": ["parkinson disease", "parkinson's disease", "anxiety", "depression"],
-    "阿尔茨海默病": ["alzheimer disease", "alzheimer's disease", "depression", "anxiety"],
-    "老年痴呆": ["alzheimer disease", "depression", "anxiety"],
-    "多动症": ["attention deficit hyperactivity disorder", "adhd", "bipolar disorder", "anxiety"],
+    "帕金森病": ["parkinson disease", "parkinson's disease"],
+    "阿尔茨海默病": ["alzheimer disease", "alzheimer's disease"],
+    "老年痴呆": ["alzheimer disease"],
+    "多动症": ["attention deficit hyperactivity disorder", "adhd"],
     "精神分裂症": ["schizophrenia"],
-    "强迫症": ["obsessive compulsive disorder", "ocd", "anxiety", "bipolar disorder"],
+    "强迫症": ["obsessive compulsive disorder", "ocd"],
     "惊恐障碍": ["panic disorder", "anxiety", "bipolar disorder"],
     "社交焦虑": ["social anxiety disorder", "anxiety"],
     # 肾/泌尿
     "慢性肾病": ["chronic kidney disease", "ckd", "renal disease", "renal impairment", "kidney disease"],
     "尿路感染": ["urinary tract infection", "uti"],
-    "尿路结石": ["urinary calculi", "kidney stones", "urinary tract infection", "chronic kidney disease"],
-    "肾结石": ["nephrolithiasis", "kidney stones", "chronic kidney disease"],
+    "尿路结石": ["urinary calculi", "kidney stones"],
+    "肾结石": ["nephrolithiasis", "kidney stones"],
     "前列腺增生": ["benign prostatic hyperplasia", "bph"],
     "尿失禁": ["urinary incontinence", "urinary tract infection"],
     # 风湿/骨骼
@@ -120,16 +121,16 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "发烧": ["fever", "pyrexia", "febrile illness"],
     "发热": ["fever", "pyrexia"],
     "细菌感染": ["bacterial infection", "bacterial infections"],
-    "病毒感染": ["viral infection", "bacterial infections"],
-    "真菌感染": ["fungal infection", "bacterial infections"],
-    "疱疹": ["herpes simplex virus infection", "bacterial infections"],
-    "带状疱疹": ["herpes zoster", "shingles", "nerve pain", "bacterial infections"],
+    "病毒感染": ["viral infection", "viral illness"],
+    "真菌感染": ["fungal infection", "candidiasis"],
+    "疱疹": ["herpes simplex virus infection"],
+    "带状疱疹": ["herpes zoster", "shingles", "nerve pain"],
     "流感": ["influenza", "flu", "fever"],
-    "新冠": ["covid-19", "coronavirus infection", "fever", "bacterial infections"],
-    "艾滋病": ["human immunodeficiency virus", "hiv infection", "hiv", "bacterial infections"],
-    "梅毒": ["syphilis", "bacterial infections"],
-    "寄生虫感染": ["parasitic infection", "parasitic worm infection", "bacterial infections"],
-    "蛔虫": ["ascariasis", "parasitic worm infection", "bacterial infections"],
+    "新冠": ["covid-19", "coronavirus infection", "fever"],
+    "艾滋病": ["human immunodeficiency virus", "hiv infection", "hiv"],
+    "梅毒": ["syphilis"],
+    "寄生虫感染": ["parasitic infection", "parasitic worm infection"],
+    "蛔虫": ["ascariasis", "parasitic worm infection"],
     # 皮肤
     "湿疹": ["eczema", "atopic dermatitis"],
     "荨麻疹": ["urticaria", "hives", "allergic rhinitis"],
@@ -146,13 +147,13 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "白血病": ["leukemia", "anemia"],
     "淋巴瘤": ["lymphoma", "anemia"],
     "乳腺癌": ["breast cancer"],
-    "肺癌": ["lung cancer", "breast cancer"],
-    "结肠癌": ["colon cancer", "colorectal cancer", "breast cancer"],
-    "前列腺癌": ["prostate cancer", "breast cancer"],
+    "肺癌": ["lung cancer"],
+    "结肠癌": ["colon cancer", "colorectal cancer"],
+    "前列腺癌": ["prostate cancer"],
     # 眼科
     "青光眼": ["glaucoma"],
-    "白内障": ["cataract", "glaucoma"],
-    "干眼症": ["dry eye syndrome", "allergic rhinitis"],
+    "白内障": ["cataract"],
+    "干眼症": ["dry eye syndrome", "keratoconjunctivitis sicca"],
     "结膜炎": ["conjunctivitis", "allergic rhinitis"],
     # 其他
     "过敏": ["allergic rhinitis", "allergy", "allergic reaction", "allergic dermatitis", "atopic dermatitis"],
@@ -165,18 +166,18 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "眩晕": ["vertigo", "dizziness"],
     "晕眩": ["vertigo", "dizziness"],
     "水肿": ["edema", "swelling"],
-    "炎症": ["inflammation", "inflammatory condition", "bacterial infections"],
-    "脱发": ["alopecia", "hair loss", "anemia"],
+    "炎症": ["inflammation", "inflammatory condition"],
+    "脱发": ["alopecia", "hair loss"],
     "多囊卵巢综合征": ["polycystic ovary syndrome", "obesity", "diabetes"],
     "不孕": ["infertility", "diabetes"],
     "勃起功能障碍": ["erectile dysfunction"],
     "阳痿": ["erectile dysfunction"],
     "痛经": ["dysmenorrhea", "menstrual pain", "stomach pain", "back pain"],
-    "月经不调": ["menstrual irregularity", "anemia"],
-    "更年期综合征": ["menopause", "anxiety", "depression"],
-    "戒烟": ["smoking cessation", "nicotine dependence", "anxiety"],
-    "酗酒": ["alcohol dependence", "alcoholism", "anxiety", "depression"],
-    "中毒": ["poisoning", "toxicity", "bacterial infections"],
+    "月经不调": ["menstrual irregularity", "dysmenorrhea", "polycystic ovary syndrome"],
+    "更年期综合征": ["menopause", "menopausal symptoms"],
+    "戒烟": ["smoking cessation", "nicotine dependence"],
+    "酗酒": ["alcohol dependence", "alcoholism", "alcohol withdrawal"],
+    "中毒": ["poisoning", "toxicity"],
     # 新增常见疾病（修复缺失的关键疾病名）
     "中风": ["stroke", "cerebrovascular accident", "prevention of cerebrovascular accident", "hypertension"],
     "脑卒中": ["stroke", "cerebrovascular accident", "prevention of cerebrovascular accident", "hypertension"],
@@ -184,22 +185,22 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "脑梗死": ["cerebral infarction", "stroke", "prevention of cerebrovascular accident", "hypertension"],
     "脑出血": ["cerebral hemorrhage", "stroke", "hemorrhagic stroke", "prevention of cerebrovascular accident", "hypertension"],
     "脑溢血": ["cerebral hemorrhage", "stroke", "prevention of cerebrovascular accident", "hypertension"],
-    "阑尾炎": ["appendicitis", "stomach pain", "bacterial infections"],
-    "扁桃体炎": ["tonsillitis", "bacterial infections", "fever"],
-    "中耳炎": ["otitis media", "bacterial infections", "fever"],
+    "阑尾炎": ["appendicitis", "abdominal pain"],
+    "扁桃体炎": ["tonsillitis"],
+    "中耳炎": ["otitis media"],
     "咽炎": ["pharyngitis", "pharyngitis due to streptococcus pyogenes", "sore throat"],
     "心肌病": ["cardiomyopathy", "heart failure"],
     "肩周炎": ["adhesive capsulitis", "frozen shoulder", "joint pain", "back pain"],
     "坐骨神经痛": ["sciatica", "back pain", "nerve pain"],
     "接触性皮炎": ["contact dermatitis", "atopic dermatitis"],
-    "甲状腺癌": ["thyroid cancer", "hyperthyroidism", "breast cancer"],
+    "甲状腺癌": ["thyroid cancer", "hyperthyroidism"],
     "胰腺炎": ["pancreatitis", "stomach pain", "acid reflux"],
-    "腮腺炎": ["mumps", "parotitis", "fever", "bacterial infections"],
-    "附件炎": ["adnexitis", "pelvic inflammatory disease", "urinary tract infection"],
-    "盆腔炎": ["pelvic inflammatory disease", "urinary tract infection"],
-    "宫颈炎": ["cervicitis", "urinary tract infection"],
-    "阴道炎": ["vaginitis", "urinary tract infection"],
-    "前列腺炎": ["prostatitis", "urinary tract infection"],
+    "腮腺炎": ["mumps", "parotitis"],
+    "附件炎": ["adnexitis", "pelvic inflammatory disease"],
+    "盆腔炎": ["pelvic inflammatory disease"],
+    "宫颈炎": ["cervicitis", "pelvic inflammatory disease"],
+    "阴道炎": ["vaginitis", "vulvovaginal candidiasis", "bacterial vaginosis"],
+    "前列腺炎": ["prostatitis"],
     # 新增: vocab中存在但mapper中缺失的疾病名（补全逆向映射）
     "胃酸反流": ["acid reflux", "gastroesophageal reflux disease", "gerd"],
     "反酸": ["acid reflux", "gastroesophageal reflux disease", "gerd"],
@@ -209,16 +210,16 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "腺癌": ["adenocarcinoma", "adenocarcinoma of pancreas", "stomach pain"],
     "焦虑不安": ["anxiety", "bipolar disorder"],
     "细菌性结膜炎": ["bacterial conjunctivitis", "conjunctivitis"],
-    "细菌性皮肤感染": ["bacterial skin infection", "atopic dermatitis"],
+    "细菌性皮肤感染": ["bacterial skin infection"],
     "细菌性尿路感染": ["bacterial urinary tract infection", "urinary tract infection"],
     "双相情感障碍": ["bipolar disorder"],
     "躁郁症": ["bipolar disorder"],
     "憩室炎": ["diverticulitis", "diverticulitis of gastrointestinal tract", "stomach pain", "diarrhea"],
-    "子宫内膜异位症": ["endometriosis", "stomach pain"],
+    "子宫内膜异位症": ["endometriosis", "pelvic pain"],
     "纤维肌痛": ["fibromyalgia", "chronic pain", "joint pain"],
     "胀气": ["flatulence", "stomach pain", "acid reflux"],
     "痔疮": ["hemorrhoids", "stomach pain"],
-    "HIV": ["hiv", "bacterial infections"],
+    "HIV": ["hiv"],
     "关节疼痛": ["joint pain", "osteoarthritis"],
     "神经痛": ["nerve pain", "back pain"],
     "链球菌咽炎": ["pharyngitis due to streptococcus pyogenes", "sore throat"],
@@ -227,7 +228,7 @@ CHINESE_TO_ENGLISH_DISEASE: Dict[str, List[str]] = {
     "酒渣鼻": ["rosacea", "acne vulgaris"],
     "癫痫发作": ["seizures", "epilepsy"],
     "嗓子疼": ["sore throat", "pharyngitis due to streptococcus pyogenes"],
-    "念珠菌性阴道炎": ["vulvovaginal candidiasis", "urinary tract infection"],
+    "念珠菌性阴道炎": ["vulvovaginal candidiasis", "candidiasis"],
     # 新增: 高频症状/疾病补全（覆盖Top50适应症中的缺失入口）
     "鼻塞": ["allergic rhinitis", "nasal congestion"],
     "充血": ["allergic rhinitis", "nasal congestion"],
@@ -435,23 +436,24 @@ def expand_english_disease(english_name: str) -> List[str]:
 
     # 直接匹配
     if name in ENGLISH_DISEASE_EXPAND:
-        return ENGLISH_DISEASE_EXPAND[name]
+        # 保留原始名 + 扩充名（防止丢失如"neuropathic pain"→只有"pain"）
+        expanded = ENGLISH_DISEASE_EXPAND[name]
+        if name not in expanded:
+            return [name] + expanded
+        return expanded
 
     # Word-boundary子串匹配 — 防止"flu"匹配"acid reflux"(因为reflux含flu)
+    # 关键改进: 必须保留原始名，防止"neuropathic pain"→只有"pain"的扩充
     import re as _re
-    results = []
+    results = [name]  # 始终保留原始名
     for en_key, en_values in ENGLISH_DISEASE_EXPAND.items():
-        # en_key作为完整词出现在name中，或name作为完整词出现在en_key中
-        if _re.search(r'\b' + _re.escape(en_key) + r'\b', name):
-            results.extend(en_values)
-        elif _re.search(r'\b' + _re.escape(name) + r'\b', en_key):
+        # 仅当en_key是name的子组件（en_key出现在name中）时才扩充
+        # 不再使用反向匹配（name出现在en_key中），因为反向匹配会
+        # 让"pain"扩充"neuropathic pain"的值——这是错误的
+        if len(en_key) >= 4 and _re.search(r'\b' + _re.escape(en_key) + r'\b', name):
             results.extend(en_values)
 
-    if results:
-        return list(set(results))
-
-    # 没有匹配时返回原始名
-    return [name]
+    return list(set(results))
 
 
 def _split_input(text: str) -> List[str]:
@@ -508,3 +510,31 @@ def process_patient_input(
         result.update(symptom_diseases)
 
     return result
+
+
+# ── KnowledgeRouter Integration ──
+
+from app.utils.knowledge_router import get_router
+
+
+def get_disease_routing_info(chinese_disease: str) -> dict:
+    """Get clinical routing information for a disease.
+
+    Returns the full L1->L2->L3 routing trace plus drug class filter.
+    Used by the recommendation pipeline to constrain candidate drugs.
+    """
+    router = get_router()
+    return router.route(chinese_disease)
+
+
+def get_appropriate_drug_classes(chinese_diseases: list) -> set:
+    """Get the set of appropriate drug classes for a list of diseases.
+
+    Returns empty set if no drug class filter is possible.
+    """
+    router = get_router()
+    all_classes = set()
+    for disease in chinese_diseases:
+        classes = router.get_drug_class_filter(str(disease))
+        all_classes.update(classes)
+    return all_classes
