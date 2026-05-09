@@ -69,6 +69,13 @@ class KnowledgeRouter:
         # L2: Standard term → Body system + Etiology
         std_term = standard_terms[0]
         category = self.l2_map.get(std_term)
+        # Fallback: try original key (without underscore replacement)
+        if not category and std_term != key.lower():
+            category = self.l2_map.get(key.lower())
+            if category:
+                std_term = key.lower()
+                result["standard_terms"] = [std_term]
+                result["routing_path"] = f"L1({key}→{std_term}[direct])"
         if not category:
             for l2_key, l2_val in self.l2_map.items():
                 if std_term in l2_key or l2_key in std_term:
