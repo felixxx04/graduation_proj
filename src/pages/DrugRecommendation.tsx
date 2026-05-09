@@ -151,6 +151,36 @@ interface PatientData {
   currentMedications: string
 }
 
+type SafetyLevel = 'safe' | 'off_label' | 'unverified' | 'relative_contraindication' | 'data_unverified' | string;
+
+const safetyConfig: Record<string, { label: string; color: string; bg: string }> = {
+  safe:                    { label: '安全',      color: '#22c55e', bg: '#052e16' },
+  relative_contraindication: { label: '需谨慎',  color: '#f59e0b', bg: '#451a03' },
+  off_label:               { label: '超说明书',  color: '#f97316', bg: '#431407' },
+  unverified:               { label: '待验证',   color: '#a855f7', bg: '#2e1065' },
+  data_unverified:          { label: '待验证',   color: '#a855f7', bg: '#2e1065' },
+};
+
+function SafetyBadge({ level }: { level: string }) {
+  const cfg = safetyConfig[level] || { label: level || '未知', color: '#888', bg: '#111' };
+  return (
+    <span style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      padding: '1px 6px',
+      borderRadius: '3px',
+      fontSize: '11px',
+      fontWeight: 600,
+      color: cfg.color,
+      backgroundColor: cfg.bg,
+      marginLeft: '6px',
+      lineHeight: '18px',
+    }}>
+      {cfg.label}
+    </span>
+  );
+}
+
 export default function DrugRecommendation() {
   const { config, budget, refresh } = usePrivacyStore()
   const { patients, addPatient } = usePatientStore()
@@ -425,16 +455,7 @@ export default function DrugRecommendation() {
           </div>
         </div>
       )}
-      {/* Disclaimer Banner — 不可折叠免责声明 */}
-      <div className="bg-destructive/8 border-b border-destructive/20 px-6 py-3">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-destructive" />
-          <p className="text-ia-label font-heading font-semibold text-destructive">
-            免责声明：本系统推荐结果由AI模型生成，仅供参考，不构成医疗诊断或处方建议。最终用药决策须由执业医师确认。
-          </p>
-        </div>
-      </div>
-
+      
       {/* Page Header — Border-left editorial */}
       <section className="border-l-4 border-l-primary bg-surface-elevated px-6 py-8">
         <div className="flex items-start gap-4">
@@ -888,7 +909,12 @@ export default function DrugRecommendation() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1.5">
                             <Pill className="h-4 w-4 text-brand-sky" />
-                            <h4 className="font-heading font-semibold text-ia-card-title">{rec.drugName}</h4>
+                            <h4 className="font-heading font-semibold text-ia-card-title">
+                              <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                {rec.drugName}
+                                <SafetyBadge level={rec.safetyType || 'safe'} />
+                              </span>
+                            </h4>
                             {rec.englishName && (
                               <span className="text-xs text-muted-foreground font-mono">{rec.englishName}</span>
                             )}
@@ -919,11 +945,6 @@ export default function DrugRecommendation() {
                             <span className="ia-badge ia-badge-primary">
                               {rec.category}
                             </span>
-                            {rec.safetyType && (
-                              <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-ia-data-3/10 text-ia-data-3 border-ia-data-3/20">
-                                {rec.safetyType}
-                              </span>
-                            )}
                             {rec.matchedDisease && (
                               <span className="ia-badge text-[10px] px-1.5 py-0.5 bg-brand-sky/10 text-brand-sky border-brand-sky/20">
                                 匹配疾病: {rec.matchedDisease}
@@ -943,6 +964,13 @@ export default function DrugRecommendation() {
                         <Target className="h-3.5 w-3.5" />
                         <span>{rec.dosage} · {rec.frequency}</span>
                       </div>
+
+                      {/* Safety: doctor-review-required indicator */}
+                      {rec.safetyType && rec.safetyType !== 'safe' && (
+                        <div style={{ color: '#f59e0b', fontSize: '11px', marginTop: '2px' }}>
+                          {'⚠ 需医生审核'}
+                        </div>
+                      )}
 
                       {/* Score breakdown */}
                       {dpEnabled && rec.rawScore !== undefined && (
