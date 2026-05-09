@@ -2,6 +2,7 @@
   "version": "1.0",
   "description": "Clinical knowledge routing tables for disease→drug-class mapping",
   "l1_colloquial_to_standard": {
+    "高血压": ["hypertension"],
     "拉肚子": ["diarrhea"],
     "拉稀": ["diarrhea"],
     "跑肚": ["diarrhea"],
