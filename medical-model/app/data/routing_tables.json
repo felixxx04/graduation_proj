@@ -1,0 +1,378 @@
+{
+  "version": "1.0",
+  "description": "Clinical knowledge routing tables for disease→drug-class mapping",
+  "l1_colloquial_to_standard": {
+    "拉肚子": ["diarrhea"],
+    "拉稀": ["diarrhea"],
+    "跑肚": ["diarrhea"],
+    "嗓子发炎": ["pharyngitis", "upper respiratory infection"],
+    "喉咙痛": ["pharyngitis"],
+    "嗓子疼": ["pharyngitis"],
+    "感冒": ["common cold", "upper respiratory infection"],
+    "伤风": ["common cold", "upper respiratory infection"],
+    "发烧": ["fever"],
+    "发热": ["fever"],
+    "烧心": ["heartburn", "gastroesophageal reflux disease"],
+    "反酸": ["gastroesophageal reflux disease"],
+    "烧心反酸": ["gastroesophageal reflux disease"],
+    "头晕": ["dizziness", "vertigo"],
+    "晕": ["dizziness", "vertigo"],
+    "头痛": ["headache"],
+    "头疼": ["headache"],
+    "流鼻涕": ["rhinorrhea", "common cold"],
+    "鼻塞": ["nasal congestion", "rhinitis"],
+    "打喷嚏": ["sneezing", "allergic rhinitis"],
+    "咳嗽": ["cough"],
+    "咳痰": ["productive cough"],
+    "胸闷": ["chest tightness"],
+    "胸痛": ["chest pain"],
+    "心慌": ["palpitations"],
+    "心跳快": ["tachycardia"],
+    "气短": ["dyspnea", "shortness of breath"],
+    "喘不上气": ["dyspnea", "shortness of breath"],
+    "失眠": ["insomnia"],
+    "睡不着": ["insomnia"],
+    "睡不着觉": ["insomnia"],
+    "便秘": ["constipation"],
+    "拉不出": ["constipation"],
+    "恶心": ["nausea"],
+    "想吐": ["nausea"],
+    "呕吐": ["vomiting"],
+    "吐了": ["vomiting"],
+    "胃痛": ["stomach pain", "gastritis"],
+    "胃疼": ["stomach pain", "gastritis"],
+    "肚子痛": ["abdominal pain"],
+    "肚子疼": ["abdominal pain"],
+    "腰疼": ["lower back pain"],
+    "腰酸": ["lower back pain"],
+    "关节痛": ["joint pain", "osteoarthritis"],
+    "关节疼": ["joint pain", "osteoarthritis"],
+    "水肿": ["edema", "swelling"],
+    "浮肿": ["edema", "swelling"],
+    "痒": ["pruritus", "itching"],
+    "发痒": ["pruritus", "itching"],
+    "皮疹": ["rash"],
+    "起疹子": ["rash"],
+    "脚气": ["tinea pedis", "fungal infection"],
+    "鹅口疮": ["oral candidiasis", "fungal infection"],
+    "尿频": ["urinary frequency"],
+    "尿急": ["urinary urgency"],
+    "尿痛": ["dysuria"],
+    "尿血": ["hematuria"],
+    "血尿": ["hematuria"],
+    "视力模糊": ["blurred vision"],
+    "看不清": ["blurred vision"],
+    "耳鸣": ["tinnitus"],
+    "流鼻血": ["epistaxis", "nosebleed"],
+    "牙龈出血": ["gingival bleeding"],
+    "脱发": ["alopecia", "hair loss"],
+    "掉头发": ["alopecia", "hair loss"],
+    "盗汗": ["night sweats"],
+    "疲劳": ["fatigue"],
+    "乏力": ["fatigue", "weakness"],
+    "没力气": ["fatigue", "weakness"],
+    "没精神": ["fatigue"]
+  },
+  "l2_disease_categories": {
+    "hypertension": {"body_system": "cardiovascular", "etiology": "chronic", "category_name": "高血压"},
+    "hypotension": {"body_system": "cardiovascular", "etiology": "dysfunction", "category_name": "低血压"},
+    "coronary artery disease": {"body_system": "cardiovascular", "etiology": "atherosclerotic", "category_name": "冠心病"},
+    "angina": {"body_system": "cardiovascular", "etiology": "ischemic", "category_name": "心绞痛"},
+    "myocardial infarction": {"body_system": "cardiovascular", "etiology": "ischemic", "category_name": "心肌梗死"},
+    "heart failure": {"body_system": "cardiovascular", "etiology": "chronic", "category_name": "心力衰竭"},
+    "atrial fibrillation": {"body_system": "cardiovascular", "etiology": "arrhythmic", "category_name": "房颤"},
+    "arrhythmia": {"body_system": "cardiovascular", "etiology": "arrhythmic", "category_name": "心律失常"},
+    "deep vein thrombosis": {"body_system": "cardiovascular", "etiology": "thrombotic", "category_name": "深静脉血栓"},
+    "pulmonary embolism": {"body_system": "cardiovascular", "etiology": "thrombotic", "category_name": "肺栓塞"},
+    "hyperlipidemia": {"body_system": "cardiovascular", "etiology": "metabolic", "category_name": "高脂血症"},
+    "diabetes mellitus": {"body_system": "endocrine", "etiology": "metabolic", "category_name": "糖尿病"},
+    "hypothyroidism": {"body_system": "endocrine", "etiology": "deficiency", "category_name": "甲状腺功能减退"},
+    "hyperthyroidism": {"body_system": "endocrine", "etiology": "autoimmune", "category_name": "甲状腺功能亢进"},
+    "asthma": {"body_system": "respiratory", "etiology": "inflammatory", "category_name": "哮喘"},
+    "copd": {"body_system": "respiratory", "etiology": "chronic", "category_name": "慢阻肺"},
+    "pneumonia": {"body_system": "respiratory", "etiology": "bacterial", "category_name": "肺炎"},
+    "bronchitis": {"body_system": "respiratory", "etiology": "viral", "category_name": "支气管炎"},
+    "upper respiratory infection": {"body_system": "respiratory", "etiology": "viral", "category_name": "上呼吸道感染"},
+    "common cold": {"body_system": "respiratory", "etiology": "viral", "category_name": "普通感冒"},
+    "pulmonary fibrosis": {"body_system": "respiratory", "etiology": "fibrotic", "category_name": "肺纤维化"},
+    "pulmonary hypertension": {"body_system": "respiratory", "etiology": "vascular", "category_name": "肺动脉高压"},
+    "gastric ulcer": {"body_system": "gastrointestinal", "etiology": "erosive", "category_name": "胃溃疡"},
+    "duodenal ulcer": {"body_system": "gastrointestinal", "etiology": "erosive", "category_name": "十二指肠溃疡"},
+    "gastroesophageal reflux disease": {"body_system": "gastrointestinal", "etiology": "reflux", "category_name": "胃食管反流"},
+    "gastritis": {"body_system": "gastrointestinal", "etiology": "inflammatory", "category_name": "胃炎"},
+    "enteritis": {"body_system": "gastrointestinal", "etiology": "infectious", "category_name": "肠炎"},
+    "ulcerative colitis": {"body_system": "gastrointestinal", "etiology": "autoimmune", "category_name": "溃疡性结肠炎"},
+    "crohn disease": {"body_system": "gastrointestinal", "etiology": "autoimmune", "category_name": "克罗恩病"},
+    "irritable bowel syndrome": {"body_system": "gastrointestinal", "etiology": "functional", "category_name": "肠易激综合征"},
+    "diarrhea": {"body_system": "gastrointestinal", "etiology": "infectious", "category_name": "腹泻"},
+    "constipation": {"body_system": "gastrointestinal", "etiology": "functional", "category_name": "便秘"},
+    "hepatitis": {"body_system": "hepatic", "etiology": "infectious", "category_name": "肝炎"},
+    "fatty liver": {"body_system": "hepatic", "etiology": "metabolic", "category_name": "脂肪肝"},
+    "cirrhosis": {"body_system": "hepatic", "etiology": "chronic", "category_name": "肝硬化"},
+    "cholecystitis": {"body_system": "biliary", "etiology": "inflammatory", "category_name": "胆囊炎"},
+    "cholelithiasis": {"body_system": "biliary", "etiology": "calculous", "category_name": "胆结石"},
+    "depression": {"body_system": "neurologic", "etiology": "psychiatric", "category_name": "抑郁症"},
+    "anxiety": {"body_system": "neurologic", "etiology": "psychiatric", "category_name": "焦虑症"},
+    "insomnia": {"body_system": "neurologic", "etiology": "psychiatric", "category_name": "失眠"},
+    "migraine": {"body_system": "neurologic", "etiology": "vascular", "category_name": "偏头痛"},
+    "headache": {"body_system": "neurologic", "etiology": "symptomatic", "category_name": "头痛"},
+    "epilepsy": {"body_system": "neurologic", "etiology": "neurological", "category_name": "癫痫"},
+    "parkinson disease": {"body_system": "neurologic", "etiology": "neurodegenerative", "category_name": "帕金森病"},
+    "alzheimer disease": {"body_system": "neurologic", "etiology": "neurodegenerative", "category_name": "阿尔茨海默病"},
+    "schizophrenia": {"body_system": "neurologic", "etiology": "psychiatric", "category_name": "精神分裂症"},
+    "obsessive compulsive disorder": {"body_system": "neurologic", "etiology": "psychiatric", "category_name": "强迫症"},
+    "chronic kidney disease": {"body_system": "renal", "etiology": "chronic", "category_name": "慢性肾病"},
+    "urinary tract infection": {"body_system": "renal", "etiology": "bacterial", "category_name": "尿路感染"},
+    "nephrolithiasis": {"body_system": "renal", "etiology": "calculous", "category_name": "肾结石"},
+    "benign prostatic hyperplasia": {"body_system": "reproductive", "etiology": "hyperplastic", "category_name": "前列腺增生"},
+    "urinary incontinence": {"body_system": "renal", "etiology": "functional", "category_name": "尿失禁"},
+    "rheumatoid arthritis": {"body_system": "musculoskeletal", "etiology": "autoimmune", "category_name": "类风湿关节炎"},
+    "osteoarthritis": {"body_system": "musculoskeletal", "etiology": "degenerative", "category_name": "骨关节炎"},
+    "gout": {"body_system": "musculoskeletal", "etiology": "metabolic", "category_name": "痛风"},
+    "osteoporosis": {"body_system": "musculoskeletal", "etiology": "degenerative", "category_name": "骨质疏松"},
+    "systemic lupus erythematosus": {"body_system": "musculoskeletal", "etiology": "autoimmune", "category_name": "系统性红斑狼疮"},
+    "low back pain": {"body_system": "musculoskeletal", "etiology": "mechanical", "category_name": "下背痛"},
+    "fever": {"body_system": "systemic", "etiology": "symptomatic", "category_name": "发热"},
+    "bacterial infection": {"body_system": "systemic", "etiology": "bacterial", "category_name": "细菌感染"},
+    "viral infection": {"body_system": "systemic", "etiology": "viral", "category_name": "病毒感染"},
+    "fungal infection": {"body_system": "systemic", "etiology": "fungal", "category_name": "真菌感染"},
+    "anemia": {"body_system": "hematologic", "etiology": "deficiency", "category_name": "贫血"},
+    "glaucoma": {"body_system": "ophthalmic", "etiology": "chronic", "category_name": "青光眼"},
+    "cataract": {"body_system": "ophthalmic", "etiology": "degenerative", "category_name": "白内障"},
+    "dry eye": {"body_system": "ophthalmic", "etiology": "inflammatory", "category_name": "干眼症"},
+    "allergic rhinitis": {"body_system": "respiratory", "etiology": "allergic", "category_name": "过敏性鼻炎"},
+    "eczema": {"body_system": "dermatologic", "etiology": "inflammatory", "category_name": "湿疹"},
+    "psoriasis": {"body_system": "dermatologic", "etiology": "autoimmune", "category_name": "银屑病"},
+    "herpes": {"body_system": "systemic", "etiology": "viral", "category_name": "疱疹"},
+    "alcohol withdrawal": {"body_system": "neurologic", "etiology": "withdrawal", "category_name": "酒精戒断"},
+    "smoking cessation": {"body_system": "neurologic", "etiology": "dependency", "category_name": "戒烟"},
+    "endometriosis": {"body_system": "reproductive", "etiology": "hormonal", "category_name": "子宫内膜异位症"},
+    "menopause": {"body_system": "reproductive", "etiology": "hormonal", "category_name": "更年期综合征"},
+    "vaginitis": {"body_system": "reproductive", "etiology": "infectious", "category_name": "阴道炎"},
+    "cervicitis": {"body_system": "reproductive", "etiology": "infectious", "category_name": "宫颈炎"},
+    "menstrual disorder": {"body_system": "reproductive", "etiology": "hormonal", "category_name": "月经不调"},
+    "prostate cancer": {"body_system": "reproductive", "etiology": "neoplastic", "category_name": "前列腺癌"},
+    "lung cancer": {"body_system": "respiratory", "etiology": "neoplastic", "category_name": "肺癌"},
+    "colon cancer": {"body_system": "gastrointestinal", "etiology": "neoplastic", "category_name": "结肠癌"},
+    "breast cancer": {"body_system": "reproductive", "etiology": "neoplastic", "category_name": "乳腺癌"},
+    "vomiting": {"body_system": "gastrointestinal", "etiology": "symptomatic", "category_name": "呕吐"},
+    "nausea": {"body_system": "gastrointestinal", "etiology": "symptomatic", "category_name": "恶心"}
+  },
+  "l3_indication_to_atc": {
+    "cardiovascular_chronic": {
+      "atc_codes": ["C09", "C07", "C08", "C03"],
+      "drug_classes": ["ACE抑制剂", "ARB", "钙通道阻滞剂", "β受体阻断剂", "利尿剂"],
+      "description": "心血管慢性病用药"
+    },
+    "cardiovascular_ischemic": {
+      "atc_codes": ["C07", "C08", "B01", "C10"],
+      "drug_classes": ["β受体阻断剂", "钙通道阻滞剂", "抗血小板药", "他汀类", "硝酸酯类"],
+      "description": "缺血性心脏病用药"
+    },
+    "cardiovascular_arrhythmic": {
+      "atc_codes": ["C01", "C07", "B01"],
+      "drug_classes": ["抗心律失常药", "β受体阻断剂", "抗凝药"],
+      "description": "心律失常用药"
+    },
+    "cardiovascular_thrombotic": {
+      "atc_codes": ["B01"],
+      "drug_classes": ["抗凝药", "抗血小板药"],
+      "description": "血栓性疾病用药"
+    },
+    "cardiovascular_dysfunction": {
+      "atc_codes": ["C01", "C09"],
+      "drug_classes": ["升压药", "血管活性药"],
+      "description": "心血管功能调节药"
+    },
+    "endocrine_metabolic": {
+      "atc_codes": ["A10", "C10"],
+      "drug_classes": ["降糖药", "胰岛素", "他汀类", "贝特类"],
+      "description": "内分泌代谢病用药"
+    },
+    "endocrine_deficiency": {
+      "atc_codes": ["H03"],
+      "drug_classes": ["甲状腺激素"],
+      "description": "甲状腺功能减退用药"
+    },
+    "endocrine_autoimmune": {
+      "atc_codes": ["H03"],
+      "drug_classes": ["抗甲状腺药"],
+      "description": "甲亢用药"
+    },
+    "respiratory_viral": {
+      "atc_codes": ["R05", "N02B", "R01"],
+      "drug_classes": ["镇咳药", "祛痰药", "解热镇痛药", "减充血剂"],
+      "description": "呼吸道病毒感染对症治疗"
+    },
+    "respiratory_bacterial": {
+      "atc_codes": ["J01"],
+      "drug_classes": ["抗生素", "青霉素类", "大环内酯类", "氟喹诺酮类", "头孢菌素类"],
+      "description": "呼吸道细菌感染用药"
+    },
+    "respiratory_inflammatory": {
+      "atc_codes": ["R03", "H02"],
+      "drug_classes": ["支气管扩张剂", "吸入性糖皮质激素", "白三烯受体拮抗剂"],
+      "description": "呼吸道炎症性疾病用药"
+    },
+    "respiratory_fibrotic": {
+      "atc_codes": ["R03", "L04"],
+      "drug_classes": ["抗纤维化药", "免疫抑制剂"],
+      "description": "肺纤维化用药（选择有限）"
+    },
+    "respiratory_vascular": {
+      "atc_codes": ["C02", "G04"],
+      "drug_classes": ["肺动脉高压专用药", "血管扩张剂"],
+      "description": "肺血管疾病用药"
+    },
+    "gastrointestinal_erosive": {
+      "atc_codes": ["A02"],
+      "drug_classes": ["PPI", "H2RA", "胃黏膜保护剂"],
+      "description": "消化道溃疡用药"
+    },
+    "gastrointestinal_reflux": {
+      "atc_codes": ["A02"],
+      "drug_classes": ["PPI", "H2RA", "促动力药"],
+      "description": "GERD用药"
+    },
+    "gastrointestinal_infectious": {
+      "atc_codes": ["A07A", "J01X"],
+      "drug_classes": ["肠道抗感染药", "抗生素"],
+      "description": "肠道感染用药"
+    },
+    "gastrointestinal_autoimmune": {
+      "atc_codes": ["A07E", "L04"],
+      "drug_classes": ["氨基水杨酸类", "免疫抑制剂", "生物制剂"],
+      "description": "IBD用药"
+    },
+    "gastrointestinal_functional": {
+      "atc_codes": ["A06", "A07D", "A03"],
+      "drug_classes": ["泻药", "止泻药", "解痉药", "益生菌"],
+      "description": "功能性肠病用药"
+    },
+    "hepatic_infectious": {
+      "atc_codes": ["J05", "L03"],
+      "drug_classes": ["抗病毒药", "免疫调节剂"],
+      "description": "肝炎用药"
+    },
+    "hepatic_metabolic": {
+      "atc_codes": ["A05", "C10"],
+      "drug_classes": ["保肝药", "降脂药"],
+      "description": "脂肪肝用药"
+    },
+    "biliary_inflammatory": {
+      "atc_codes": ["J01", "A05"],
+      "drug_classes": ["抗生素", "利胆药"],
+      "description": "胆道感染用药"
+    },
+    "biliary_calculous": {
+      "atc_codes": ["A05", "N02"],
+      "drug_classes": ["利胆药", "镇痛药"],
+      "description": "胆结石对症用药"
+    },
+    "neurologic_psychiatric": {
+      "atc_codes": ["N06", "N05"],
+      "drug_classes": ["SSRI", "SNRI", "苯二氮卓类", "抗精神病药"],
+      "description": "精神疾病用药"
+    },
+    "neurologic_vascular": {
+      "atc_codes": ["N02C", "N02"],
+      "drug_classes": ["曲普坦类", "镇痛药", "CGRP拮抗剂"],
+      "description": "偏头痛用药"
+    },
+    "neurologic_symptomatic": {
+      "atc_codes": ["N02"],
+      "drug_classes": ["镇痛药", "NSAIDs"],
+      "description": "头痛/疼痛对症治疗"
+    },
+    "neurologic_neurological": {
+      "atc_codes": ["N03"],
+      "drug_classes": ["抗癫痫药"],
+      "description": "癫痫用药"
+    },
+    "neurologic_neurodegenerative": {
+      "atc_codes": ["N04", "N06D"],
+      "drug_classes": ["多巴胺激动剂", "MAOI", "胆碱酯酶抑制剂", "NMDA拮抗剂"],
+      "description": "神经退行性疾病用药"
+    },
+    "renal_chronic": {
+      "atc_codes": ["C09", "C03", "B03"],
+      "drug_classes": ["ACE抑制剂", "ARB", "利尿剂", "促红细胞生成素"],
+      "description": "慢性肾病用药"
+    },
+    "renal_bacterial": {
+      "atc_codes": ["J01", "G04"],
+      "drug_classes": ["抗生素", "泌尿系统抗菌药"],
+      "description": "尿路感染用药"
+    },
+    "renal_calculous": {
+      "atc_codes": ["G04", "M04", "N02"],
+      "drug_classes": ["排石药", "别嘌呤醇", "碱化尿液药", "镇痛药"],
+      "description": "肾结石用药"
+    },
+    "musculoskeletal_autoimmune": {
+      "atc_codes": ["M01", "L04"],
+      "drug_classes": ["NSAIDs", "DMARDs", "生物制剂", "糖皮质激素"],
+      "description": "自身免疫性关节病用药"
+    },
+    "musculoskeletal_degenerative": {
+      "atc_codes": ["M01", "M05", "N02"],
+      "drug_classes": ["NSAIDs", "镇痛药", "双膦酸盐", "软骨保护剂"],
+      "description": "退行性骨关节病用药"
+    },
+    "musculoskeletal_metabolic": {
+      "atc_codes": ["M04"],
+      "drug_classes": ["降尿酸药", "秋水仙碱", "NSAIDs"],
+      "description": "痛风用药"
+    },
+    "systemic_bacterial": {
+      "atc_codes": ["J01"],
+      "drug_classes": ["抗生素", "青霉素类", "头孢菌素类", "氟喹诺酮类", "大环内酯类"],
+      "description": "系统性细菌感染用药"
+    },
+    "systemic_viral": {
+      "atc_codes": ["J05", "N02B"],
+      "drug_classes": ["抗病毒药", "解热镇痛药（对症）"],
+      "description": "病毒感染治疗（对症为主）"
+    },
+    "systemic_fungal": {
+      "atc_codes": ["J02", "D01"],
+      "drug_classes": ["抗真菌药", "唑类", "多烯类"],
+      "description": "真菌感染用药"
+    },
+    "hematologic_deficiency": {
+      "atc_codes": ["B03"],
+      "drug_classes": ["铁剂", "维生素B12", "叶酸", "促红细胞生成素"],
+      "description": "贫血用药"
+    },
+    "reproductive_hormonal": {
+      "atc_codes": ["G03", "G02"],
+      "drug_classes": ["雌激素", "孕激素", "避孕药", "促性腺激素"],
+      "description": "激素相关疾病用药"
+    },
+    "reproductive_infectious": {
+      "atc_codes": ["G01", "J01"],
+      "drug_classes": ["抗真菌药", "抗生素", "抗寄生虫药"],
+      "description": "生殖道感染用药"
+    },
+    "ophthalmic_chronic": {
+      "atc_codes": ["S01"],
+      "drug_classes": ["降眼压药", "碳酸酐酶抑制剂", "前列腺素类似物"],
+      "description": "青光眼用药"
+    },
+    "ophthalmic_degenerative": {
+      "atc_codes": ["S01"],
+      "drug_classes": ["人工泪液", "抗氧化剂（辅助）"],
+      "description": "白内障辅助用药（手术为主）"
+    },
+    "dermatologic_inflammatory": {
+      "atc_codes": ["D07", "D02"],
+      "drug_classes": ["外用糖皮质激素", "润肤剂", "钙调神经磷酸酶抑制剂"],
+      "description": "皮肤炎症用药"
+    },
+    "dermatologic_autoimmune": {
+      "atc_codes": ["D05", "L04"],
+      "drug_classes": ["外用维生素D类似物", "生物制剂", "免疫抑制剂"],
+      "description": "银屑病用药"
+    }
+  }
+}
