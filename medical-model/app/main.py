@@ -9,6 +9,7 @@ from pathlib import Path
 from app.config import settings
 from app.services.predictor import predictor
 from app.data.critical_interactions import get_critical_interactions
+from app.utils.patient_input_enhancer import get_enhancer
 from app.exceptions import (
     ModelServiceError,
     DataNotFoundError,
@@ -278,8 +279,33 @@ def status():
 
 @app.post("/model/predict")
 def predict(request: PredictRequest):
+    # ── Patient Input Enhancement ──
+    # Normalize colloquial Chinese to standard medical terms
+    enhancer = get_enhancer()
+    raw_disease = getattr(request, 'diseases', '')
+    if raw_disease and isinstance(raw_disease, str) and raw_disease.strip():
+        enhanced_disease, confidence = enhancer.enhance(raw_disease)
+        if enhanced_disease:
+            logger.info(f"Enhanced input: '{raw_disease}' -> '{enhanced_disease}' (confidence={confidence})")
+            request.enhanced_disease = enhanced_disease
+            request.input_confidence = confidence
+        else:
+            request.input_confidence = "none"
+    elif isinstance(raw_disease, list) and raw_disease:
+        enhanced_list = []
+        confidences = []
+        for d in raw_disease:
+            ed, conf = enhancer.enhance(str(d))
+            if ed:
+                enhanced_list.append(ed)
+                confidences.append(conf)
+        if enhanced_list:
+            request.enhanced_diseases = enhanced_list
+            confidence_rank = {"high": 3, "medium": 2, "low": 1, "none": 0}
+            request.input_confidence = min(confidences, key=lambda c: confidence_rank.get(c, 0))
+
     # 处理疾病和症状: 中文→英文映射 + 症状→疾病映射
-    from app.utils.disease_mapper import process_patient_input, _split_input
+    from app.utils.disease_mapper import process_patient_input, _split_input, translate_chinese_disease
 
     # 生成综合疾病名集合（包含中文翻译+症状关联）
     expanded_diseases = process_patient_input(
@@ -287,22 +313,141 @@ def predict(request: PredictRequest):
         symptoms_str=request.symptoms or "",
     )
 
+    # 保存原始映射结果（不含vocab代理词），用于识别患者真实疾病
+    # SEMANTIC_VOCAB_MAP添加的是vocab代理词，不是患者实际疾病
+    original_mapped_diseases = expanded_diseases.copy()  # 语义映射前的原始集合
+
+    # 记录患者主要输入疾病（不含扩展同义词）
+    # 用于lost_diseases计算：只识别用户实际输入的疾病，而非disease_mapper扩展的同义词
+    # 例: "cluster headache" 扩展为 ["cluster headache", "head pain", "tension headache", ...]
+    #     primary_input_diseases 只包含 "cluster headache"，避免lost_diseases过度膨胀
+    primary_input_diseases: Set[str] = set()
+    if request.diseases:
+        disease_parts = _split_input(request.diseases or "")
+        for part in disease_parts:
+            en_names = translate_chinese_disease(part)
+            if en_names:
+                # 中文输入：取第一个翻译（通常是直接映射，最精确）
+                primary_input_diseases.add(en_names[0])
+            else:
+                # 英文输入：直接用输入本身作为主疾病
+                primary_input_diseases.add(part.strip().lower())
+
+    # 语义映射：将不在vocab中的疾病名映射到语义最接近的vocab词
+    # 这些映射用于vocab过滤阶段，确保模型编码有意义
+    # 注意：适应症匹配层（clinical_matcher）独立于vocab，仍使用原始英文匹配
+    SEMANTIC_VOCAB_MAP = {
+        "hypothyroidism": "hyperthyroidism",  # vocab中仅有hyperthyroidism
+        "constipation": "stomach pain",        # vocab中无constipation
+        "bronchitis": "asthma",                # vocab中无bronchitis
+        "menopause": "depression",             # vocab中无menopause
+        "atrial fibrillation": "arrhythmia",   # vocab中无atrial_fibrillation
+        "copd": "asthma",                      # vocab中无copd
+        "chronic obstructive pulmonary disease": "asthma",
+        "enteritis": "bacterial infections",   # vocab中无enteritis，映射到感染类
+        "colitis": "bacterial infections",     # vocab中无colitis，映射到感染类
+        "cholecystitis": "stomach pain",       # 胆囊炎映射到腹痛（更接近真实症状）
+        "cholelithiasis": "stomach pain",      # 胆结石映射到腹痛
+        "gallstones": "stomach pain",
+        "biliary colic": "stomach pain",
+        "urinary calculi": "bacterial urinary tract infection",  # 尿路结石映射到UTI
+        "kidney stones": "bacterial urinary tract infection",
+        "nephrolithiasis": "bacterial urinary tract infection",
+        "common cold": "common cold",          # 已在vocab，确保映射
+        "viral infection": "bacterial infections",    # vocab中无viral infection
+        "viral illness": "bacterial infections",
+        "fungal infection": "bacterial infections",   # vocab中无fungal infection
+        "candidiasis": "bacterial infections",
+        "cervicitis": "bacterial infections",          # vocab中无cervicitis
+        "vaginitis": "bacterial infections",            # vocab中无vaginitis
+        "vulvovaginal candidiasis": "bacterial infections",
+        "bacterial vaginosis": "bacterial infections",
+        "pelvic inflammatory disease": "bacterial infections",
+        "adnexitis": "bacterial infections",
+        "pelvic pain": "stomach pain",                  # vocab中无pelvic pain
+        "dry eye syndrome": "allergic rhinitis",        # vocab中无dry eye
+        "keratoconjunctivitis sicca": "allergic rhinitis",
+        "obsessive compulsive disorder": "anxiety",     # vocab中无OCD，映射到焦虑类
+        "ocd": "anxiety",
+        "pulmonary fibrosis": "asthma",                 # vocab中无pulmonary fibrosis
+        "idiopathic pulmonary fibrosis": "asthma",
+        "cataract": "glaucoma",                         # vocab中无cataract，映射到眼科类
+        "alcohol dependence": "anxiety",                # vocab中无alcohol dependence
+        "alcoholism": "anxiety",
+        "alcohol withdrawal": "anxiety",
+        "menstrual irregularity": "anxiety",             # vocab中无menstrual irregularity
+        "dysmenorrhea": "stomach pain",                  # vocab中无dysmenorrhea
+        "colon cancer": "breast cancer",                 # vocab中无colon cancer
+        "colorectal cancer": "breast cancer",
+        "lung cancer": "breast cancer",                  # vocab中无lung cancer
+        "prostate cancer": "breast cancer",              # vocab中无prostate cancer
+        "thyroid cancer": "hyperthyroidism",             # vocab中无thyroid cancer
+        "appendicitis": "stomach pain",                  # vocab中无appendicitis
+        "abdominal pain": "stomach pain",
+        "parotitis": "bacterial infections",             # vocab中无parotitis
+        "mumps": "bacterial infections",
+        "tonsillitis": "bacterial infections",           # vocab中无tonsillitis
+        "otitis media": "bacterial infections",          # vocab中无otitis media
+        "prostatitis": "bacterial infections",           # vocab中无prostatitis
+        "poisoning": "bacterial infections",             # vocab中无poisoning
+        "toxicity": "bacterial infections",
+        "herpes simplex virus infection": "bacterial infections",  # vocab中无HSV
+        "menopausal symptoms": "depression",
+        "nicotine dependence": "anxiety",
+    }
+    # Apply semantic mapping before vocab filter
+    mapped_diseases = set()
+    for d in expanded_diseases:
+        d_lower = d.lower()
+        if d_lower in SEMANTIC_VOCAB_MAP:
+            mapped_diseases.add(SEMANTIC_VOCAB_MAP[d_lower])
+            mapped_diseases.add(d)  # 保留原始名（用于适应症匹配）
+        else:
+            mapped_diseases.add(d)
+    expanded_diseases = mapped_diseases
+
+    # 保存原始映射结果（含不在vocab中的词），用于适应症匹配
+    # 关键修复：indication_match_conditions必须排除SEMANTIC_VOCAB_MAP的代理词
+    # 代理词（如constipation→"stomach pain"）仅用于模型编码，不应影响临床匹配
+    # 否则PPI等通过"stomach pain"适应症匹配到便秘患者
+    proxy_values = set(SEMANTIC_VOCAB_MAP.values())
+    all_mapped_diseases = set()
+    for d in expanded_diseases:
+        if d.lower() not in proxy_values:
+            all_mapped_diseases.add(d)
+        # 代理词跳过 — 它们不是患者的真实疾病
+
     # 过滤：只保留 encoder primary_disease 词表中存在的疾病名
     # 避免 "pyrexia"/"febrile illness" 等未登录词映射到 __unknown__ 导致模型退化
+    vocab_filtered = set()
     if predictor.encoder is not None and 'primary_disease' in predictor.encoder.vocab_maps:
         pd_vocab = predictor.encoder.vocab_maps['primary_disease']
         known = sorted([d for d in expanded_diseases if d in pd_vocab])
         unknown = [d for d in expanded_diseases if d not in pd_vocab]
         if known:
-            expanded_diseases = known  # 按字母排序，确保 deterministic primary_disease
+            vocab_filtered = set(known)
             if unknown:
                 logger.info(f"Filtered unknown disease synonyms: {unknown} (not in encoder vocab)")
         elif unknown:
-            logger.warning(f"All expanded diseases unknown in encoder vocab: {unknown}, using as-is")
-            expanded_diseases = sorted(expanded_diseases)
+            # Fallback: 尝试子串匹配在vocab中找最接近的词
+            fallback_matches = []
+            for d in unknown:
+                d_lower = d.lower()
+                for vocab_word in pd_vocab:
+                    vocab_lower = vocab_word.lower()
+                    if d_lower in vocab_lower or vocab_lower in d_lower:
+                        fallback_matches.append(vocab_word)
+            if fallback_matches:
+                vocab_filtered = set(fallback_matches)
+                logger.info(f"Fallback substring match for unknown diseases {unknown} → {sorted(fallback_matches)}")
+            else:
+                logger.warning(f"All expanded diseases unknown in encoder vocab: {unknown}, using as-is")
+                vocab_filtered = set(expanded_diseases)
     else:
         logger.warning("Encoder or primary_disease vocab not available, using expanded_diseases as-is")
-        expanded_diseases = sorted(expanded_diseases)
+        vocab_filtered = set(expanded_diseases)
+
+    expanded_diseases = sorted(vocab_filtered)
 
     # 基本疾病列表（从 diseases 字段分割）
     disease_list = _split_input(request.diseases or "")
@@ -311,12 +456,19 @@ def predict(request: PredictRequest):
         'id': request.patientId,
         'age': request.age,
         'gender': request.gender,
-        'diseases': expanded_diseases,  # 已过滤+去重的英文疾病名列表
+        'diseases': expanded_diseases,  # vocab过滤后的疾病名（用于模型编码）
         'disease_list': disease_list,  # 原始输入（用于解释）
         'chronic_diseases': expanded_diseases,  # 同步
+        'indication_match_conditions': all_mapped_diseases,  # 完整映射结果（用于适应症匹配）
+        'original_mapped_diseases': original_mapped_diseases,  # 语义映射前的原始疾病（用于识别真实疾病）
+        'primary_input_diseases': primary_input_diseases,  # 患者实际输入的疾病（不含扩展同义词）
         'symptoms': request.symptoms,
         'allergies': request.allergies.split('，') if request.allergies else [],
-        'current_medications': request.currentMedications.split('，') if request.currentMedications else []
+        'current_medications': request.currentMedications.split('，') if request.currentMedications else [],
+        # 患者输入增强字段（由PatientInputEnhancer在predict入口处添加）
+        'enhanced_disease': getattr(request, 'enhanced_disease', None),
+        'enhanced_diseases': getattr(request, 'enhanced_diseases', None),
+        'input_confidence': getattr(request, 'input_confidence', None),
     }
 
     # v2: 患者器官功能与生理指标（由后端自动补充）
