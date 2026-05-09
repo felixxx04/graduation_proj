@@ -16,10 +16,19 @@ v2: 使用clinical_matcher替代子串匹配, 新增儿科/哺乳期硬排除
 """
 
 import logging
+from enum import Enum
 from typing import Dict, List, Set, Tuple, Any, Optional
 from dataclasses import dataclass, field
 
 from app.utils.clinical_matcher import match_condition, match_allergy
+
+
+class SafetyLevel(Enum):
+    SAFE = "safe"
+    WARNING = "warning"
+    OFF_LABEL = "off_label"
+    UNVERIFIED = "unverified"
+    EXCLUDED = "excluded"
 
 logger = logging.getLogger(__name__)
 
@@ -62,11 +71,42 @@ def _collect_current_medications(patient_data: Dict) -> List[str]:
     return [str(m) for m in meds if m and m != '__unknown__']
 
 
+def _is_hard_exclude(reason: str) -> bool:
+    """Determine if an exclusion reason warrants hard exclusion (can't override)."""
+    hard_keywords = [
+        "过敏冲突",
+        "妊娠X级",
+        "致命交互",
+        "MAOI+SSRI",
+        "绝对禁忌",
+        "儿科禁忌",
+        "哺乳期L5",
+        "草药补充剂",
+        "加重真菌感染",
+        "加重感染",
+        "感染性肠炎不适当",
+        "对病毒性",
+    ]
+    return any(kw in reason for kw in hard_keywords)
+
+
+def _extract_safety_tag(reason: str) -> str:
+    """Extract a short safety tag from a longer exclusion reason."""
+    if "off_label" in reason.lower() or "无适应症" in reason:
+        return "off_label"
+    if "数据未验证" in reason:
+        return "unverified"
+    if "相对禁忌" in reason:
+        return "relative_contraindication"
+    return "marked_for_review"
+
+
 @dataclass(frozen=True)
 class ExclusionResult:
     """Layer 1 排除结果"""
     safe_candidates: List[Dict[str, Any]]
     excluded_drugs: List[Dict[str, Any]] = field(default_factory=list)
+    marked_candidates: List[Dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -114,6 +154,7 @@ class SafetyFilter:
         """
         safe_candidates: List[Dict[str, Any]] = []
         excluded_drugs: List[Dict[str, Any]] = []
+        marked_drugs: List[Dict[str, Any]] = []
 
         # 收集患者条件集合
         patient_conditions = _collect_patient_conditions(patient_data)
@@ -292,23 +333,447 @@ class SafetyFilter:
                             exclusion_reason = f"肝功能不全禁忌"
                             break
 
-            # 分类
+            # 9. 草药/补充剂排除 — 感染性疾病不应推荐无抗菌证据的草药
+            # Echinacea等草药被标注为"Herbal Supplement"/"Dietary Supplement"
+            # 其适应症仅为"immune support"/"common cold prophylaxis"等辅助用途
+            # 对bacterial/viral/fungal等感染性疾病无治疗证据，推荐属于医学错误
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                supplement_keywords = ('herbal supplement', 'dietary supplement', 'supplement')
+                if any(kw in drug_class_lower for kw in supplement_keywords):
+                    # 检查患者是否有感染性疾病
+                    infection_keywords = (
+                        'infection', 'bacterial', 'viral', 'fungal', 'parasitic',
+                        'sepsis', 'abscess', 'cellulitis', 'pneumonia',
+                    )
+                    patient_condition_text = ' '.join(patient_conditions)
+                    if any(kw in patient_condition_text for kw in infection_keywords):
+                        exclusion_reason = f"草药补充剂无抗菌证据，不可用于感染性疾病: {drug_name}"
+
+            # 10. 抗生素误用于病毒性疾病硬排除
+            # 支气管炎、感冒、上呼吸道感染等多为病毒性
+            # 抗生素对病毒无效，不应作为主要推荐
+            # 仅排除口服/注射系统性抗生素，保留局部外用抗生素
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                antibiotic_keywords = (
+                    'antibiotic', 'antibacterial', 'quinolone', 'fluoroquinolone',
+                    'macrolide', 'cephalosporin', 'penicillin', 'tetracycline',
+                    'lincosamide', 'nitroimidazole', 'sulfonamide antibiotic',
+                    'glycopeptide', 'oxazolidinone', 'carbapenem', 'monobactam',
+                )
+                systemic_form_keywords = ('tablet', 'capsule', 'oral', 'injection', 'intravenous')
+                dosage_form = str(drug.get('dosage_form', '')).lower()
+                drug_name_lower = drug_name.lower()
+                # Some drugs have empty dosage_form but the route is in the name
+                # e.g. "erythromycin (oral/injection)" has dosage_form=""
+                is_systemic = (
+                    any(kw in dosage_form for kw in systemic_form_keywords)
+                    or any(kw in drug_name_lower for kw in systemic_form_keywords)
+                )
+                is_systemic_antibiotic = (
+                    any(kw in drug_class_lower for kw in antibiotic_keywords)
+                    and is_systemic
+                )
+                if is_systemic_antibiotic:
+                    viral_disease_keywords = (
+                        'common cold', 'cold', 'upper respiratory infection',
+                        'uri', 'urti', 'bronchitis', 'flu', 'influenza',
+                        'viral infection', 'cough',
+                    )
+                    # Check primary_input_diseases first (original user input)
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    for disease in check_diseases:
+                        if any(kw in disease for kw in viral_disease_keywords):
+                            exclusion_reason = f"抗生素对病毒性疾病无效，不应推荐: {drug_name}"
+                            break
+
+            # 11. PPI误用于胆囊疾病硬排除
+            # 胆囊炎/胆结石需要抗感染或手术，PPI(质子泵抑制剂)对胆囊疾病无效
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                is_ppi = 'proton pump inhibitor' in drug_class_lower or 'ppi' in drug_class_lower
+                if is_ppi:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    gallbladder_keywords = ('cholecystitis', 'gallstone', 'cholelithiasis', 'biliary', 'gallbladder')
+                    for disease in check_diseases:
+                        if any(kw in disease for kw in gallbladder_keywords):
+                            exclusion_reason = f"PPI对胆囊疾病无效，不应推荐: {drug_name}"
+                            break
+
+            # 12. 抗生素误用于尿路结石硬排除
+            # 尿路结石需要排石/碎石治疗，抗生素仅在合并感染时使用
+            # 不应作为结石的主要推荐药物
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                antibiotic_keywords = (
+                    'antibiotic', 'antibacterial', 'quinolone', 'fluoroquinolone',
+                    'cephalosporin', 'penicillin', 'sulfonamide antibiotic',
+                )
+                is_antibiotic = any(kw in drug_class_lower for kw in antibiotic_keywords)
+                dosage_form = str(drug.get('dosage_form', '')).lower()
+                drug_name_lower = drug_name.lower()
+                is_systemic = (
+                    any(kw in dosage_form for kw in ('tablet', 'capsule', 'oral', 'injection'))
+                    or any(kw in drug_name_lower for kw in ('tablet', 'capsule', 'oral', 'injection'))
+                )
+                if is_antibiotic and is_systemic:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    stone_keywords = ('kidney stone', 'urinary calculi', 'nephrolithiasis', 'cholelithiasis', 'gallstone', 'urolithiasis')
+                    # Skip if patient also has UTI (antibiotics are appropriate for UTI)
+                    has_uti = any('urinary tract infection' in d or 'uti' in d for d in check_diseases)
+                    if not has_uti:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in stone_keywords):
+                                exclusion_reason = f"抗生素对尿路结石无直接治疗作用(除非合并感染): {drug_name}"
+                                break
+
+            # 13. IBD药物误用于感染性肠炎硬排除
+            # 感染性肠炎需要抗感染或支持治疗，不应推荐生物制剂/免疫抑制剂等IBD药物
+            # 仅当患者明确诊断为IBD(溃疡性结肠炎/Crohn病)时才允许使用
+            if not exclusion_reason:
+                ibd_drug_keywords = (
+                    'biologic', 'anti-tnf', 'tnf inhibitor', 'immunosuppressant',
+                    'anti-integrin', 'jak inhibitor', 'il inhibitor',
+                )
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                ibd_specific_drugs = {
+                    'infliximab', 'adalimumab', 'golimumab', 'vedolizumab',
+                    'ustekinumab', 'tofacitinib', 'upadacitinib',
+                    'mesalamine', 'sulfasalazine', 'balsalazide',
+                    'olsalazine', 'budesonide', 'mercaptopurine',
+                    'azathioprine', 'methotrexate',
+                }
+                is_ibd_drug = (
+                    drug_gn_lower in ibd_specific_drugs
+                    or any(kw in drug_class_lower for kw in ibd_drug_keywords)
+                )
+                if is_ibd_drug:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    ibd_keywords = ('ulcerative colitis', 'crohn', 'inflammatory bowel disease', 'ibd')
+                    enteritis_keywords = ('enteritis', 'gastroenteritis', 'food poisoning')
+                    # 如果是IBD则允许，如果是普通肠炎则排除
+                    has_ibd = any(any(kw in d for kw in ibd_keywords) for d in check_diseases)
+                    if not has_ibd:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in enteritis_keywords):
+                                exclusion_reason = f"IBD药物对感染性肠炎不适当: {drug_name}"
+                                break
+
+            # 14. 糖尿病药物误用于尿路结石硬排除
+            # 尿路结石需要排石/碎石/止痛治疗，降糖药(DPP-4/SGLT2/GLP-1/胰岛素)与结石无关
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                diabetes_drug_keywords = (
+                    'dpp-4 inhibitor', 'dpp-4', 'sglt2 inhibitor', 'sglt2',
+                    'glp-1', 'incretin mimetic', 'insulin', 'antidiabetic',
+                    'biguanide', 'metformin', 'sulfonylurea', 'thiazolidinedione',
+                )
+                diabetes_specific_drugs = {
+                    'linagliptin', 'empagliflozin', 'canagliflozin', 'dapagliflozin',
+                    'semaglutide', 'liraglutide', 'exenatide', 'tirzepatide',
+                    'sitagliptin', 'saxagliptin', 'alogliptin', 'vildagliptin',
+                    'metformin', 'glipizide', 'glyburide', 'pioglitazone',
+                    'rosiglitazone', 'colesevelam', 'acarbose', 'pramlintide',
+                }
+                is_diabetes_drug = (
+                    drug_gn_lower in diabetes_specific_drugs
+                    or any(kw in drug_class_lower for kw in diabetes_drug_keywords)
+                )
+                if is_diabetes_drug:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    stone_keywords = ('kidney stone', 'urinary calculi', 'nephrolithiasis', 'urolithiasis')
+                    diabetes_keywords = ('diabetes', 'type 2 diabetes', 'type 1 diabetes', 'diabetic')
+                    has_diabetes = any(any(kw in d for kw in diabetes_keywords) for d in check_diseases)
+                    if not has_diabetes:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in stone_keywords):
+                                exclusion_reason = f"降糖药对尿路结石无治疗作用: {drug_name}"
+                                break
+
+            # 15. 苯二氮卓类误用于胆囊疾病硬排除
+            # 胆囊炎/胆结石需要镇痛和抗感染，镇静剂(苯二氮卓)有肝损伤风险，不适当
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                is_benzodiazepine = 'benzodiazepine' in drug_class_lower
+                if is_benzodiazepine:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    gallbladder_keywords = ('cholecystitis', 'gallstone', 'cholelithiasis', 'biliary', 'gallbladder')
+                    anxiety_keywords = ('anxiety', 'panic', 'insomnia', 'seizure', 'epilepsy')
+                    has_anxiety_need = any(any(kw in d for kw in anxiety_keywords) for d in check_diseases)
+                    if not has_anxiety_need:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in gallbladder_keywords):
+                                exclusion_reason = f"镇静剂对胆囊疾病不适当且有肝损伤风险: {drug_name}"
+                                break
+
+            # 16. 糖皮质激素误用于感染性肠炎硬排除
+            # 感染性肠炎需要抗感染/支持治疗，激素会抑制免疫加重感染
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                corticosteroid_keywords = ('corticosteroid', 'glucocorticoid', 'steroid', 'cortisone')
+                corticosteroid_drugs = {
+                    'prednisone', 'prednisolone', 'dexamethasone', 'methylprednisolone',
+                    'hydrocortisone', 'betamethasone', 'triamcinolone', 'budesonide',
+                    'fludrocortisone', 'cortisone',
+                }
+                is_corticosteroid = (
+                    drug_gn_lower in corticosteroid_drugs
+                    or any(kw in drug_class_lower for kw in corticosteroid_keywords)
+                )
+                if is_corticosteroid:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    ibd_keywords = ('ulcerative colitis', 'crohn', 'inflammatory bowel disease', 'ibd')
+                    enteritis_keywords = ('enteritis', 'gastroenteritis', 'food poisoning')
+                    has_ibd = any(any(kw in d for kw in ibd_keywords) for d in check_diseases)
+                    if not has_ibd:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in enteritis_keywords):
+                                exclusion_reason = f"糖皮质激素对感染性肠炎不适当，会加重感染: {drug_name}"
+                                break
+
+            # 17. 促尿酸排泄药(Probenecid等)误用于感染性肠炎排除
+            # Probenecid是促尿酸排泄药，仅作为抗生素辅助增强疗效，不应作为肠炎主要推荐
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                uricosuric_keywords = ('uricosuric', 'probenecid', 'sulfinpyrazone')
+                is_uricosuric = (
+                    drug_gn_lower in uricosuric_keywords
+                    or any(kw in drug_class_lower for kw in uricosuric_keywords)
+                )
+                if is_uricosuric:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    gout_keywords = ('gout', 'hyperuricemia', 'uric acid')
+                    enteritis_keywords = ('enteritis', 'gastroenteritis', 'food poisoning', 'diarrhea')
+                    has_gout = any(any(kw in d for kw in gout_keywords) for d in check_diseases)
+                    if not has_gout:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in enteritis_keywords):
+                                exclusion_reason = f"促尿酸排泄药不适用于肠炎: {drug_name}"
+                                break
+
+            # 18. 糖皮质激素误用于真菌感染硬排除
+            # 糖皮质激素会抑制免疫系统，加重真菌感染，属于严重临床错误
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                corticosteroid_keywords = ('corticosteroid', 'glucocorticoid', 'steroid', 'cortisone')
+                corticosteroid_drugs = {
+                    'prednisone', 'prednisolone', 'dexamethasone', 'methylprednisolone',
+                    'hydrocortisone', 'betamethasone', 'triamcinolone', 'budesonide',
+                    'fludrocortisone', 'cortisone',
+                }
+                is_corticosteroid = (
+                    drug_gn_lower in corticosteroid_drugs
+                    or any(kw in drug_class_lower for kw in corticosteroid_keywords)
+                )
+                if is_corticosteroid:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    fungal_keywords = ('fungal infection', 'candidiasis', 'candida', 'fungal', 'mycosis', 'ringworm', 'tinea')
+                    for disease in check_diseases:
+                        if any(kw in disease for kw in fungal_keywords):
+                            exclusion_reason = f"糖皮质激素会加重真菌感染，绝对禁忌: {drug_name}"
+                            break
+
+            # 19. 青光眼药物误用于白内障硬排除
+            # 白内障需要手术治疗，降眼压药(青光眼药)对白内障无治疗作用
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                glaucoma_drug_keywords = (
+                    'carbonic anhydrase inhibitor', 'beta-blocker eye', 'prostaglandin analogue',
+                    'alpha agonist eye', 'cholinergic eye', 'miotic',
+                )
+                glaucoma_specific_drugs = {
+                    'acetazolamide', 'dorzolamide', 'brinzolamide',
+                    'timolol', 'betaxolol', 'levobunolol',
+                    'latanoprost', 'travoprost', 'bimatoprost',
+                    'brimonidine', 'apraclonidine',
+                    'pilocarpine', 'echothiophate',
+                }
+                is_glaucoma_drug = (
+                    drug_gn_lower in glaucoma_specific_drugs
+                    or any(kw in drug_class_lower for kw in glaucoma_drug_keywords)
+                )
+                if is_glaucoma_drug:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    glaucoma_keywords = ('glaucoma', 'ocular hypertension', 'intraocular pressure')
+                    cataract_keywords = ('cataract')
+                    has_glaucoma = any(any(kw in d for kw in glaucoma_keywords) for d in check_diseases)
+                    if not has_glaucoma:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in cataract_keywords):
+                                exclusion_reason = f"青光眼药物对白内障无治疗作用: {drug_name}"
+                                break
+
+            # 20. 抗生素误用于真菌感染硬排除
+            # 真菌感染需要抗真菌药，抗生素对真菌无效且可能加重病情
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                antibiotic_keywords = (
+                    'antibiotic', 'antibacterial', 'quinolone', 'fluoroquinolone',
+                    'macrolide', 'cephalosporin', 'penicillin', 'tetracycline',
+                    'lincosamide', 'nitroimidazole', 'sulfonamide antibiotic',
+                    'glycopeptide', 'oxazolidinone', 'carbapenem', 'monobactam',
+                )
+                is_antibiotic = any(kw in drug_class_lower for kw in antibiotic_keywords)
+                if is_antibiotic:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    fungal_keywords = ('fungal infection', 'candidiasis', 'candida', 'fungal', 'mycosis', 'ringworm', 'tinea', 'vaginal yeast')
+                    bacterial_keywords = ('bacterial infection', 'bacterial', 'sepsis', 'cellulitis', 'pneumonia')
+                    has_bacterial = any(any(kw in d for kw in bacterial_keywords) for d in check_diseases)
+                    if not has_bacterial:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in fungal_keywords):
+                                exclusion_reason = f"抗生素对真菌感染无效，需要抗真菌药: {drug_name}"
+                                break
+
+            # 21. 苯二氮卓类误用于OCD/强迫症硬排除
+            # OCD一线治疗为SSRI(氟伏沙明/氟西汀/舍曲林)，苯二氮卓类不适用
+            # 苯二氮卓类仅短期缓解焦虑症状，不治疗OCD核心病理
+            if not exclusion_reason:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                is_benzodiazepine = 'benzodiazepine' in drug_class_lower
+                if is_benzodiazepine:
+                    primary_input = set(
+                        str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    original_mapped = set(
+                        str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                        if d and d != '__unknown__'
+                    )
+                    check_diseases = primary_input or original_mapped
+                    ocd_keywords = ('obsessive compulsive disorder', 'ocd', '强迫症')
+                    anxiety_keywords = ('anxiety', 'panic', 'insomnia', 'seizure', 'epilepsy', 'alcohol withdrawal')
+                    has_anxiety_need = any(any(kw in d for kw in anxiety_keywords) for d in check_diseases)
+                    if not has_anxiety_need:
+                        for disease in check_diseases:
+                            if any(kw in disease for kw in ocd_keywords):
+                                exclusion_reason = f"苯二氮卓类不是OCD一线治疗，需SSRI: {drug_name}"
+                                break
+
+            # Categorize: exclude (hard) or mark (soft, for doctor review)
             if exclusion_reason:
-                excluded_drugs.append({
-                    'drug_name': drug_name,
-                    'reason': exclusion_reason,
-                    'drug_data': drug,
-                })
+                if _is_hard_exclude(exclusion_reason):
+                    excluded_drugs.append({
+                        'drug_name': drug_name,
+                        'reason': exclusion_reason,
+                        'drug_data': drug,
+                    })
+                else:
+                    # Soft exclude → mark for doctor review, keep in safe_candidates
+                    marked_drugs.append({
+                        'drug_name': drug_name,
+                        'drug_data': drug,
+                        'safety_tag': _extract_safety_tag(exclusion_reason),
+                        'review_reason': exclusion_reason,
+                    })
+                    # Also keep in safe_candidates so it reaches ranking layer
+                    safe_candidates.append(drug)
             else:
                 safe_candidates.append(drug)
 
         logger.info(
-            f"SafetyFilter: {len(safe_candidates)} safe candidates, "
-            f"{len(excluded_drugs)} excluded from {len(drug_candidates)} total"
+            f"SafetyFilter: {len(safe_candidates)} safe (incl. {len(marked_drugs)} marked), "
+            f"{len(excluded_drugs)} hard-excluded from {len(drug_candidates)} total"
         )
         return ExclusionResult(
             safe_candidates=safe_candidates,
             excluded_drugs=excluded_drugs,
+            marked_candidates=marked_drugs,
         )
 
 
