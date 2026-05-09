@@ -32,6 +32,7 @@ import { api, getErrorMessage } from '@/lib/api'
 import { gaussianSigma, laplaceScale } from '@/lib/privacy'
 import { usePatientStore, PatientGender } from '@/lib/patientStore'
 import { TextExpander } from '@/components/ui/text-expander'
+import ReviewPanel from '../components/ReviewPanel'
 import {
   BarChart,
   Bar,
@@ -232,6 +233,7 @@ export default function DrugRecommendation() {
   const [totalCandidateInfo, setTotalCandidateInfo] = useState<{ total: number; excluded: number; safe: number } | null>(null)
   const [dataGaps, setDataGaps] = useState<string[]>([])
   const [privacyPanelCollapsed, setPrivacyPanelCollapsed] = useState(false)
+  const [recommendationId, setRecommendationId] = useState<string>('')
 
   const handleSelectPatient = (id: string) => {
     setSelectedPatientId(id)
@@ -369,6 +371,7 @@ export default function DrugRecommendation() {
         }))
       )
       setShowResults(true)
+      setRecommendationId(String(response.recommendationId))
       setSelectedDrug(null)
       setShowExplainability(false)
       await refresh()
@@ -1131,6 +1134,38 @@ export default function DrugRecommendation() {
                       </div>
                     )}
                   </div>
+                )}
+
+                {/* Doctor Review Panel */}
+                {recommendations.length > 0 && (
+                  <ReviewPanel
+                    recommendationId={recommendationId}
+                    diseaseCn={patientData.diseases}
+                    drugs={recommendations.map((r) => ({
+                      drugName: r.drugName,
+                      englishName: r.englishName || '',
+                      category: r.category,
+                      safetyType: r.safetyType || 'safe',
+                      score: r.score,
+                    }))}
+                    onSubmitReview={async (decision, selectedDrug, reason) => {
+                      try {
+                        await fetch('/api/review/log', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            recommendationId,
+                            diseaseCn: patientData.diseases,
+                            doctorDecision: decision,
+                            doctorSelectedDrug: selectedDrug || null,
+                            doctorReason: reason || null,
+                          }),
+                        });
+                      } catch (err) {
+                        console.error('Failed to submit review:', err);
+                      }
+                    }}
+                  />
                 )}
 
                 {/* Detailed Drug Information */}

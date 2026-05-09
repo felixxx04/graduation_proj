@@ -609,6 +609,25 @@ class RecommendationPredictor:
                 if flags.get('contraindication_type') == 'data_unverified'
             )
 
+            # Compute drug-class filter from KnowledgeRouter
+            from app.utils.disease_mapper import get_appropriate_drug_classes, get_disease_routing_info
+            patient_diseases_cn = patient_data.get('primary_input_diseases',
+                                  patient_data.get('original_mapped_diseases',
+                                  patient_data.get('diseases', [])))
+            if patient_diseases_cn:
+                diseases_list = [str(d) for d in patient_diseases_cn if d and d != '__unknown__']
+                self._drug_class_filter = get_appropriate_drug_classes(diseases_list)
+                # Determine etiology for viral-disease antibiotic penalty
+                self._current_route_info = None
+                for disease in diseases_list:
+                    route_info = get_disease_routing_info(disease)
+                    if route_info and route_info.get('etiology') == 'viral':
+                        self._current_route_info = route_info
+                        break
+            else:
+                self._drug_class_filter = set()
+                self._current_route_info = None
+
             # ===== Layer 3: DeepFM排序 =====
             ranked_results = self._rank_candidates(
                 patient_data, exclusion_result.safe_candidates,
@@ -625,6 +644,72 @@ class RecommendationPredictor:
             for rec in final_results:
                 if rec.get('matchedDisease') and rec.get('matchedDisease') != '未知':
                     rec['score'] = round(min(1.0, rec['score'] * 1.3), 3)
+
+            # ===== 丢失疾病优先提升 =====
+            # 当患者真实疾病被vocab代理替代时，匹配真实疾病的药物必须优先于仅匹配代理疾病的药物
+            # 否则模型编码偏差会导致代理疾病相关药物（如PPI）压倒真实疾病药物（如泻药）
+            vocab_diseases = set(
+                str(d).lower() for d in patient_data.get('diseases', []) or []
+                if d and d != '__unknown__'
+            )
+            primary_input = set(
+                str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+                if d and d != '__unknown__'
+            )
+            # lost_diseases: 患者实际输入的疾病中，不在vocab中的部分
+            lost_diseases = primary_input - vocab_diseases
+            if not primary_input:
+                original_diseases = set(
+                    str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
+                    if d and d != '__unknown__'
+                )
+                lost_diseases = original_diseases - vocab_diseases
+
+            # 获取患者用于适应症匹配的完整条件集合（含同义词链）
+            indication_conds = set()
+            for d in patient_data.get('indication_match_conditions', []) or []:
+                if d and d != '__unknown__':
+                    indication_conds.add(str(d).lower())
+
+            # 扩展lost_diseases: indication_conds中不在vocab的也视为"真实疾病"
+            for cond in indication_conds:
+                if cond not in vocab_diseases and cond not in lost_diseases:
+                    lost_diseases.add(cond)
+
+            has_lost_diseases = len(lost_diseases) > 0
+            if has_lost_diseases:
+                logger.info(f"[LOST_DISEASES] lost_diseases={lost_diseases}, primary={primary_input}, vocab={vocab_diseases}, indication_conds={indication_conds}")
+                boosted_drugs = []
+                penalized_drugs = []
+                for rec in final_results:
+                    drug_name = rec.get('englishName', rec.get('drugName', ''))
+                    drug_data = None
+                    for d in self.drugs_data:
+                        dn = d.get('generic_name', d.get('name', ''))
+                        if dn == drug_name or dn.lower() == drug_name.lower():
+                            drug_data = d
+                            break
+                    if not drug_data:
+                        continue
+                    # 检查药物是否匹配了患者真实疾病（含indication_conds同义词链）
+                    matches_real = False
+                    for ind in drug_data.get('indications', []) or []:
+                        ind_str = str(ind.get('condition', ind) if isinstance(ind, dict) else ind).lower()
+                        if match_indication(indication_conds, ind_str):
+                            matches_real = True
+                            break
+                    if matches_real:
+                        old_score = rec['score']
+                        rec['score'] = 1.0
+                        boosted_drugs.append(f"{drug_name}: {old_score}->1.0")
+                    elif rec['score'] > 0.3:
+                        # 不匹配任何真实疾病的高分药物=模型偏差，大幅降权
+                        old_score = rec['score']
+                        rec['score'] = old_score * 0.15
+                        penalized_drugs.append(f"{drug_name}: {old_score:.3f}->{rec['score']:.3f}")
+                logger.info(f"[LOST_DISEASES] boosted {len(boosted_drugs)} drugs: {boosted_drugs[:10]}")
+                if penalized_drugs:
+                    logger.info(f"[LOST_DISEASES] penalized {len(penalized_drugs)} drugs: {penalized_drugs[:10]}")
 
             # ===== 多疾病覆盖优先排序 =====
             # DeepSeek验证发现: 原排序偏向单一疾病(通常高血压), 多病患者的推荐无法覆盖所有疾病
@@ -822,6 +907,7 @@ class RecommendationPredictor:
         for d in patient_data.get('chronic_diseases', []) or []:
             if d and d != '__unknown__':
                 patient_conditions.add(str(d).lower())
+        logger.info(f"[PATIENT_CONDITIONS] conditions={patient_conditions}, diseases={patient_data.get('diseases', [])}, indication_match={patient_data.get('indication_match_conditions', [])}")
 
         # 识别"丢失疾病"：患者实际疾病中被vocab过滤掉的部分
         # 这些疾病在模型编码中由vocab代理词替代，导致模型排序偏向代理疾病相关药物
@@ -830,11 +916,24 @@ class RecommendationPredictor:
             str(d).lower() for d in patient_data.get('diseases', []) or []
             if d and d != '__unknown__'
         )
+        primary_input_diseases = set(
+            str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+            if d and d != '__unknown__'
+        )
         original_diseases = set(
             str(d).lower() for d in patient_data.get('original_mapped_diseases', []) or []
             if d and d != '__unknown__'
         )
-        lost_diseases = original_diseases - vocab_diseases  # 真实疾病中被vocab过滤掉的
+        # lost_diseases: 真实疾病中被vocab过滤掉的
+        # 使用primary_input_diseases(不含扩展同义词)精确计算
+        lost_diseases = primary_input_diseases - vocab_diseases if primary_input_diseases else original_diseases - vocab_diseases
+        # 扩展lost_diseases: 包含indication_match_conditions中不在vocab的疾病
+        # 这确保diarrhea/nausea/bacterial infections等在同义词链中的词也被视为"真实疾病"
+        # 避免"enteritis"→lost_disease但"diarrhea"→vocab_disease导致匹配腹泻的药物不被boost
+        for cond in patient_conditions:
+            if cond not in vocab_diseases and cond not in lost_diseases:
+                lost_diseases.add(cond)
+        has_lost_diseases = len(lost_diseases) > 0
 
         for drug in safe_candidates:
             # 构建特征记录
@@ -872,11 +971,45 @@ class RecommendationPredictor:
                         matches_lost_disease = True
                     break
 
-            # 对匹配丢失疾病的药物施加显著boost
-            # 模型编码使用vocab代理词，导致真实疾病相关药物排序偏低
-            # boost幅度=0.3，与DP噪声上限(0.35)相当，确保真实疾病药物超越代理疾病药物
-            if matches_lost_disease:
-                raw_score = min(1.0, raw_score + 0.3)
+            # 对匹配患者真实疾病的药物施加显著boost
+            # patient_conditions包含indication_match_conditions（完整映射结果）
+            # has_indication=True意味着药物匹配了患者的真实疾病（含同义词链）
+            if has_indication:
+                if matches_lost_disease:
+                    raw_score = min(1.0, raw_score + 0.5)
+                else:
+                    # 匹配patient_conditions但不直接匹配lost_disease
+                    # 仍需boost，因为模型排序偏向非相关高分药物
+                    raw_score = min(1.0, raw_score + 0.4)
+
+            # Drug-class relevance check via KnowledgeRouter
+            # Boost drugs from clinically appropriate classes; penalize wrong classes
+            drug_class_filter = getattr(self, '_drug_class_filter', None)
+            if drug_class_filter:
+                drug_class_lower = str(drug.get('drug_class_en', '')).lower()
+                drug_gn_lower = drug_name.lower()
+                class_match = 0.0
+                for target_class in drug_class_filter:
+                    target_lower = target_class.lower()
+                    if target_lower in drug_class_lower or drug_class_lower in target_lower:
+                        class_match = max(class_match, 0.25)
+                    if target_lower in drug_gn_lower:
+                        class_match = max(class_match, 0.1)
+                if class_match > 0:
+                    raw_score = min(1.0, raw_score + class_match)
+
+                # Penalize clearly wrong drug classes for viral diseases
+                route_info = getattr(self, '_current_route_info', None)
+                if route_info and route_info.get('etiology') == 'viral' and class_match == 0:
+                    wrong_class_kw = ['antibiotic', 'antibacterial', 'cephalosporin',
+                                      'penicillin', 'fluoroquinolone', 'macrolide']
+                    if any(kw in drug_class_lower for kw in wrong_class_kw):
+                        raw_score *= 0.3
+
+            # 对不匹配任何真实疾病的高分药物施加惩罚
+            # 当存在lost_diseases时，模型高分可能来自vocab代理偏差而非临床相关性
+            if has_lost_diseases and not has_indication and raw_score > 0.3:
+                raw_score *= 0.15  # 大幅降权：高分但无适应症匹配=模型偏差
 
             # DP噪声（仅作用于排序层）
             final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(
@@ -920,12 +1053,23 @@ class RecommendationPredictor:
                 'dpAnomaly': dp_anomaly,
             })
 
-        # 多维度排序: 适应症匹配 > DP评分 > 原始评分
-        # 确保有疾病匹配的药物优先推荐, 防止DP噪声将无适应症药物推到首位
+        # 多维度排序: 安全级别 > 适应症匹配 > DP评分 > 原始评分
+        # 确保安全药物优先, 防止DP噪声将高风险药物推到首位
+        def _safety_priority(rec):
+            st = rec.get('safetyType', 'safe')
+            if st == 'safe':
+                return 3
+            if st in ('relative_contraindication',):
+                return 2
+            if st in ('off_label', 'unverified', 'data_unverified'):
+                return 1
+            return 0
+
         results.sort(key=lambda x: (
-            1 if x.get('matchedDisease') else 0,
+            _safety_priority(x),
+            1 if x.get('matchedDisease') and x.get('matchedDisease') != '未知' else 0,
             x['score'],
-            x['rawScore'],
+            x.get('rawScore', 0),
         ), reverse=True)
         return results
 
@@ -1027,11 +1171,22 @@ class RecommendationPredictor:
                 'dpAnomaly': dp_anomaly,
             })
 
-        # 多维度排序: 适应症匹配 > DP评分 > 原始评分
+        # 多维度排序: 安全级别 > 适应症匹配 > DP评分 > 原始评分
+        def _safety_priority(rec):
+            st = rec.get('safetyType', 'safe')
+            if st == 'safe':
+                return 3
+            if st in ('relative_contraindication',):
+                return 2
+            if st in ('off_label', 'unverified', 'data_unverified'):
+                return 1
+            return 0
+
         results.sort(key=lambda x: (
-            1 if x.get('matchedDisease') else 0,
+            _safety_priority(x),
+            1 if x.get('matchedDisease') and x.get('matchedDisease') != '未知' else 0,
             x['score'],
-            x['rawScore'],
+            x.get('rawScore', 0),
         ), reverse=True)
         return results
 
@@ -1086,57 +1241,156 @@ class RecommendationPredictor:
             x.get('rawScore', 0),
         ), reverse=True)
 
-        # 收集患者疾病集合
-        patient_diseases: List[str] = []
-        for d in patient_data.get('indication_match_conditions', []) or []:
-            if d and d != '__unknown__':
-                patient_diseases.append(str(d).lower())
-        if not patient_diseases:
-            for d in patient_data.get('diseases', []) or []:
-                if d and d != '__unknown__':
-                    patient_diseases.append(str(d).lower())
-        for d in patient_data.get('chronic_diseases', []) or []:
-            if d and d != '__unknown__':
-                patient_diseases.append(str(d).lower())
+        # 收集患者疾病集合（去重：只用primary_input + vocab_diseases，不含扩展同义词）
+        # 扩展同义词（如"head pain"="headache"）会导致过多疾病占用top_k位置
+        # 真正需要覆盖的是: 患者输入的疾病(primary) + vocab映射的疾病(vocab)
+        primary_input_set = set(
+            str(d).lower() for d in patient_data.get('primary_input_diseases', []) or []
+            if d and d != '__unknown__'
+        )
+        vocab_diseases_set = set(
+            str(d).lower() for d in patient_data.get('diseases', []) or []
+            if d and d != '__unknown__'
+        )
+        # 合并: 患者输入的疾病 + vocab疾病（去重）
+        patient_diseases: List[str] = sorted(primary_input_set | vocab_diseases_set)
+
+        # lost_diseases: 患者实际输入的疾病中不在vocab中的部分
+        lost_diseases = primary_input_set - vocab_diseases_set if primary_input_set else set()
+        logger.info(f"[DISEASE_BALANCED] diseases={patient_diseases}, top_k={top_k}, total={len(all_results)}, lost={lost_diseases}, primary={primary_input_set}")
 
         # 只有1种疾病时, 直接取top_k最高分
         if len(patient_diseases) <= 1:
             return all_results[:top_k]
 
-        # 为每个疾病找最佳匹配药物
+        # 疾病排序: lost_diseases优先于vocab_diseases
+        priority_diseases = []
+        other_diseases = []
+        for d in patient_diseases:
+            if d in lost_diseases:
+                priority_diseases.append(d)
+            else:
+                other_diseases.append(d)
+        ordered_diseases = priority_diseases + other_diseases
+
+        # 为每个疾病找最佳匹配药物（按优先级排序）
+        # 关键策略: 当lost_diseases存在时，限制vocab代理疾病的位置数
+        # vocab代理词(headache/migraine)是lost_disease(cluster headache)的模型编码代理
+        # 不应让代理疾病药物(NSAIDs/β-blockers)占据大多数推荐位置
+        # 真实疾病药物(Sumatriptan/Ergotamine)应优先占据剩余位置
         selected: List[Dict[str, Any]] = []
         selected_names: Set[str] = set()
-        covered_diseases: Set[str] = set()
 
-        for disease in patient_diseases:
-            # 在所有结果中找该疾病的最佳匹配
+        # 先为每个lost_disease选一个最佳药物
+        # 优先选择on_label药物（主要治疗），其次选择off_label药物（辅助治疗）
+        for disease in priority_diseases:
+            if len(selected) >= top_k:
+                break
+            best_for_disease = None
+            best_evidence_level = 'unknown'
+            for rec in all_results:
+                if rec.get('drugName', '') in selected_names:
+                    continue
+                if self._drug_matches_disease(rec, disease):
+                    # Check evidence level: on_label > off_label > supportive > unknown
+                    ev_level = str(rec.get('explanation', {}).get('evidenceLevel', 'unknown')).lower()
+                    ev_priority = {'on_label': 3, 'off_label': 2, 'supportive': 1, 'unknown': 0}
+                    current_priority = ev_priority.get(ev_level, 0)
+                    if best_for_disease is None:
+                        best_for_disease = rec
+                        best_evidence_level = ev_level
+                    elif current_priority > ev_priority.get(best_evidence_level, 0):
+                        # Higher evidence level wins regardless of score
+                        best_for_disease = rec
+                        best_evidence_level = ev_level
+                    elif current_priority == ev_priority.get(best_evidence_level, 0) and rec['score'] > best_for_disease['score']:
+                        # Same evidence level, compare scores
+                        best_for_disease = rec
+                        best_evidence_level = ev_level
+            if best_for_disease:
+                selected.append(best_for_disease)
+                selected_names.add(best_for_disease['drugName'])
+
+        # 为vocab疾病选药，但限制数量: 每个lost_disease只给vocab疾病1个位置
+        # 避免选择被proxy惩罚的药物(如焦虑代理下的Propranolol)
+        vocab_slots = max(1, len(lost_diseases)) if lost_diseases else top_k
+        vocab_filled = 0
+        for disease in other_diseases:
+            if len(selected) >= top_k:
+                break
+            if vocab_filled >= vocab_slots:
+                break  # vocab疾病药物位置已满
             best_for_disease = None
             for rec in all_results:
                 if rec.get('drugName', '') in selected_names:
                     continue
-                # 检查药物是否匹配该疾病
                 if self._drug_matches_disease(rec, disease):
+                    # Skip proxy-penalized drugs (score <= 0.35 indicates proxy penalty)
+                    if lost_diseases and rec.get('score', 0) < 0.4:
+                        continue
                     if best_for_disease is None or rec['score'] > best_for_disease['score']:
                         best_for_disease = rec
-
-            if not best_for_disease:
-                continue
-
             if best_for_disease:
                 selected.append(best_for_disease)
                 selected_names.add(best_for_disease['drugName'])
-                covered_diseases.add(disease)
+                vocab_filled += 1
 
-        # 填充剩余位置: 从最高分药物中选取(排除已选)
+        # 填充剩余位置: 优先选择匹配lost_disease的药物，再选其他高分药物
         remaining_slots = top_k - len(selected)
         if remaining_slots > 0:
-            for rec in all_results:
-                if rec.get('drugName', '') not in selected_names:
+            # 第一轮: 填充匹配lost_disease的药物（更多治疗选择）
+            # 优先选择matchedDisease直接匹配lost_disease的药物（特异性高）
+            # 再选择通过indications匹配的药物（特异性较低）
+            if lost_diseases:
+                lost_matches = []
+                # 收集所有匹配lost_disease的候选药物
+                lost_candidates = []
+                for rec in all_results:
+                    if rec.get('drugName', '') in selected_names:
+                        continue
+                    if self._drug_matches_lost_disease(rec, lost_diseases):
+                        # 判断特异性: matchedDisease直接匹配lost_disease → 高特异性
+                        # 例: matchedDisease="cluster headache" 匹配 ld="cluster headache" → spec=2
+                        # 例: matchedDisease="cluster headache prophylaxis" 包含 ld → spec=1
+                        # 例: matchedDisease="headache" 虽包含在ld中但更generic → spec=0
+                        specificity = 0
+                        matched_disease = str(rec.get('matchedDisease', '')).lower()
+                        for ld in lost_diseases:
+                            if ld == matched_disease:
+                                specificity = 2  # 精确匹配（最高特异性）
+                            elif ld in matched_disease and len(ld) >= 4:
+                                specificity = max(specificity, 1)  # lost_disease是matchedDisease的子串（高特异性）
+                        lost_candidates.append((specificity, rec))
+
+                # 按特异性+证据等级排序: 高特异性优先，on_label优先，同等条件按score排序
+                ev_priority = {'on_label': 3, 'off_label': 2, 'supportive': 1, 'unknown': 0}
+                lost_candidates.sort(key=lambda x: (
+                    -x[0],  # specificity (high first)
+                    -ev_priority.get(str(x[1].get('explanation', {}).get('evidenceLevel', 'unknown')).lower(), 0),  # evidence (on_label first)
+                    -x[1].get('score', 0),  # score (high first)
+                    -x[1].get('rawScore', 0),  # rawScore
+                ))
+
+                for specificity, rec in lost_candidates:
+                    if remaining_slots <= 0:
+                        break
                     selected.append(rec)
                     selected_names.add(rec['drugName'])
                     remaining_slots -= 1
+                    lost_matches.append(f"{rec.get('drugName','?')}(spec={specificity},matched={rec.get('matchedDisease','?')})")
+                logger.info(f"[LOST_FILL] filled={lost_matches}")
+
+            # 第二轮: 用最高分药物填充剩余位置
+            if remaining_slots > 0:
+                for rec in all_results:
                     if remaining_slots <= 0:
                         break
+                    if rec.get('drugName', '') not in selected_names:
+                        selected.append(rec)
+                        selected_names.add(rec['drugName'])
+                        remaining_slots -= 1
+
+        logger.info(f"[DISEASE_BALANCED] selected={[f'{s.get('drugName','?')}(score={s.get('score')},matched={s.get('matchedDisease','?')})' for s in selected]}")
 
         return selected[:top_k]
 
@@ -1174,6 +1428,17 @@ class RecommendationPredictor:
                         if disease in ind_cond or ind_cond in disease:
                             return True
 
+        return False
+
+    def _drug_matches_lost_disease(
+        self,
+        rec: Dict[str, Any],
+        lost_diseases: Set[str],
+    ) -> bool:
+        """检查推荐药物是否匹配任意lost_disease"""
+        for disease in lost_diseases:
+            if self._drug_matches_disease(rec, disease):
+                return True
         return False
 
     def _build_record(
