@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { api } from '@/lib/api'
 import { Clock, CheckCircle, XCircle, Edit, FileText, ChevronDown, ChevronUp } from 'lucide-react'
-import { REVIEW_REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
+import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
 
 interface HistoryItem {
   id: number
