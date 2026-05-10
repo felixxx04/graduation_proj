@@ -3,60 +3,351 @@
   "description": "Symptom combination patterns for L3 fallback matching in PatientInputEnhancer",
   "combos": [
     {
-      "keywords": ["头痛", "头疼", "发热", "发烧", "肌肉酸痛", "全身酸痛"],
+      "keywords": [
+        "头痛",
+        "头疼",
+        "发热",
+        "发烧",
+        "肌肉酸痛",
+        "全身酸痛"
+      ],
       "min_matches": 2,
       "disease": "influenza-like illness",
       "body_system": "respiratory",
       "etiology": "viral"
     },
     {
-      "keywords": ["尿频", "尿急", "尿痛", "排尿痛", "下腹痛"],
+      "keywords": [
+        "尿频",
+        "尿急",
+        "尿痛",
+        "排尿痛",
+        "下腹痛"
+      ],
       "min_matches": 2,
       "disease": "urinary tract infection",
       "body_system": "renal",
       "etiology": "bacterial"
     },
     {
-      "keywords": ["反酸", "烧心", "胃酸", "饭后加重", "胸骨后烧灼感"],
+      "keywords": [
+        "反酸",
+        "烧心",
+        "胃酸",
+        "饭后加重",
+        "胸骨后烧灼感"
+      ],
       "min_matches": 2,
       "disease": "gastroesophageal reflux disease",
       "body_system": "gastrointestinal",
       "etiology": "reflux"
     },
     {
-      "keywords": ["鼻塞", "流鼻涕", "打喷嚏", "鼻痒", "流涕"],
+      "keywords": [
+        "鼻塞",
+        "流鼻涕",
+        "打喷嚏",
+        "鼻痒",
+        "流涕"
+      ],
       "min_matches": 2,
       "disease": "allergic rhinitis",
       "body_system": "respiratory",
       "etiology": "allergic"
     },
     {
-      "keywords": ["咳嗽", "咳痰", "发热", "发烧", "胸痛"],
+      "keywords": [
+        "咳嗽",
+        "咳痰",
+        "发热",
+        "发烧",
+        "胸痛"
+      ],
       "min_matches": 3,
       "disease": "pneumonia",
       "body_system": "respiratory",
       "etiology": "bacterial"
     },
     {
-      "keywords": ["关节痛", "关节疼", "晨僵", "对称性", "关节肿胀"],
+      "keywords": [
+        "关节痛",
+        "关节疼",
+        "晨僵",
+        "对称性",
+        "关节肿胀"
+      ],
       "min_matches": 2,
       "disease": "rheumatoid arthritis",
       "body_system": "musculoskeletal",
       "etiology": "autoimmune"
     },
     {
-      "keywords": ["胃痛", "胃疼", "上腹痛", "饭后痛", "空腹痛", "夜间痛"],
+      "keywords": [
+        "胃痛",
+        "胃疼",
+        "上腹痛",
+        "饭后痛",
+        "空腹痛",
+        "夜间痛"
+      ],
       "min_matches": 2,
       "disease": "gastric ulcer",
       "body_system": "gastrointestinal",
       "etiology": "erosive"
     },
     {
-      "keywords": ["腰痛", "腰疼", "下背痛", "腿麻", "坐骨神经"],
+      "keywords": [
+        "腰痛",
+        "腰疼",
+        "下背痛",
+        "腿麻",
+        "坐骨神经"
+      ],
       "min_matches": 2,
       "disease": "low back pain",
       "body_system": "musculoskeletal",
       "etiology": "mechanical"
+    },
+    {
+      "keywords": [
+        "喘息",
+        "气促",
+        "胸闷",
+        "咳嗽"
+      ],
+      "min_matches": 2,
+      "disease": "asthma",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "咳嗽",
+        "咳痰",
+        "低热"
+      ],
+      "min_matches": 2,
+      "disease": "acute bronchitis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "咽痛",
+        "干咳",
+        "咽痒"
+      ],
+      "min_matches": 2,
+      "disease": "pharyngitis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "咳嗽",
+        "咯血",
+        "盗汗",
+        "低热"
+      ],
+      "min_matches": 2,
+      "disease": "pulmonary tuberculosis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "腹痛",
+        "腹泻",
+        "发热"
+      ],
+      "min_matches": 2,
+      "disease": "acute gastroenteritis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "上腹痛",
+        "反酸",
+        "餐后或饥饿痛"
+      ],
+      "min_matches": 2,
+      "disease": "peptic ulcer",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "腹痛",
+        "腹胀",
+        "腹泻或便秘"
+      ],
+      "min_matches": 2,
+      "disease": "irritable bowel syndrome",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "右上腹痛",
+        "恶心",
+        "发热"
+      ],
+      "min_matches": 2,
+      "disease": "cholecystitis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "转移性右下腹痛",
+        "恶心",
+        "发热"
+      ],
+      "min_matches": 2,
+      "disease": "appendicitis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "剧烈上腹痛",
+        "放射至背",
+        "呕吐"
+      ],
+      "min_matches": 2,
+      "disease": "acute pancreatitis",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "胸闷",
+        "气短",
+        "下肢水肿"
+      ],
+      "min_matches": 2,
+      "disease": "heart failure",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "头晕",
+        "眼花",
+        "乏力"
+      ],
+      "min_matches": 2,
+      "disease": "hypotension",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "胸痛",
+        "气短",
+        "左肩臂放射"
+      ],
+      "min_matches": 2,
+      "disease": "angina pectoris",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "剧烈胸痛",
+        "大汗",
+        "濒死感"
+      ],
+      "min_matches": 2,
+      "disease": "myocardial infarction",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "心悸",
+        "心慌",
+        "头晕"
+      ],
+      "min_matches": 2,
+      "disease": "arrhythmia",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "眩晕",
+        "耳鸣",
+        "恶心"
+      ],
+      "min_matches": 2,
+      "disease": "ménière's disease",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "一侧头痛",
+        "畏光",
+        "恶心"
+      ],
+      "min_matches": 2,
+      "disease": "migraine",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "双侧紧箍样头痛",
+        "压痛"
+      ],
+      "min_matches": 2,
+      "disease": "tension-type headache",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "突发一侧无力",
+        "言语不清",
+        "口角歪斜"
+      ],
+      "min_matches": 2,
+      "disease": "stroke",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "静止性震颤",
+        "运动迟缓",
+        "肌强直"
+      ],
+      "min_matches": 2,
+      "disease": "parkinson's disease",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "进行性记忆减退",
+        "认知下降"
+      ],
+      "min_matches": 2,
+      "disease": "alzheimer's disease",
+      "body_system": "",
+      "etiology": ""
+    },
+    {
+      "keywords": [
+        "面部电击样剧痛",
+        "触发点"
+      ],
+      "min_matches": 2,
+      "disease": "trigeminal neuralgia",
+      "body_system": "",
+      "etiology": ""
     }
   ]
 }

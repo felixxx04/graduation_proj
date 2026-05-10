@@ -215,9 +215,9 @@
     "etiology": "metabolic"
   },
   "prevention of cerebrovascular accident": {
-    "chinese": "脑血管意外预防",
-    "body_system": "cardiovascular",
-    "etiology": "other"
+    "chinese": "预防脑血管意外",
+    "body_system": "neurologic",
+    "etiology": "vascular"
   },
   "chronic pain": {
     "chinese": "慢性疼痛",
@@ -231,7 +231,7 @@
   },
   "minor aches and pains": {
     "chinese": "轻微疼痛",
-    "body_system": "other",
+    "body_system": "systemic",
     "etiology": "symptomatic"
   },
   "angina pectoris": {
@@ -251,7 +251,7 @@
   },
   "bacterial infection": {
     "chinese": "细菌感染",
-    "body_system": "other",
+    "body_system": "systemic",
     "etiology": "bacterial"
   },
   "sore throat": {
@@ -395,9 +395,9 @@
     "etiology": "symptomatic"
   },
   "otitis media": {
-    "chinese": "中耳炎",
-    "body_system": "other",
-    "etiology": "bacterial"
+    "chinese": "急性中耳炎",
+    "body_system": "respiratory",
+    "etiology": "infectious"
   },
   "dyspepsia": {
     "chinese": "消化不良",
@@ -941,7 +941,7 @@
   },
   "toothache": {
     "chinese": "牙痛",
-    "body_system": "other",
+    "body_system": "gastrointestinal",
     "etiology": "symptomatic"
   },
   "restless legs syndrome": {
@@ -1061,7 +1061,7 @@
   },
   "smoking cessation": {
     "chinese": "戒烟",
-    "body_system": "other",
+    "body_system": "psychiatric",
     "etiology": "psychiatric"
   },
   "hypercalcemia": {
@@ -1206,7 +1206,7 @@
   },
   "hyperuricemia": {
     "chinese": "高尿酸血症",
-    "body_system": "other",
+    "body_system": "",
     "etiology": "metabolic"
   },
   "anxiety disorders": {
@@ -1400,9 +1400,9 @@
     "etiology": "psychiatric"
   },
   "organ transplant rejection prophylaxis": {
-    "chinese": "器官移植排斥预防",
+    "chinese": "器官移植排斥反应预防",
     "body_system": "systemic",
-    "etiology": "other"
+    "etiology": "inflammatory"
   },
   "leukemia": {
     "chinese": "急性白血病",
@@ -1447,7 +1447,7 @@
   "febrile neutropenia": {
     "chinese": "发热性中性粒细胞减少症",
     "body_system": "hematologic",
-    "etiology": "other"
+    "etiology": "deficiency"
   },
   "gonorrhea": {
     "chinese": "淋病",
@@ -1572,7 +1572,7 @@
   "dandruff": {
     "chinese": "头皮屑",
     "body_system": "dermatologic",
-    "etiology": "other"
+    "etiology": "fungal"
   },
   "ichthyosis": {
     "chinese": "鱼鳞病",
@@ -1655,9 +1655,9 @@
     "etiology": "bacterial"
   },
   "ovulation induction": {
-    "chinese": "诱导排卵",
+    "chinese": "促排卵",
     "body_system": "reproductive",
-    "etiology": "endocrine"
+    "etiology": "hormonal"
   },
   "stroke prevention in atrial fibrillation": {
     "chinese": "房颤卒中预防",
@@ -1687,7 +1687,7 @@
   "melasma": {
     "chinese": "黄褐斑",
     "body_system": "dermatologic",
-    "etiology": "endocrine"
+    "etiology": "hormonal"
   },
   "muscle spasticity": {
     "chinese": "肌肉痉挛状态",
@@ -1751,7 +1751,7 @@
   },
   "dental infection": {
     "chinese": "牙科感染",
-    "body_system": "other",
+    "body_system": "gastrointestinal",
     "etiology": "bacterial"
   },
   "nephrotic syndrome": {
@@ -1800,49 +1800,49 @@
     "etiology": "neoplastic"
   },
   "hot flashes": {
-    "chinese": "urinary incontinence",
-    "body_system": "尿失禁",
-    "etiology": "renal"
+    "chinese": "潮热",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "skin itching": {
-    "chinese": "skin itching",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "皮肤瘙痒",
+    "body_system": "dermatologic",
+    "etiology": "symptomatic"
   },
   "androgenetic alopecia": {
-    "chinese": "androgenetic alopecia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "雄激素性脱发",
+    "body_system": "dermatologic",
+    "etiology": "hormonal"
   },
   "cutaneous candidiasis": {
-    "chinese": "cutaneous candidiasis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "皮肤念珠菌病",
+    "body_system": "dermatologic",
+    "etiology": "fungal"
   },
   "lennox-gastaut syndrome": {
-    "chinese": "lennox-gastaut syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "Lennox-Gastaut综合征",
+    "body_system": "neurologic",
+    "etiology": "chronic"
   },
   "breakthrough cancer pain": {
-    "chinese": "breakthrough cancer pain",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "癌性爆发痛",
+    "body_system": "neurologic",
+    "etiology": "neoplastic"
   },
   "exercise-induced bronchospasm": {
-    "chinese": "exercise-induced bronchospasm",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "运动诱发性支气管痉挛",
+    "body_system": "respiratory",
+    "etiology": "functional"
   },
   "gestational diabetes mellitus": {
-    "chinese": "gestational diabetes mellitus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "糖尿病",
+    "body_system": "endocrine",
+    "etiology": "metabolic"
   },
   "lupus": {
-    "chinese": "lupus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "狼疮",
+    "body_system": "systemic",
+    "etiology": "autoimmune"
   },
   "diabetes mellitus": {
     "chinese": "diabetes mellitus",
@@ -1850,24 +1850,24 @@
     "etiology": ""
   },
   "neuroblastoma": {
-    "chinese": "neuroblastoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "神经母细胞瘤",
+    "body_system": "neurologic",
+    "etiology": "neoplastic"
   },
   "scabies": {
-    "chinese": "scabies",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "疥疮",
+    "body_system": "dermatologic",
+    "etiology": "parasitic"
   },
   "acute bacterial exacerbation of chronic bronchitis": {
-    "chinese": "acute bacterial exacerbation of chronic bronchitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "支气管炎",
+    "body_system": "respiratory",
+    "etiology": "infectious"
   },
   "acute myocardial infarction": {
-    "chinese": "acute myocardial infarction",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "急性心肌梗死",
+    "body_system": "cardiovascular",
+    "etiology": "ischemic"
   },
   "bronchitis": {
     "chinese": "bronchitis",
@@ -1875,104 +1875,104 @@
     "etiology": ""
   },
   "polycystic ovary syndrome": {
-    "chinese": "polycystic ovary syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "多囊卵巢综合征",
+    "body_system": "reproductive",
+    "etiology": "hormonal"
   },
   "vitiligo": {
-    "chinese": "vitiligo",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "白癜风",
+    "body_system": "dermatologic",
+    "etiology": "autoimmune"
   },
   "bacterial vaginosis": {
-    "chinese": "bacterial vaginosis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "细菌性阴道病",
+    "body_system": "reproductive",
+    "etiology": "bacterial"
   },
   "neurogenic detrusor overactivity": {
-    "chinese": "neurogenic detrusor overactivity",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "神经源性逼尿肌过度活动",
+    "body_system": "renal",
+    "etiology": "functional"
   },
   "hepatocellular carcinoma": {
-    "chinese": "hepatocellular carcinoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肝细胞癌",
+    "body_system": "hepatic",
+    "etiology": "neoplastic"
   },
   "diphtheria": {
-    "chinese": "diphtheria",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "白喉",
+    "body_system": "respiratory",
+    "etiology": "bacterial"
   },
   "atrial flutter": {
-    "chinese": "atrial flutter",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心房扑动",
+    "body_system": "cardiovascular",
+    "etiology": "degenerative"
   },
   "raynaud's phenomenon": {
-    "chinese": "raynaud's phenomenon",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "雷诺现象",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "dehydration": {
-    "chinese": "dehydration",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "脱水",
+    "body_system": "systemic",
+    "etiology": "deficiency"
   },
   "plague": {
-    "chinese": "plague",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "鼠疫",
+    "body_system": "systemic",
+    "etiology": "bacterial"
   },
   "tardive dyskinesia": {
-    "chinese": "tardive dyskinesia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "迟发性运动障碍",
+    "body_system": "neurologic",
+    "etiology": "psychiatric"
   },
   "keratosis pilaris": {
-    "chinese": "keratosis pilaris",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "毛周角化病",
+    "body_system": "dermatologic",
+    "etiology": "genetic"
   },
   "biliary calculus": {
-    "chinese": "biliary calculus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "胆结石",
+    "body_system": "biliary",
+    "etiology": "metabolic"
   },
   "cold symptoms": {
-    "chinese": "cold symptoms",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "感冒症状",
+    "body_system": "respiratory",
+    "etiology": "viral"
   },
   "cough associated with cold": {
-    "chinese": "cough associated with cold",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "感冒相关咳嗽",
+    "body_system": "respiratory",
+    "etiology": "viral"
   },
   "cardiovascular risk reduction in type 2 diabetes": {
-    "chinese": "cardiovascular risk reduction in type 2 diabetes",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "2型糖尿病患者心血管风险降低",
+    "body_system": "cardiovascular",
+    "etiology": "metabolic"
   },
   "overweight with weight-related comorbidities": {
-    "chinese": "overweight with weight-related comorbidities",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "超重伴有体重相关合并症",
+    "body_system": "endocrine",
+    "etiology": "metabolic"
   },
   "insect bites": {
-    "chinese": "insect bites",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "虫咬",
+    "body_system": "dermatologic",
+    "etiology": "inflammatory"
   },
   "hypertensive emergencies": {
-    "chinese": "hypertensive emergencies",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "高血压急症",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "urinary incontinence": {
-    "chinese": "urinary incontinence",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "尿失禁",
+    "body_system": "renal",
+    "etiology": "functional"
   },
   "pain with associated sleeplessness": {
     "chinese": "疼痛伴失眠",
@@ -2150,179 +2150,179 @@
     "etiology": "fungal"
   },
   "hormone replacement": {
-    "chinese": "hormone replacement",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "激素替代",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "soft tissue sarcoma": {
-    "chinese": "soft tissue sarcoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "软组织肉瘤",
+    "body_system": "musculoskeletal",
+    "etiology": "neoplastic"
   },
   "atrial fibrillation/flutter": {
-    "chinese": "atrial fibrillation/flutter",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心房颤动/扑动",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "shock": {
-    "chinese": "shock",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "休克",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "lymphoma": {
-    "chinese": "lymphoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "淋巴瘤",
+    "body_system": "hematologic",
+    "etiology": "neoplastic"
   },
   "periodontitis": {
-    "chinese": "periodontitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "牙周炎",
+    "body_system": "gastrointestinal",
+    "etiology": "bacterial"
   },
   "hair loss": {
-    "chinese": "hair loss",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "脱发",
+    "body_system": "dermatologic",
+    "etiology": "hormonal"
   },
   "anemia": {
-    "chinese": "anemia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "贫血",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
   },
   "complicated skin and soft tissue infection": {
-    "chinese": "complicated skin and soft tissue infection",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "复杂性皮肤及软组织感染",
+    "body_system": "dermatologic",
+    "etiology": "bacterial"
   },
   "h. pylori eradication (part of regimen)": {
-    "chinese": "h. pylori eradication (part of regimen)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "幽门螺杆菌根除（方案组成部分）",
+    "body_system": "gastrointestinal",
+    "etiology": "bacterial"
   },
   "gender-affirming hormone therapy": {
-    "chinese": "gender-affirming hormone therapy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "性别肯定激素治疗",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "breast cancer (hormone receptor-positive, her2-negative)": {
-    "chinese": "breast cancer (hormone receptor-positive, her2-negative)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "乳腺癌（激素受体阳性，HER2阴性）",
+    "body_system": "reproductive",
+    "etiology": "neoplastic"
   },
   "tinea versicolor": {
-    "chinese": "tinea versicolor",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "花斑癣",
+    "body_system": "dermatologic",
+    "etiology": "fungal"
   },
   "hypotension": {
-    "chinese": "hypotension",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "低血压",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "folate deficiency": {
-    "chinese": "folate deficiency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "叶酸缺乏",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
   },
   "partial seizures": {
-    "chinese": "partial seizures",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "部分性癫痫发作",
+    "body_system": "neurologic",
+    "etiology": "symptomatic"
   },
   "central precocious puberty": {
-    "chinese": "central precocious puberty",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "中枢性性早熟",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "nephrogenic diabetes insipidus": {
-    "chinese": "nephrogenic diabetes insipidus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肾性尿崩症",
+    "body_system": "renal",
+    "etiology": "hormonal"
   },
   "essential thrombocythemia": {
-    "chinese": "essential thrombocythemia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "原发性血小板增多症",
+    "body_system": "hematologic",
+    "etiology": "neoplastic"
   },
   "gist": {
-    "chinese": "gist",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "胃肠道间质瘤",
+    "body_system": "gastrointestinal",
+    "etiology": "neoplastic"
   },
   "severe nodular acne": {
-    "chinese": "severe nodular acne",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "重度结节性痤疮",
+    "body_system": "dermatologic",
+    "etiology": "inflammatory"
   },
   "prostatitis": {
-    "chinese": "prostatitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "前列腺炎",
+    "body_system": "reproductive",
+    "etiology": "inflammatory"
   },
   "myxedema coma": {
-    "chinese": "myxedema coma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "粘液性水肿昏迷",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "nausea and vomiting in pregnancy": {
-    "chinese": "nausea and vomiting in pregnancy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "妊娠期恶心呕吐",
+    "body_system": "reproductive",
+    "etiology": "hormonal"
   },
   "endometrial hyperplasia prevention": {
-    "chinese": "endometrial hyperplasia prevention",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "子宫内膜增生预防",
+    "body_system": "reproductive",
+    "etiology": "hormonal"
   },
   "supportive": {
-    "chinese": "supportive",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "支持治疗",
+    "body_system": "systemic",
+    "etiology": "symptomatic"
   },
   "muscle spasms": {
-    "chinese": "muscle spasms",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肌肉痉挛",
+    "body_system": "musculoskeletal",
+    "etiology": "functional"
   },
   "multiple sclerosis exacerbation": {
-    "chinese": "multiple sclerosis exacerbation",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "多发性硬化急性加重",
+    "body_system": "neurologic",
+    "etiology": "autoimmune"
   },
   "trichomoniasis": {
-    "chinese": "trichomoniasis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "滴虫病",
+    "body_system": "reproductive",
+    "etiology": "parasitic"
   },
   "posttraumatic stress disorder": {
-    "chinese": "posttraumatic stress disorder",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "创伤后应激障碍",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "hepatic encephalopathy": {
-    "chinese": "hepatic encephalopathy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肝性脑病",
+    "body_system": "hepatic",
+    "etiology": "metabolic"
   },
   "postoperative ileus": {
-    "chinese": "postoperative ileus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "术后肠梗阻",
+    "body_system": "gastrointestinal",
+    "etiology": "functional"
   },
   "pellagra": {
-    "chinese": "pellagra",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "烟酸缺乏（糙皮病）",
+    "body_system": "systemic",
+    "etiology": "deficiency"
   },
   "preterm labor": {
-    "chinese": "preterm labor",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "早产",
+    "body_system": "reproductive",
+    "etiology": "hormonal"
   },
   "giardiasis": {
-    "chinese": "giardiasis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "贾第鞭毛虫病",
+    "body_system": "gastrointestinal",
+    "etiology": "parasitic"
   },
   "tonic-clonic seizures": {
     "chinese": "强直-阵挛发作",
@@ -3177,7 +3177,7 @@
   "secondary amenorrhea": {
     "chinese": "继发性闭经",
     "body_system": "reproductive",
-    "etiology": "endocrine"
+    "etiology": "hormonal"
   },
   "abnormal uterine bleeding": {
     "chinese": "异常子宫出血",
@@ -3200,104 +3200,104 @@
     "etiology": "neoplastic"
   },
   "moderate to severe alzheimer's disease": {
-    "chinese": "moderate to severe alzheimer's disease",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "中度至重度阿尔茨海默病",
+    "body_system": "neurologic",
+    "etiology": "degenerative"
   },
   "parkinson's disease dementia": {
-    "chinese": "parkinson's disease dementia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "帕金森病痴呆",
+    "body_system": "neurologic",
+    "etiology": "degenerative"
   },
   "moderate to severe acute pain": {
-    "chinese": "moderate to severe acute pain",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "中度至重度急性疼痛",
+    "body_system": "neurologic",
+    "etiology": "acute"
   },
   "mild to moderate ulcerative colitis": {
-    "chinese": "mild to moderate ulcerative colitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "轻度至中度溃疡性结肠炎",
+    "body_system": "gastrointestinal",
+    "etiology": "autoimmune"
   },
   "ulcerative proctitis": {
-    "chinese": "ulcerative proctitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "溃疡性直肠炎",
+    "body_system": "gastrointestinal",
+    "etiology": "autoimmune"
   },
   "ulcerative proctosigmoiditis": {
-    "chinese": "ulcerative proctosigmoiditis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "溃疡性直肠乙状结肠炎",
+    "body_system": "gastrointestinal",
+    "etiology": "autoimmune"
   },
   "neonatal abstinence syndrome": {
-    "chinese": "neonatal abstinence syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "新生儿戒断综合征",
+    "body_system": "systemic",
+    "etiology": "symptomatic"
   },
   "graves' disease": {
-    "chinese": "graves' disease",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "格雷夫斯病",
+    "body_system": "endocrine",
+    "etiology": "autoimmune"
   },
   "tetanus": {
-    "chinese": "tetanus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "破伤风",
+    "body_system": "neurologic",
+    "etiology": "bacterial"
   },
   "ectopic pregnancy": {
-    "chinese": "ectopic pregnancy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "异位妊娠",
+    "body_system": "reproductive",
+    "etiology": "acute"
   },
   "cutaneous t-cell lymphoma": {
-    "chinese": "cutaneous t-cell lymphoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "皮肤T细胞淋巴瘤",
+    "body_system": "dermatologic",
+    "etiology": "neoplastic"
   },
   "diaper rash": {
-    "chinese": "diaper rash",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "尿布疹",
+    "body_system": "dermatologic",
+    "etiology": "inflammatory"
   },
   "sedation before procedures": {
-    "chinese": "sedation before procedures",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "手术前镇静",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "induction of anesthesia": {
-    "chinese": "induction of anesthesia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "麻醉诱导",
+    "body_system": "neurologic",
+    "etiology": "functional"
   },
   "cancer pain": {
-    "chinese": "cancer pain",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "癌性疼痛",
+    "body_system": "systemic",
+    "etiology": "neoplastic"
   },
   "skin and soft tissue infection (methicillin-sensitive staph aureus)": {
-    "chinese": "skin and soft tissue infection (methicillin-sensitive staph aureus)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "皮肤和软组织感染（甲氧西林敏感金黄色葡萄球菌）",
+    "body_system": "dermatologic",
+    "etiology": "bacterial"
   },
   "moderate to severe pain": {
-    "chinese": "moderate to severe pain",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "中度至重度疼痛",
+    "body_system": "neurologic",
+    "etiology": "symptomatic"
   },
   "acute gout": {
-    "chinese": "acute gout",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "急性痛风",
+    "body_system": "musculoskeletal",
+    "etiology": "metabolic"
   },
   "myasthenia gravis": {
-    "chinese": "myasthenia gravis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "重症肌无力",
+    "body_system": "neurologic",
+    "etiology": "autoimmune"
   },
   "reversal of neuromuscular blockade": {
-    "chinese": "reversal of neuromuscular blockade",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "神经肌肉阻滞逆转",
+    "body_system": "neurologic",
+    "etiology": "functional"
   },
   "niacin deficiency (pellagra)": {
     "chinese": "niacin deficiency (pellagra)",
@@ -3305,74 +3305,74 @@
     "etiology": ""
   },
   "otitis externa": {
-    "chinese": "otitis externa",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "外耳炎",
+    "body_system": "dermatologic",
+    "etiology": "bacterial"
   },
   "weight loss maintenance": {
-    "chinese": "weight loss maintenance",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "体重维持",
+    "body_system": "endocrine",
+    "etiology": "metabolic"
   },
   "neurogenic bladder": {
-    "chinese": "neurogenic bladder",
-    "body_system": "",
+    "chinese": "神经源性膀胱",
+    "body_system": "renal",
     "etiology": ""
   },
   "stress ulcer prophylaxis": {
-    "chinese": "stress ulcer prophylaxis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "应激性溃疡预防",
+    "body_system": "gastrointestinal",
+    "etiology": "acute"
   },
   "leishmaniasis": {
-    "chinese": "leishmaniasis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "利什曼病",
+    "body_system": "systemic",
+    "etiology": "parasitic"
   },
   "taeniasis": {
-    "chinese": "taeniasis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "绦虫病",
+    "body_system": "gastrointestinal",
+    "etiology": "parasitic"
   },
   "ptsd": {
-    "chinese": "ptsd",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "创伤后应激障碍",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "anthrax": {
-    "chinese": "anthrax",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "炭疽",
+    "body_system": "systemic",
+    "etiology": "bacterial"
   },
   "pneumocystis pneumonia": {
-    "chinese": "pneumocystis pneumonia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肺孢子菌肺炎",
+    "body_system": "respiratory",
+    "etiology": "fungal"
   },
   "pediculosis capitis": {
-    "chinese": "pediculosis capitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "头虱病",
+    "body_system": "dermatologic",
+    "etiology": "parasitic"
   },
   "arrhythmias": {
-    "chinese": "arrhythmias",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心律失常",
+    "body_system": "cardiovascular",
+    "etiology": "functional"
   },
   "non-alcoholic steatohepatitis": {
-    "chinese": "non-alcoholic steatohepatitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "非酒精性脂肪性肝炎",
+    "body_system": "hepatic",
+    "etiology": "metabolic"
   },
   "periodic limb movement disorder": {
-    "chinese": "periodic limb movement disorder",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "周期性肢体运动障碍",
+    "body_system": "neurologic",
+    "etiology": "functional"
   },
   "prevention of myocardial infarction": {
-    "chinese": "prevention of myocardial infarction",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心肌梗死预防",
+    "body_system": "cardiovascular",
+    "etiology": "ischemic"
   },
   "secondary prevention of cardiovascular disease": {
     "chinese": "心血管疾病二级预防",
@@ -3925,34 +3925,34 @@
     "etiology": "genetic"
   },
   "dermatologic conditions": {
-    "chinese": "dermatologic",
-    "body_system": "symptomatic",
-    "etiology": ""
+    "chinese": "皮肤疾病",
+    "body_system": "dermatologic",
+    "etiology": "inflammatory"
   },
   "preterm labor fetal lung maturation": {
-    "chinese": "reproductive",
-    "body_system": "acute",
-    "etiology": ""
+    "chinese": "早产胎儿肺成熟",
+    "body_system": "respiratory",
+    "etiology": "hormonal"
   },
   "urinary retention": {
-    "chinese": "renal",
-    "body_system": "symptomatic",
-    "etiology": ""
+    "chinese": "尿潴留",
+    "body_system": "renal",
+    "etiology": "functional"
   },
   "systemic sclerosis digital ulcers": {
-    "chinese": "systemic",
-    "body_system": "autoimmune",
-    "etiology": ""
+    "chinese": "系统性硬化症指端溃疡",
+    "body_system": "systemic",
+    "etiology": "autoimmune"
   },
   "facial erythema of rosacea": {
-    "chinese": "dermatologic",
-    "body_system": "inflammatory",
-    "etiology": ""
+    "chinese": "酒渣鼻面部红斑",
+    "body_system": "dermatologic",
+    "etiology": "inflammatory"
   },
   "sexual dysfunction from antidepressants": {
-    "chinese": "reproductive",
-    "body_system": "symptomatic 或 psychiatric？看病因选 symptomatic 较为中性。我选 symptomatic。",
-    "etiology": ""
+    "chinese": "抗抑郁药所致性功能障碍",
+    "body_system": "psychiatric",
+    "etiology": "functional"
   },
   "anxiety symptoms": {
     "chinese": "焦虑症状",
@@ -3965,114 +3965,114 @@
     "etiology": "genetic"
   },
   "scalp psoriasis": {
-    "chinese": "dermatologic",
-    "body_system": "autoimmune",
-    "etiology": ""
+    "chinese": "头皮银屑病",
+    "body_system": "dermatologic",
+    "etiology": "autoimmune"
   },
   "complex regional pain syndrome": {
-    "chinese": "neurologic",
-    "body_system": "inflammatory",
-    "etiology": ""
+    "chinese": "复杂性区域疼痛综合征",
+    "body_system": "neurologic",
+    "etiology": "chronic"
   },
   "hypocalcemia in chronic renal failure": {
-    "chinese": "renal",
-    "body_system": "chronic",
-    "etiology": ""
+    "chinese": "慢性肾衰竭低钙血症",
+    "body_system": "renal",
+    "etiology": "metabolic"
   },
   "secondary hyperparathyroidism": {
-    "chinese": "endocrine",
-    "body_system": "metabolic。也可以说 chronic，因为常伴随慢性肾病。但病因 metabolic 更直接。用 metabolic。",
-    "etiology": ""
+    "chinese": "透析患者继发性甲状旁腺功能亢进",
+    "body_system": "endocrine",
+    "etiology": "metabolic"
   },
   "psoriasis (topical)": {
-    "chinese": "dermatologic",
-    "body_system": "autoimmune",
-    "etiology": ""
+    "chinese": "银屑病（局部）",
+    "body_system": "dermatologic",
+    "etiology": "autoimmune"
   },
   "hyperphosphatemia in chronic renal failure": {
-    "chinese": "renal",
-    "body_system": "chronic",
-    "etiology": ""
+    "chinese": "慢性肾衰竭高磷血症",
+    "body_system": "renal",
+    "etiology": "metabolic"
   },
   "antacid": {
-    "chinese": "gastrointestinal",
-    "body_system": "symptomatic。是不是可译为 \"抗酸剂适应症\" 但要求适应症，抗酸就是缓解症状的。那就这样。",
-    "etiology": ""
+    "chinese": "抗酸",
+    "body_system": "gastrointestinal",
+    "etiology": "functional"
   },
   "diabetic kidney disease": {
-    "chinese": "renal",
-    "body_system": "metabolic",
-    "etiology": ""
+    "chinese": "糖尿病肾病",
+    "body_system": "renal",
+    "etiology": "metabolic"
   },
   "scleroderma renal crisis": {
-    "chinese": "renal",
-    "body_system": "autoimmune",
-    "etiology": ""
+    "chinese": "硬皮病肾危象",
+    "body_system": "renal",
+    "etiology": "autoimmune"
   },
   "parkinson's disease (in combination with levodopa)": {
-    "chinese": "neurologic",
-    "body_system": "degenerative",
-    "etiology": ""
+    "chinese": "帕金森病（与左旋多巴联用）",
+    "body_system": "neurologic",
+    "etiology": "degenerative"
   },
   "acute muscle pain": {
-    "chinese": "musculoskeletal",
-    "body_system": "acute",
-    "etiology": ""
+    "chinese": "急性肌肉疼痛",
+    "body_system": "musculoskeletal",
+    "etiology": "acute"
   },
   "muscle spasm associated with strains or sprains": {
-    "chinese": "musculoskeletal",
-    "body_system": "acute",
-    "etiology": ""
+    "chinese": "拉伤或扭伤相关肌肉痉挛",
+    "body_system": "musculoskeletal",
+    "etiology": "acute"
   },
   "invasive aspergillosis refractory to other therapy": {
-    "chinese": "systemic",
-    "body_system": "fungal",
-    "etiology": ""
+    "chinese": "难治性侵袭性曲霉病",
+    "body_system": "systemic",
+    "etiology": "fungal"
   },
   "candidemia and invasive candidiasis": {
-    "chinese": "systemic",
-    "body_system": "fungal",
-    "etiology": ""
+    "chinese": "念珠菌血症与侵袭性念珠菌病",
+    "body_system": "systemic",
+    "etiology": "fungal"
   },
   "empiric therapy for febrile neutropenia": {
-    "chinese": "hematologic",
-    "body_system": "infectious (注意病因选 infectious，因为针对感染) 但确切说，中性粒细胞减少本身是血液病，病因可能是药物或化疗，但这里“经验性治疗”针对感染。所以病因 infectious 正确。",
-    "etiology": ""
+    "chinese": "发热性中性粒细胞减少经验治疗",
+    "body_system": "hematologic",
+    "etiology": "infectious"
   },
   "surgical site infection prophylaxis": {
-    "chinese": "systemic",
-    "body_system": "bacterial",
-    "etiology": ""
+    "chinese": "手术部位感染预防",
+    "body_system": "systemic",
+    "etiology": "infectious"
   },
   "endocarditis prophylaxis and treatment": {
-    "chinese": "cardiovascular",
-    "body_system": "bacterial",
-    "etiology": ""
+    "chinese": "心内膜炎预防与治疗",
+    "body_system": "cardiovascular",
+    "etiology": "infectious"
   },
   "peritonitis": {
-    "chinese": "gastrointestinal",
-    "body_system": "bacterial",
-    "etiology": ""
+    "chinese": "腹膜炎",
+    "body_system": "gastrointestinal",
+    "etiology": "infectious"
   },
   "acute sinusitis": {
     "chinese": "急性鼻窦炎",
     "body_system": "respiratory",
-    "etiology": "infectious。或者bacterial。我选 infectious。"
+    "etiology": "acute"
   },
   "lyme disease (early stage)": {
-    "chinese": "systemic",
-    "body_system": "bacterial",
-    "etiology": ""
+    "chinese": "莱姆病（早期）",
+    "body_system": "systemic",
+    "etiology": "infectious"
   },
   "mastitis": {
-    "chinese": "reproductive",
-    "body_system": "infectious 或 bacterial。选 bacterial。",
-    "etiology": ""
+    "chinese": "乳腺炎",
+    "body_system": "reproductive",
+    "etiology": "infectious"
   },
   "chronic urticaria": {
-    "chinese": "dermatologic",
-    "body_system": "autoimmune",
-    "etiology": ""
+    "chinese": "慢性荨麻疹",
+    "body_system": "dermatologic",
+    "etiology": "allergic"
   },
   "conjunctivitis (topical)": {
     "chinese": "结膜炎（局部用）",
@@ -4240,9 +4240,9 @@
     "etiology": "genetic"
   },
   "primary hyperparathyroidism": {
-    "chinese": "primary hyperparathyroidism",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "原发性甲状旁腺功能亢进",
+    "body_system": "endocrine",
+    "etiology": "neoplastic"
   },
   "secondary hyperparathyroidism in dialysis patients": {
     "chinese": "secondary hyperparathyroidism in dialysis patients",
@@ -4390,39 +4390,39 @@
     "etiology": "acute"
   },
   "chronic iron overload due to transfusions": {
-    "chinese": "",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "输血所致慢性铁过载",
+    "body_system": "hematologic",
+    "etiology": "metabolic"
   },
   "aluminum toxicity in renal failure": {
-    "chinese": "aluminum toxicity in renal failure",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肾衰竭铝中毒",
+    "body_system": "renal",
+    "etiology": "metabolic"
   },
   "bone loss in prostate cancer on androgen deprivation therapy": {
-    "chinese": "bone loss in prostate cancer on androgen deprivation therapy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "前列腺癌雄激素剥夺治疗骨丢失",
+    "body_system": "musculoskeletal",
+    "etiology": "hormonal"
   },
   "bone loss in breast cancer on aromatase inhibitor therapy": {
-    "chinese": "bone loss in breast cancer on aromatase inhibitor therapy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "乳腺癌芳香化酶抑制剂治疗骨丢失",
+    "body_system": "musculoskeletal",
+    "etiology": "hormonal"
   },
   "central diabetes insipidus": {
-    "chinese": "central diabetes insipidus",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "中枢性尿崩症",
+    "body_system": "endocrine",
+    "etiology": "deficiency"
   },
   "hemophilia a (mild)": {
-    "chinese": "hemophilia a (mild)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "血友病A（轻型）",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
   },
   "von willebrand disease (type 1)": {
-    "chinese": "von willebrand disease (type 1)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "血管性血友病（1型）",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
   },
   "psoriasis (face/groin)": {
     "chinese": "银屑病（面部/腹股沟）",
@@ -4445,19 +4445,19 @@
     "etiology": "psychiatric"
   },
   "functional bowel disorders": {
-    "chinese": "functional bowel disorders",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "功能性肠病",
+    "body_system": "gastrointestinal",
+    "etiology": "functional"
   },
   "atrial flutter rate control": {
-    "chinese": "atrial flutter rate control",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心房扑动心室率控制",
+    "body_system": "cardiovascular",
+    "etiology": "functional"
   },
   "anal fissure (topical)": {
-    "chinese": "anal fissure (topical)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肛裂（局部）",
+    "body_system": "gastrointestinal",
+    "etiology": "acute"
   },
   "cervical ripening": {
     "chinese": "cervical ripening",
@@ -5470,9 +5470,9 @@
     "etiology": "functional"
   },
   "primary carnitine deficiency": {
-    "chinese": "primary carnitine deficiency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "原发性肉碱缺乏症",
+    "body_system": "systemic",
+    "etiology": "deficiency"
   },
   "adjunctive therapy in major depression": {
     "chinese": "重性抑郁障碍的辅助治疗",
@@ -5510,24 +5510,24 @@
     "etiology": "symptomatic"
   },
   "anxiety associated with depression": {
-    "chinese": "anxiety associated with depression",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "与抑郁相关的焦虑",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "chemotherapy-induced nausea and vomiting (adjunct)": {
-    "chinese": "chemotherapy-induced nausea and vomiting (adjunct)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "化疗引起的恶心与呕吐（辅助用药）",
+    "body_system": "gastrointestinal",
+    "etiology": "neoplastic"
   },
   "stroke risk reduction in hypertension with left ventricular hypertrophy": {
-    "chinese": "stroke risk reduction in hypertension with left ventricular hypertrophy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "高血压伴左心室肥厚患者的卒中风险降低",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "primary prevention of cardiovascular events": {
-    "chinese": "primary prevention of cardiovascular events",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心血管事件的一级预防",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "secondary prevention of cardiovascular events": {
     "chinese": "secondary prevention of cardiovascular events",
@@ -6690,14 +6690,14 @@
     "etiology": ""
   },
   "growth hormone deficiency": {
-    "chinese": "growth hormone deficiency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "生长激素缺乏症",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "turner syndrome": {
-    "chinese": "turner syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "特纳综合征",
+    "body_system": "endocrine",
+    "etiology": "genetic"
   },
   "prader-willi syndrome": {
     "chinese": "普拉德-威利综合征",
@@ -6760,119 +6760,119 @@
     "etiology": "metabolic"
   },
   "idiopathic short stature": {
-    "chinese": "idiopathic short stature",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "特发性身材矮小",
+    "body_system": "endocrine",
+    "etiology": "functional"
   },
   "oral mucositis": {
-    "chinese": "oral mucositis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "口腔黏膜炎",
+    "body_system": "gastrointestinal",
+    "etiology": "inflammatory"
   },
   "anesthesia": {
-    "chinese": "anesthesia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "麻醉",
+    "body_system": "neurologic",
+    "etiology": "symptomatic"
   },
   "labor pain": {
-    "chinese": "labor pain",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "分娩疼痛",
+    "body_system": "reproductive",
+    "etiology": "acute"
   },
   "analgesia": {
-    "chinese": "analgesia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "镇痛",
+    "body_system": "neurologic",
+    "etiology": "symptomatic"
   },
   "pancreatic neuroendocrine tumor": {
-    "chinese": "pancreatic neuroendocrine tumor",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "胰腺神经内分泌肿瘤",
+    "body_system": "endocrine",
+    "etiology": "neoplastic"
   },
   "prevention of breast cancer in high-risk women": {
-    "chinese": "prevention of breast cancer in high-risk women",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "高危女性乳腺癌预防",
+    "body_system": "reproductive",
+    "etiology": "neoplastic"
   },
   "kidney stone expulsion": {
-    "chinese": "kidney stone expulsion",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "肾结石排出",
+    "body_system": "renal",
+    "etiology": "metabolic"
   },
   "acute bacterial skin and skin structure infections": {
-    "chinese": "acute bacterial skin and skin structure infections",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "急性细菌性皮肤及皮肤结构感染",
+    "body_system": "dermatologic",
+    "etiology": "bacterial"
   },
   "ventilator-associated pneumonia": {
-    "chinese": "ventilator-associated pneumonia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "呼吸机相关性肺炎",
+    "body_system": "respiratory",
+    "etiology": "bacterial"
   },
   "glioblastoma multiforme": {
-    "chinese": "glioblastoma multiforme",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "多形性胶质母细胞瘤",
+    "body_system": "neurologic",
+    "etiology": "neoplastic"
   },
   "anaplastic astrocytoma": {
-    "chinese": "anaplastic astrocytoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "间变性星形细胞瘤",
+    "body_system": "neurologic",
+    "etiology": "neoplastic"
   },
   "fungal nail infections": {
-    "chinese": "fungal nail infections",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "真菌性指甲感染",
+    "body_system": "dermatologic",
+    "etiology": "fungal"
   },
   "fracture nonunion": {
-    "chinese": "fracture nonunion",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "骨折不愈合",
+    "body_system": "musculoskeletal",
+    "etiology": "degenerative"
   },
   "delayed puberty": {
-    "chinese": "delayed puberty",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "青春期延迟",
+    "body_system": "endocrine",
+    "etiology": "hormonal"
   },
   "low libido": {
-    "chinese": "low libido",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "性欲低下",
+    "body_system": "reproductive",
+    "etiology": "hormonal"
   },
   "huntington's disease chorea": {
-    "chinese": "huntington's disease chorea",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "亨廷顿病舞蹈症",
+    "body_system": "neurologic",
+    "etiology": "genetic"
   },
   "erythema nodosum leprosum": {
-    "chinese": "erythema nodosum leprosum",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "麻风结节性红斑",
+    "body_system": "dermatologic",
+    "etiology": "bacterial"
   },
   "myelodysplastic syndrome": {
-    "chinese": "myelodysplastic syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "骨髓增生异常综合征",
+    "body_system": "hematologic",
+    "etiology": "neoplastic"
   },
   "neonatal apnea": {
-    "chinese": "neonatal apnea",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "新生儿呼吸暂停",
+    "body_system": "respiratory",
+    "etiology": "functional"
   },
   "malignant lymphoma": {
-    "chinese": "malignant lymphoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "恶性淋巴瘤",
+    "body_system": "hematologic",
+    "etiology": "neoplastic"
   },
   "conditioning before hematopoietic stem cell transplantation": {
-    "chinese": "conditioning before hematopoietic stem cell transplantation",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "造血干细胞移植前预处理",
+    "body_system": "hematologic",
+    "etiology": "neoplastic"
   },
   "stroke": {
-    "chinese": "stroke",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "脑卒中",
+    "body_system": "neurologic",
+    "etiology": "vascular"
   },
   "septicemia": {
     "chinese": "败血症",
@@ -7040,169 +7040,169 @@
     "etiology": "acute"
   },
   "cytomegalovirus prophylaxis in transplant": {
-    "chinese": "cytomegalovirus prophylaxis in transplant",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "移植后巨细胞病毒预防",
+    "body_system": "systemic",
+    "etiology": "viral"
   },
   "medullary thyroid cancer": {
-    "chinese": "medullary thyroid cancer",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "甲状腺髓样癌",
+    "body_system": "endocrine",
+    "etiology": "neoplastic"
   },
   "esophageal variceal bleeding": {
-    "chinese": "esophageal variceal bleeding",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "食管静脉曲张出血",
+    "body_system": "gastrointestinal",
+    "etiology": "hemorrhagic"
   },
   "ventricular fibrillation": {
-    "chinese": "ventricular fibrillation",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "心室颤动",
+    "body_system": "cardiovascular",
+    "etiology": "ischemic"
   },
   "erdheim-chester disease": {
-    "chinese": "erdheim-chester disease",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "埃尔德海姆-切斯特病",
+    "body_system": "systemic",
+    "etiology": "neoplastic"
   },
   "kaposi's sarcoma": {
-    "chinese": "kaposi's sarcoma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "卡波西肉瘤",
+    "body_system": "dermatologic",
+    "etiology": "neoplastic"
   },
   "fungal keratitis": {
-    "chinese": "fungal keratitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "真菌性角膜炎",
+    "body_system": "ophthalmic",
+    "etiology": "fungal"
   },
   "prevention of thromboembolism": {
-    "chinese": "prevention of thromboembolism",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "血栓栓塞的预防",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "mechanical heart valve": {
-    "chinese": "mechanical heart valve",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "机械心脏瓣膜",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "antiphospholipid syndrome": {
-    "chinese": "antiphospholipid syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "抗磷脂综合征",
+    "body_system": "hematologic",
+    "etiology": "autoimmune"
   },
   "thromboembolism prevention/treatment": {
-    "chinese": "thromboembolism prevention/treatment",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "血栓栓塞的预防/治疗",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "bone metastases from solid tumors": {
-    "chinese": "bone metastases from solid tumors",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "实体瘤骨转移",
+    "body_system": "musculoskeletal",
+    "etiology": "neoplastic"
   },
   "inhalational anthrax": {
-    "chinese": "inhalational anthrax",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "吸入性炭疽",
+    "body_system": "respiratory",
+    "etiology": "bacterial"
   },
   "folate supplementation": {
-    "chinese": "folate supplementation",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "叶酸补充",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
   },
   "chronic periodontitis": {
-    "chinese": "chronic periodontitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "慢性牙周炎",
+    "body_system": "gastrointestinal",
+    "etiology": "inflammatory"
   },
   "secondarily infected skin lesions": {
-    "chinese": "secondarily infected skin lesions",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "继发感染的皮肤病变",
+    "body_system": "dermatologic",
+    "etiology": "infectious"
   },
   "calluses": {
-    "chinese": "calluses",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "胼胝",
+    "body_system": "dermatologic",
+    "etiology": "functional"
   },
   "pharmacokinetic booster": {
-    "chinese": "pharmacokinetic booster",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "药代动力学增强剂",
+    "body_system": "systemic",
+    "etiology": "functional"
   },
   "primary immunodeficiency": {
-    "chinese": "primary immunodeficiency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "原发性免疫缺陷",
+    "body_system": "systemic",
+    "etiology": "genetic"
   },
   "immune thrombocytopenic purpura": {
-    "chinese": "immune thrombocytopenic purpura",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "免疫性血小板减少性紫癜",
+    "body_system": "hematologic",
+    "etiology": "autoimmune"
   },
   "kawasaki disease": {
-    "chinese": "kawasaki disease",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "川崎病",
+    "body_system": "cardiovascular",
+    "etiology": "inflammatory"
   },
   "multifocal motor neuropathy": {
-    "chinese": "multifocal motor neuropathy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "多灶性运动神经病",
+    "body_system": "neurologic",
+    "etiology": "autoimmune"
   },
   "chronic inflammatory demyelinating polyneuropathy": {
-    "chinese": "chronic inflammatory demyelinating polyneuropathy",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "慢性炎性脱髓鞘性多发性神经病",
+    "body_system": "neurologic",
+    "etiology": "autoimmune"
   },
   "chronic moderate to severe plaque psoriasis in pediatric patients": {
-    "chinese": "chronic moderate to severe plaque psoriasis in pediatric patients",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "儿童慢性中重度斑块型银屑病",
+    "body_system": "dermatologic",
+    "etiology": "autoimmune"
   },
   "alzheimer disease (mild cognitive impairment or mild dementia stage)": {
-    "chinese": "alzheimer disease (mild cognitive impairment or mild dementia stage)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "阿尔茨海默病（轻度认知障碍或轻度痴呆阶段）",
+    "body_system": "neurologic",
+    "etiology": "degenerative"
   },
   "rheumatic fever": {
-    "chinese": "rheumatic fever",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "风湿热",
+    "body_system": "cardiovascular",
+    "etiology": "autoimmune"
   },
   "acute angina pectoris": {
-    "chinese": "acute angina pectoris",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "急性心绞痛",
+    "body_system": "cardiovascular",
+    "etiology": "ischemic"
   },
   "anticoagulation during surgery": {
-    "chinese": "anticoagulation during surgery",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "手术期间抗凝",
+    "body_system": "hematologic",
+    "etiology": "acute"
   },
   "atrial fibrillation with embolization": {
-    "chinese": "atrial fibrillation with embolization",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "房颤伴栓塞",
+    "body_system": "cardiovascular",
+    "etiology": "ischemic"
   },
   "anticoagulation during percutaneous coronary intervention": {
-    "chinese": "anticoagulation during percutaneous coronary intervention",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "经皮冠状动脉介入治疗期间抗凝",
+    "body_system": "cardiovascular",
+    "etiology": "acute"
   },
   "hypereosinophilic syndrome": {
-    "chinese": "hypereosinophilic syndrome",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "嗜酸性粒细胞增多综合征",
+    "body_system": "hematologic",
+    "etiology": "neoplastic"
   },
   "severe asthma with eosinophilic phenotype": {
-    "chinese": "severe asthma with eosinophilic phenotype",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "重度哮喘",
+    "body_system": "respiratory",
+    "etiology": "inflammatory"
   },
   "severe asthma": {
-    "chinese": "severe asthma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "重度哮喘（附加维持治疗）",
+    "body_system": "respiratory",
+    "etiology": "inflammatory"
   },
   "severe asthma (add-on maintenance)": {
     "chinese": "severe asthma (add-on maintenance)",
@@ -7210,19 +7210,19 @@
     "etiology": ""
   },
   "bursitis": {
-    "chinese": "bursitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "滑囊炎",
+    "body_system": "musculoskeletal",
+    "etiology": "inflammatory"
   },
   "apnea of prematurity": {
-    "chinese": "apnea of prematurity",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "早产儿呼吸暂停",
+    "body_system": "respiratory",
+    "etiology": "functional"
   },
   "fatigue": {
-    "chinese": "fatigue",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "疲劳",
+    "body_system": "systemic",
+    "etiology": "symptomatic"
   },
   "adjunct in tension headache": {
     "chinese": "紧张性头痛的辅助治疗",
@@ -7750,179 +7750,179 @@
     "etiology": "inflammatory"
   },
   "acute allergic reaction": {
-    "chinese": "acute allergic reaction",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "急性过敏反应",
+    "body_system": "systemic",
+    "etiology": "allergic"
   },
   "sleep onset latency": {
-    "chinese": "sleep onset latency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "入睡潜伏期延长",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "sleep maintenance": {
-    "chinese": "sleep maintenance",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "睡眠维持障碍",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "insomnia characterized by difficulty with sleep onset": {
-    "chinese": "insomnia characterized by difficulty with sleep onset",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "以入睡困难为特征的失眠症",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "intracranial hypertension": {
-    "chinese": "intracranial hypertension",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "颅内高压",
+    "body_system": "neurologic",
+    "etiology": "symptomatic"
   },
   "insomnia (short-term treatment)": {
-    "chinese": "insomnia (short-term treatment)",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "失眠（短期治疗）",
+    "body_system": "psychiatric",
+    "etiology": "psychiatric"
   },
   "migraine prevention": {
-    "chinese": "migraine prevention",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "偏头痛预防",
+    "body_system": "neurologic",
+    "etiology": "vascular"
   },
   "uterine atony": {
-    "chinese": "uterine atony",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "子宫收缩乏力",
+    "body_system": "reproductive",
+    "etiology": "functional"
   },
   "vitamin deficiency": {
-    "chinese": "vitamin deficiency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "维生素缺乏",
+    "body_system": "systemic",
+    "etiology": "deficiency"
   },
   "chronic venous insufficiency": {
-    "chinese": "chronic venous insufficiency",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "慢性静脉功能不全",
+    "body_system": "cardiovascular",
+    "etiology": "vascular"
   },
   "minor arthritis": {
-    "chinese": "minor arthritis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "轻度关节炎",
+    "body_system": "musculoskeletal",
+    "etiology": "inflammatory"
   },
   "bone loss": {
-    "chinese": "bone loss",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "骨质流失",
+    "body_system": "musculoskeletal",
+    "etiology": "metabolic"
   },
   "ventricular arrhythmia": {
-    "chinese": "ventricular arrhythmia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "室性心律失常",
+    "body_system": "cardiovascular",
+    "etiology": "functional"
   },
   "insect bite": {
-    "chinese": "insect bite",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "虫咬",
+    "body_system": "dermatologic",
+    "etiology": "inflammatory"
   },
   "acute musculoskeletal pain": {
-    "chinese": "acute musculoskeletal pain",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "急性肌肉骨骼疼痛",
+    "body_system": "musculoskeletal",
+    "etiology": "acute"
   },
   "minor skin procedure": {
-    "chinese": "minor skin procedure",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "小皮肤手术",
+    "body_system": "dermatologic",
+    "etiology": "acute"
   },
   "opioid overdose prevention": {
-    "chinese": "opioid overdose prevention",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "阿片类药物过量预防",
+    "body_system": "systemic",
+    "etiology": "acute"
   },
   "vancomycin-resistant enterococcus faecium infection": {
-    "chinese": "vancomycin-resistant enterococcus faecium infection",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "耐万古霉素屎肠球菌感染",
+    "body_system": "systemic",
+    "etiology": "bacterial"
   },
   "empyema": {
-    "chinese": "empyema",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "脓胸",
+    "body_system": "respiratory",
+    "etiology": "infectious"
   },
   "endometritis": {
-    "chinese": "endometritis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "子宫内膜炎",
+    "body_system": "reproductive",
+    "etiology": "inflammatory"
   },
   "allergic contact dermatitis": {
-    "chinese": "allergic contact dermatitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "过敏性接触性皮炎",
+    "body_system": "dermatologic",
+    "etiology": "allergic"
   },
   "transplant rejection prophylaxis": {
-    "chinese": "transplant rejection prophylaxis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "移植排斥预防",
+    "body_system": "systemic",
+    "etiology": "inflammatory"
   },
   "autoimmune hemolytic anemia": {
-    "chinese": "autoimmune hemolytic anemia",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "自身免疫性溶血性贫血",
+    "body_system": "hematologic",
+    "etiology": "autoimmune"
   },
   "wilson's disease": {
-    "chinese": "wilson's disease",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "威尔逊病",
+    "body_system": "hepatic",
+    "etiology": "metabolic"
   },
   "cystinuria": {
-    "chinese": "cystinuria",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "胱氨酸尿症",
+    "body_system": "renal",
+    "etiology": "metabolic"
   },
   "scleroderma": {
-    "chinese": "scleroderma",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "硬皮病",
+    "body_system": "dermatologic",
+    "etiology": "autoimmune"
   },
   "chronic granulomatous disease": {
-    "chinese": "chronic granulomatous disease",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "慢性肉芽肿病",
+    "body_system": "hematologic",
+    "etiology": "genetic"
   },
   "osteopetrosis": {
-    "chinese": "osteopetrosis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "骨硬化症",
+    "body_system": "musculoskeletal",
+    "etiology": "genetic"
   },
   "idiopathic pulmonary fibrosis": {
-    "chinese": "idiopathic pulmonary fibrosis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "特发性肺纤维化",
+    "body_system": "respiratory",
+    "etiology": "chronic"
   },
   "porphyria": {
-    "chinese": "porphyria",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "卟啉症",
+    "body_system": "hematologic",
+    "etiology": "metabolic"
   },
   "absence seizure": {
-    "chinese": "absence seizure",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "失神发作",
+    "body_system": "neurologic",
+    "etiology": "genetic"
   },
   "cdkl5 deficiency disorder": {
-    "chinese": "cdkl5 deficiency disorder",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "CDKL5缺乏症",
+    "body_system": "neurologic",
+    "etiology": "genetic"
   },
   "influenza a virus infection": {
-    "chinese": "influenza a virus infection",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "甲型流感病毒感染",
+    "body_system": "respiratory",
+    "etiology": "viral"
   },
   "influenza b virus infection": {
-    "chinese": "influenza b virus infection",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "乙型流感病毒感染",
+    "body_system": "respiratory",
+    "etiology": "viral"
   },
   "cystitis": {
-    "chinese": "cystitis",
-    "body_system": "",
-    "etiology": ""
+    "chinese": "膀胱炎",
+    "body_system": "renal",
+    "etiology": "bacterial"
   },
   "struvite kidney stone": {
     "chinese": "鸟粪石肾结石",
