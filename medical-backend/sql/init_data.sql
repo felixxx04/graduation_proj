@@ -8,8 +8,8 @@ USE medical_recommendation;
 -- 插入默认账户（密码均为admin123，BCrypt hash已验证）
 INSERT INTO sys_user (username, password_hash, role, enabled) VALUES
 ('admin', '$2a$10$lut2nnnjykVjZ.8lPGoyPuwr9q1LnGVK8tMLJ0tNc20L59nqk1QBm', 'admin', TRUE),
-('doctor1', '$2a$10$lut2nnnjykVjZ.8lPGoyPuwr9q1LnGVK8tMLJ0tNc20L59nqk1QBm', 'doctor', TRUE),
-('researcher1', '$2a$10$lut2nnnjykVjZ.8lPGoyPuwr9q1LnGVK8tMLJ0tNc20L59nqk1QBm', 'researcher', TRUE);
+('patient1', '$2a$10$lut2nnnjykVjZ.8lPGoyPuwr9q1LnGVK8tMLJ0tNc20L59nqk1QBm', 'patient', TRUE),
+('doctor1', '$2a$10$lut2nnnjykVjZ.8lPGoyPuwr9q1LnGVK8tMLJ0tNc20L59nqk1QBm', 'doctor', TRUE);
 
 -- 为每个用户创建默认隐私配置（v2: 预算10.0, 噪声机制包含geometric）
 INSERT INTO privacy_config (user_id, epsilon, delta, sensitivity, noise_mechanism, application_stage, privacy_budget, budget_used)

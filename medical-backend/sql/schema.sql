@@ -20,7 +20,7 @@ CREATE TABLE sys_user (
     id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
     username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
     password_hash VARCHAR(255) NOT NULL COMMENT '密码哈希(BCrypt)',
-    role ENUM('admin', 'doctor', 'researcher') DEFAULT 'doctor' COMMENT '角色',
+    role ENUM('admin', 'doctor', 'patient') DEFAULT 'patient' COMMENT '角色',
     enabled BOOLEAN DEFAULT TRUE COMMENT '是否启用',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
@@ -97,6 +97,7 @@ CREATE TABLE recommendation (
     user_id BIGINT NOT NULL COMMENT '操作用户ID',
     input_data JSON COMMENT '输入特征(脱敏后)',
     result_data JSON COMMENT '推荐结果',
+    review_status ENUM('pending', 'confirmed', 'modified', 'rejected') DEFAULT 'pending' COMMENT '审核状态',
     dp_enabled BOOLEAN DEFAULT TRUE COMMENT '是否启用差分隐私',
     epsilon_used DECIMAL(10,4) COMMENT '消耗的隐私预算',
     recommendation_type ENUM('realtime', 'batch') DEFAULT 'realtime' COMMENT '推荐类型',
