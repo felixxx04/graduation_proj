@@ -155,7 +155,6 @@ interface PatientData {
   currentMedications: string
 }
 
-type SafetyLevel = 'safe' | 'off_label' | 'unverified' | 'relative_contraindication' | 'data_unverified' | string;
 
 const safetyConfig: Record<string, { label: string; color: string; bg: string }> = {
   safe:                    { label: '安全',      color: '#22c55e', bg: '#052e16' },
@@ -236,7 +235,6 @@ export default function DrugRecommendation() {
   const [totalCandidateInfo, setTotalCandidateInfo] = useState<{ total: number; excluded: number; safe: number } | null>(null)
   const [dataGaps, setDataGaps] = useState<string[]>([])
   const [privacyPanelCollapsed, setPrivacyPanelCollapsed] = useState(false)
-  const [recommendationId, setRecommendationId] = useState<string>('')
 
   const handleSelectPatient = (id: string) => {
     setSelectedPatientId(id)
@@ -375,7 +373,6 @@ export default function DrugRecommendation() {
         }))
       )
       setShowResults(true)
-      setRecommendationId(String(response.recommendationId))
       setSelectedDrug(null)
       setShowExplainability(false)
       await refresh()
