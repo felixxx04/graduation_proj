@@ -129,7 +129,7 @@ function normalizeEvent(event: BackendEvent): PrivacyLedgerEvent {
 }
 
 export function PrivacyStoreProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isInitializing } = useAuth()
+  const { isAuthenticated, isInitializing, user } = useAuth()
   const [config, setConfigState] = useState<PrivacyConfig>(DEFAULT_CONFIG)
   const [events, setEvents] = useState<PrivacyLedgerEvent[]>([])
   const [budget, setBudget] = useState<PrivacyBudget>(DEFAULT_BUDGET)
@@ -137,7 +137,7 @@ export function PrivacyStoreProvider({ children }: { children: React.ReactNode }
   const [error, setError] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || user?.role !== 'admin') {
       setConfigState(DEFAULT_CONFIG)
       setEvents([])
       setBudget(DEFAULT_BUDGET)
@@ -162,7 +162,7 @@ export function PrivacyStoreProvider({ children }: { children: React.ReactNode }
     } finally {
       setIsLoading(false)
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, user?.role])
 
   useEffect(() => {
     if (isInitializing) return
