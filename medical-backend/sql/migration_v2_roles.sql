@@ -14,7 +14,7 @@ DELETE FROM sys_user WHERE username = 'researcher1';
 ALTER TABLE sys_user MODIFY COLUMN role ENUM('admin', 'doctor', 'patient') DEFAULT 'patient';
 
 -- 3. 将原 doctor1 改为 patient1
-UPDATE sys_user SET role = 'patient' WHERE username = 'doctor1';
+UPDATE sys_user SET username = 'patient1', role = 'patient' WHERE username = 'doctor1';
 
 -- 4. 新增真正的 doctor 账号（密码 admin123 的 BCrypt hash）
 INSERT INTO sys_user (username, password_hash, role, enabled) VALUES
