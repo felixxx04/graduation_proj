@@ -21,7 +21,11 @@ public class AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthenticationFailedException("用户名或密码错误"));
 
-        if (!user.getEnabled() || !passwordEncoder.matches(password, user.getPasswordHash())) {
+        if (!user.getEnabled()) {
+            throw new AuthenticationFailedException("账号已被禁用，请联系管理员");
+        }
+
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new AuthenticationFailedException("用户名或密码错误");
         }
 
