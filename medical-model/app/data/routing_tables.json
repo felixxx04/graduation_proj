@@ -657,6 +657,5856 @@
       "body_system": "gastrointestinal",
       "etiology": "symptomatic",
       "category_name": "恶心"
+    },
+    "atopic dermatitis": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "特应性皮炎"
+    },
+    "bacterial urinary tract infection": {
+      "body_system": "renal",
+      "etiology": "infectious",
+      "category_name": "尿路感染"
+    },
+    "pharyngitis due to streptococcus pyogenes": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "化脓性链球菌咽炎"
+    },
+    "type 2 diabetes mellitus": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "2型糖尿病"
+    },
+    "pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "关节痛"
+    },
+    "acne vulgaris": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "寻常痤疮"
+    },
+    "back pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "背痛"
+    },
+    "nasal congestion": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "鼻塞"
+    },
+    "vertigo": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "眩晕"
+    },
+    "sinus congestion": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "鼻窦充血"
+    },
+    "cough": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "咳嗽"
+    },
+    "sneezing": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "打喷嚏"
+    },
+    "runny nose": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "流涕"
+    },
+    "acute bacterial sinusitis": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "急性细菌性鼻窦炎"
+    },
+    "hiv infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "HIV感染"
+    },
+    "acute pain": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "急性疼痛"
+    },
+    "diverticulitis of gastrointestinal tract": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "胃肠道憩室炎"
+    },
+    "joint pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "关节痛"
+    },
+    "skin and soft tissue infection": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "皮肤及软组织感染"
+    },
+    "major depressive disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "重性抑郁障碍"
+    },
+    "hemorrhoids": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "痔疮"
+    },
+    "psoriatic arthritis": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "银屑病关节炎"
+    },
+    "ankylosing spondylitis": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "强直性脊柱炎"
+    },
+    "hypercholesterolemia": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "高胆固醇血症"
+    },
+    "prevention of cerebrovascular accident": {
+      "body_system": "cardiovascular",
+      "etiology": "other",
+      "category_name": "脑血管意外预防"
+    },
+    "chronic pain": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "慢性疼痛"
+    },
+    "angina pectoris": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心绞痛"
+    },
+    "community-acquired pneumonia": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "社区获得性肺炎"
+    },
+    "sore throat": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "咽喉痛"
+    },
+    "attention deficit hyperactivity disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "注意缺陷多动障碍"
+    },
+    "edema": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "水肿"
+    },
+    "chronic obstructive pulmonary disease": {
+      "body_system": "respiratory",
+      "etiology": "chronic",
+      "category_name": "慢性阻塞性肺疾病"
+    },
+    "bacterial conjunctivitis": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "结膜炎"
+    },
+    "bipolar disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "双相障碍"
+    },
+    "contact dermatitis": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "接触性皮炎"
+    },
+    "pruritus": {
+      "body_system": "dermatologic",
+      "etiology": "symptomatic",
+      "category_name": "瘙痒"
+    },
+    "crohn's disease": {
+      "body_system": "gastrointestinal",
+      "etiology": "autoimmune",
+      "category_name": "克罗恩病"
+    },
+    "seizures": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "癫痫发作"
+    },
+    "peptic ulcer disease": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "消化性溃疡"
+    },
+    "neuropathic pain": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "神经病理性疼痛"
+    },
+    "fibromyalgia": {
+      "body_system": "musculoskeletal",
+      "etiology": "functional",
+      "category_name": "纤维肌痛"
+    },
+    "nerve pain": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "神经痛"
+    },
+    "bacterial skin infection": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "细菌性皮肤感染"
+    },
+    "allergy": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "过敏"
+    },
+    "seborrheic dermatitis": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "脂溢性皮炎"
+    },
+    "generalized anxiety disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "广泛性焦虑障碍"
+    },
+    "intra-abdominal infection": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "腹腔内感染"
+    },
+    "diabetes": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "糖尿病"
+    },
+    "urticaria": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "荨麻疹"
+    },
+    "conjunctivitis": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "结膜炎"
+    },
+    "muscle pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "肌肉疼痛"
+    },
+    "dyspepsia": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "消化不良"
+    },
+    "complicated urinary tract infection": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "复杂性尿路感染"
+    },
+    "status epilepticus": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "癫痫持续状态"
+    },
+    "type 1 diabetes mellitus": {
+      "body_system": "endocrine",
+      "etiology": "autoimmune",
+      "category_name": "1型糖尿病"
+    },
+    "migraine prophylaxis": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "偏头痛预防"
+    },
+    "edema associated with heart failure": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心力衰竭相关水肿"
+    },
+    "flatulence": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "胃肠胀气"
+    },
+    "bacterial infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "细菌感染"
+    },
+    "diabetic nephropathy": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "糖尿病肾病"
+    },
+    "type 2 diabetes": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "2型糖尿病"
+    },
+    "primary dysmenorrhea": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "原发性痛经"
+    },
+    "chest congestion": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "胸闷"
+    },
+    "acne": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "痤疮"
+    },
+    "rosacea": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "玫瑰痤疮"
+    },
+    "pharyngitis": {
+      "body_system": "respiratory",
+      "etiology": "infectious",
+      "category_name": "咽炎"
+    },
+    "hiv": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "人类免疫缺陷病毒感染"
+    },
+    "obesity": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "肥胖"
+    },
+    "panic disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "惊恐障碍"
+    },
+    "parkinson's disease": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "帕金森病"
+    },
+    "sinusitis": {
+      "body_system": "respiratory",
+      "etiology": "infectious",
+      "category_name": "鼻窦炎"
+    },
+    "stomach pain": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "胃痛"
+    },
+    "cluster headache": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "丛集性头痛"
+    },
+    "acid reflux": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "胃酸反流"
+    },
+    "adenocarcinoma of pancreas": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胰腺腺癌"
+    },
+    "erosive esophagitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "糜烂性食管炎"
+    },
+    "overactive bladder": {
+      "body_system": "renal",
+      "etiology": "functional",
+      "category_name": "膀胱过度活动症"
+    },
+    "inflammation": {
+      "body_system": "systemic",
+      "etiology": "inflammatory",
+      "category_name": "炎症"
+    },
+    "musculoskeletal pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "肌肉骨骼疼痛"
+    },
+    "bipolar i disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "双相I型障碍"
+    },
+    "zollinger-ellison syndrome": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "卓-艾综合征"
+    },
+    "nausea and vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "恶心和呕吐"
+    },
+    "inflammatory bowel disease": {
+      "body_system": "gastrointestinal",
+      "etiology": "autoimmune",
+      "category_name": "炎症性肠病"
+    },
+    "non-hodgkin's lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "非霍奇金淋巴瘤"
+    },
+    "yeast infection": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "酵母菌感染"
+    },
+    "oral candidiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "fungal",
+      "category_name": "口腔念珠菌病"
+    },
+    "contraception": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "避孕"
+    },
+    "sepsis": {
+      "body_system": "systemic",
+      "etiology": "infectious",
+      "category_name": "脓毒症"
+    },
+    "allergic rhinitis with nasal congestion": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "过敏性鼻炎伴鼻塞"
+    },
+    "narcolepsy": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "发作性睡病"
+    },
+    "acute coronary syndrome": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "急性冠状动脉综合征"
+    },
+    "nasal polyps": {
+      "body_system": "respiratory",
+      "etiology": "inflammatory",
+      "category_name": "鼻息肉"
+    },
+    "ovarian cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "卵巢癌"
+    },
+    "fungal skin infection": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "皮肤真菌感染"
+    },
+    "acute exacerbation of chronic bronchitis": {
+      "body_system": "respiratory",
+      "etiology": "infectious",
+      "category_name": "慢性支气管炎急性加重"
+    },
+    "traveler's diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "腹泻"
+    },
+    "local anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "局部麻醉"
+    },
+    "genital herpes simplex": {
+      "body_system": "reproductive",
+      "etiology": "viral",
+      "category_name": "生殖器单纯疱疹"
+    },
+    "pneumocystis jirovecii pneumonia": {
+      "body_system": "respiratory",
+      "etiology": "fungal",
+      "category_name": "耶氏肺孢子菌肺炎"
+    },
+    "chronic lymphocytic leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "慢性淋巴细胞白血病"
+    },
+    "vulvovaginal candidiasis": {
+      "body_system": "reproductive",
+      "etiology": "fungal",
+      "category_name": "外阴阴道念珠菌病"
+    },
+    "heart failure with reduced ejection fraction": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "射血分数降低的心力衰竭"
+    },
+    "complicated intra-abdominal infection": {
+      "body_system": "gastrointestinal",
+      "etiology": "infectious",
+      "category_name": "复杂性腹腔感染"
+    },
+    "allergic conjunctivitis": {
+      "body_system": "ophthalmic",
+      "etiology": "allergic",
+      "category_name": "过敏性结膜炎"
+    },
+    "tinea pedis": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "足癣"
+    },
+    "allergic reactions": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "过敏反应"
+    },
+    "motion sickness": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "晕动病"
+    },
+    "sedation": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "镇静"
+    },
+    "tuberculosis": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "结核病"
+    },
+    "pelvic inflammatory disease": {
+      "body_system": "reproductive",
+      "etiology": "infectious",
+      "category_name": "盆腔炎性疾病"
+    },
+    "infantile autism": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "婴幼儿孤独症"
+    },
+    "hypocalcemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "低钙血症"
+    },
+    "small cell lung cancer": {
+      "body_system": "respiratory",
+      "etiology": "neoplastic",
+      "category_name": "小细胞肺癌"
+    },
+    "non-small cell lung cancer": {
+      "body_system": "respiratory",
+      "etiology": "neoplastic",
+      "category_name": "非小细胞肺癌"
+    },
+    "meningitis": {
+      "body_system": "neurologic",
+      "etiology": "infectious",
+      "category_name": "脑膜炎"
+    },
+    "tinea corporis": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "体癣"
+    },
+    "tinea cruris": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "股癣"
+    },
+    "chemotherapy-induced nausea and vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "化疗引起的恶心呕吐"
+    },
+    "covid-19": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "新型冠状病毒感染"
+    },
+    "focal seizure": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "局灶性癫痫发作"
+    },
+    "bowel preparation before colonoscopy": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "结肠镜检查前肠道准备"
+    },
+    "minor skin irritation": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "轻度皮肤刺激"
+    },
+    "dysuria": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "排尿困难"
+    },
+    "calcium deficiency": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "钙缺乏"
+    },
+    "malaria": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "疟疾"
+    },
+    "impetigo": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "脓疱疮"
+    },
+    "tension headache": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "紧张性头痛"
+    },
+    "uncomplicated urinary tract infection": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "非复杂性尿路感染"
+    },
+    "menstrual pain": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "经期疼痛"
+    },
+    "endocarditis": {
+      "body_system": "cardiovascular",
+      "etiology": "bacterial",
+      "category_name": "心内膜炎"
+    },
+    "seizure": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "全面性强直-阵挛发作"
+    },
+    "muscle spasm": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "肌肉痉挛"
+    },
+    "weight management": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "体重管理"
+    },
+    "postoperative pain": {
+      "body_system": "systemic",
+      "etiology": "acute",
+      "category_name": "术后疼痛"
+    },
+    "pyelonephritis": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "肾盂肾炎"
+    },
+    "prevention of cardiovascular events": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心血管事件预防"
+    },
+    "generalized tonic-clonic seizure": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "全面性强直-阵挛发作"
+    },
+    "menopausal symptoms": {
+      "body_system": "reproductive",
+      "etiology": "degenerative",
+      "category_name": "绝经期症状"
+    },
+    "fecal impaction": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "粪便嵌塞"
+    },
+    "bladder spasm": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "膀胱痉挛"
+    },
+    "plaque psoriasis": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "斑块状银屑病"
+    },
+    "paget's disease of bone": {
+      "body_system": "musculoskeletal",
+      "etiology": "degenerative",
+      "category_name": "骨佩吉特病"
+    },
+    "supraventricular tachycardia": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "室上性心动过速"
+    },
+    "multiple myeloma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "多发性骨髓瘤"
+    },
+    "opioid use disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "阿片类药物使用障碍"
+    },
+    "postmenopausal osteoporosis": {
+      "body_system": "musculoskeletal",
+      "etiology": "degenerative",
+      "category_name": "绝经后骨质疏松"
+    },
+    "nosocomial pneumonia": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "医院获得性肺炎"
+    },
+    "restless legs syndrome": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "不宁腿综合征"
+    },
+    "menopause symptoms": {
+      "body_system": "reproductive",
+      "etiology": "degenerative",
+      "category_name": "更年期症状"
+    },
+    "organ transplant rejection": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "器官移植排斥反应"
+    },
+    "acute lymphoblastic leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性淋巴细胞白血病"
+    },
+    "premenstrual dysphoric disorder": {
+      "body_system": "reproductive",
+      "etiology": "psychiatric",
+      "category_name": "经前烦躁障碍"
+    },
+    "migraine attacks": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "偏头痛发作"
+    },
+    "ventricular arrhythmias": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "室性心律失常"
+    },
+    "alzheimer's disease": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "阿尔茨海默病"
+    },
+    "adrenal insufficiency": {
+      "body_system": "endocrine",
+      "etiology": "autoimmune",
+      "category_name": "肾上腺功能不全"
+    },
+    "psychotic disorders": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "精神病性障碍"
+    },
+    "social anxiety disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "社交焦虑障碍"
+    },
+    "chronic hepatitis b": {
+      "body_system": "hepatic",
+      "etiology": "viral",
+      "category_name": "慢性乙型肝炎"
+    },
+    "erectile dysfunction": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "勃起功能障碍"
+    },
+    "toxoplasmosis": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "弓形虫病"
+    },
+    "edema associated with liver cirrhosis": {
+      "body_system": "hepatic",
+      "etiology": "chronic",
+      "category_name": "肝硬化相关水肿"
+    },
+    "herpes labialis": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "唇疱疹"
+    },
+    "hidradenitis suppurativa": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "化脓性汗腺炎"
+    },
+    "juvenile idiopathic arthritis": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "幼年特发性关节炎"
+    },
+    "lyme disease": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "莱姆病"
+    },
+    "cerebral edema": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "脑水肿"
+    },
+    "hypercalcemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "高钙血症"
+    },
+    "heartburn": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "胃灼热"
+    },
+    "osteoporosis prevention": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "骨质疏松预防"
+    },
+    "gastric cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胃癌"
+    },
+    "pancreatic cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胰腺癌"
+    },
+    "bladder cancer": {
+      "body_system": "renal",
+      "etiology": "neoplastic",
+      "category_name": "膀胱癌"
+    },
+    "osteomyelitis": {
+      "body_system": "musculoskeletal",
+      "etiology": "bacterial",
+      "category_name": "骨髓炎"
+    },
+    "testicular cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "睾丸癌"
+    },
+    "obsessive-compulsive disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "强迫症"
+    },
+    "lichen planus": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "扁平苔藓"
+    },
+    "multiple sclerosis": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "多发性硬化"
+    },
+    "allergic disorders": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "过敏性疾病"
+    },
+    "dysmenorrhea": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "痛经"
+    },
+    "postoperative nausea and vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "术后恶心呕吐"
+    },
+    "postherpetic neuralgia": {
+      "body_system": "neurologic",
+      "etiology": "viral",
+      "category_name": "带状疱疹后神经痛"
+    },
+    "hospital-acquired pneumonia": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "医院获得性肺炎"
+    },
+    "furunculosis": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "疖病"
+    },
+    "tourette's syndrome": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "抽动秽语综合征"
+    },
+    "hyperhidrosis": {
+      "body_system": "dermatologic",
+      "etiology": "functional",
+      "category_name": "多汗症"
+    },
+    "prevention of cardiovascular disease": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心血管疾病预防"
+    },
+    "nocardiosis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "诺卡菌病"
+    },
+    "shigellosis": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "志贺菌病"
+    },
+    "chlamydia infection": {
+      "body_system": "reproductive",
+      "etiology": "bacterial",
+      "category_name": "衣原体感染"
+    },
+    "non-allergic rhinitis": {
+      "body_system": "respiratory",
+      "etiology": "functional",
+      "category_name": "非过敏性鼻炎"
+    },
+    "herpes zoster": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "带状疱疹"
+    },
+    "photoaging": {
+      "body_system": "dermatologic",
+      "etiology": "degenerative",
+      "category_name": "光老化"
+    },
+    "anxiety disorders": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "焦虑障碍"
+    },
+    "influenza": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "流行性感冒"
+    },
+    "mycobacterium avium complex infection": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "鸟胞内分枝杆菌复合体感染"
+    },
+    "chronic stable angina": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "慢性稳定型心绞痛"
+    },
+    "malaria prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "疟疾预防"
+    },
+    "cough suppression": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "镇咳"
+    },
+    "inflammatory conditions": {
+      "body_system": "systemic",
+      "etiology": "inflammatory",
+      "category_name": "炎性疾病"
+    },
+    "pulmonary arterial hypertension": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "肺动脉高压"
+    },
+    "colorectal cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "结直肠癌"
+    },
+    "preoperative sedation": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "术前镇静"
+    },
+    "vitamin d deficiency": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "维生素D缺乏"
+    },
+    "onychomycosis": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "甲癣"
+    },
+    "fungal skin infections": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "真菌性皮肤感染"
+    },
+    "various cancers": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "多种癌症"
+    },
+    "melanoma": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "黑色素瘤"
+    },
+    "hodgkin's lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "霍奇金淋巴瘤"
+    },
+    "acute myeloid leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性髓系白血病"
+    },
+    "hypercalcemia of malignancy": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "恶性肿瘤相关性高钙血症"
+    },
+    "schizoaffective disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "分裂情感性障碍"
+    },
+    "hepatitis b": {
+      "body_system": "hepatic",
+      "etiology": "viral",
+      "category_name": "乙型肝炎"
+    },
+    "hypertriglyceridemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "高甘油三酯血症"
+    },
+    "partial onset seizures": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "部分性发作癫痫"
+    },
+    "homozygous familial hypercholesterolemia": {
+      "body_system": "cardiovascular",
+      "etiology": "genetic",
+      "category_name": "纯合子家族性高胆固醇血症"
+    },
+    "pre-exposure prophylaxis for hiv": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "HIV暴露前预防"
+    },
+    "agitation": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "激越"
+    },
+    "acne rosacea": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "玫瑰痤疮"
+    },
+    "insomnia associated with cold or flu symptoms": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "与感冒或流感症状相关的失眠"
+    },
+    "common cold with nasal congestion": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "伴有鼻塞的普通感冒"
+    },
+    "edema associated with chronic kidney disease": {
+      "body_system": "renal",
+      "etiology": "chronic",
+      "category_name": "与慢性肾病相关的水肿"
+    },
+    "meniere's disease": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "梅尼埃病"
+    },
+    "pruritus ani": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "肛门瘙痒"
+    },
+    "anal fissure": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "肛裂"
+    },
+    "parasitic infection": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "寄生虫感染"
+    },
+    "serious bacterial infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "严重细菌感染"
+    },
+    "respiratory tract infection": {
+      "body_system": "respiratory",
+      "etiology": "infectious",
+      "category_name": "呼吸道感染"
+    },
+    "irritability associated with autistic disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "与自闭症障碍相关的易激惹"
+    },
+    "adhd": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "注意缺陷多动障碍"
+    },
+    "organ transplant rejection prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "other",
+      "category_name": "器官移植排斥预防"
+    },
+    "leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性白血病"
+    },
+    "atrial fibrillation rate control": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心房颤动心率控制"
+    },
+    "ocular hypertension": {
+      "body_system": "ophthalmic",
+      "etiology": "chronic",
+      "category_name": "高眼压症"
+    },
+    "eosinophilic esophagitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "嗜酸细胞性食管炎"
+    },
+    "head and neck cancer": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "头颈癌"
+    },
+    "lower respiratory tract infection": {
+      "body_system": "respiratory",
+      "etiology": "infectious",
+      "category_name": "下呼吸道感染"
+    },
+    "bacteremia": {
+      "body_system": "systemic",
+      "etiology": "infectious",
+      "category_name": "菌血症"
+    },
+    "febrile neutropenia": {
+      "body_system": "hematologic",
+      "etiology": "other",
+      "category_name": "发热性中性粒细胞减少症"
+    },
+    "gonorrhea": {
+      "body_system": "reproductive",
+      "etiology": "bacterial",
+      "category_name": "淋病"
+    },
+    "alopecia areata": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "斑秃"
+    },
+    "infertility": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "不孕症"
+    },
+    "ocd": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "强迫症"
+    },
+    "opioid withdrawal": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "阿片类药物戒断"
+    },
+    "chronic myeloid leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "慢性髓系白血病"
+    },
+    "acute leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性白血病"
+    },
+    "bedwetting": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "遗尿症"
+    },
+    "chemotherapy-induced nausea/vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "化疗引起的恶心呕吐"
+    },
+    "cystic fibrosis": {
+      "body_system": "respiratory",
+      "etiology": "genetic",
+      "category_name": "囊性纤维化"
+    },
+    "h. pylori eradication": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "幽门螺杆菌根除"
+    },
+    "renal cell carcinoma": {
+      "body_system": "renal",
+      "etiology": "neoplastic",
+      "category_name": "肾细胞癌"
+    },
+    "weight loss": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "减重"
+    },
+    "mixed dyslipidemia": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "混合型血脂异常"
+    },
+    "urinary frequency": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "尿频"
+    },
+    "patent ductus arteriosus": {
+      "body_system": "cardiovascular",
+      "etiology": "congenital",
+      "category_name": "动脉导管未闭"
+    },
+    "chronic hepatitis c": {
+      "body_system": "hepatic",
+      "etiology": "viral",
+      "category_name": "丙型肝炎"
+    },
+    "hepatitis c": {
+      "body_system": "hepatic",
+      "etiology": "viral",
+      "category_name": "丙型肝炎"
+    },
+    "essential tremor": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "特发性震颤"
+    },
+    "syphilis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "梅毒"
+    },
+    "treatment-resistant depression": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "难治性抑郁症"
+    },
+    "acute exacerbation of multiple sclerosis": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "多发性硬化急性加重"
+    },
+    "dandruff": {
+      "body_system": "dermatologic",
+      "etiology": "other",
+      "category_name": "头皮屑"
+    },
+    "ichthyosis": {
+      "body_system": "dermatologic",
+      "etiology": "genetic",
+      "category_name": "鱼鳞病"
+    },
+    "clostridium difficile infection": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "艰难梭菌感染"
+    },
+    "straining during defecation": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "排便费力"
+    },
+    "thyroid cancer (tsh suppression)": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "甲状腺癌"
+    },
+    "helicobacter pylori eradication (adjunctive)": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "幽门螺杆菌根除"
+    },
+    "eczema with suspected bacterial or fungal infection": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "怀疑细菌或真菌感染的湿疹"
+    },
+    "contact dermatitis with suspected infection": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "接触性皮炎伴可疑感染"
+    },
+    "diaper rash with suspected infection": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "尿布疹伴可疑感染"
+    },
+    "vasomotor rhinitis": {
+      "body_system": "respiratory",
+      "etiology": "functional",
+      "category_name": "血管运动性鼻炎"
+    },
+    "chickenpox": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "水痘"
+    },
+    "cold sore": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "唇疱疹"
+    },
+    "strongyloidiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "粪类圆线虫病"
+    },
+    "streptococcal pharyngitis": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "链球菌咽炎"
+    },
+    "binge eating disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "暴食症"
+    },
+    "bacterial meningitis": {
+      "body_system": "neurologic",
+      "etiology": "bacterial",
+      "category_name": "细菌性脑膜炎"
+    },
+    "endocarditis prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "bacterial",
+      "category_name": "心内膜炎预防"
+    },
+    "ovulation induction": {
+      "body_system": "reproductive",
+      "etiology": "endocrine",
+      "category_name": "诱导排卵"
+    },
+    "stroke prevention in atrial fibrillation": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "房颤卒中预防"
+    },
+    "major depressive disorder (adjunct)": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "重性抑郁障碍"
+    },
+    "tourette's disorder": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "抽动秽语综合征"
+    },
+    "obstructive sleep apnea": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "阻塞性睡眠呼吸暂停引起的嗜睡"
+    },
+    "sleepiness due to obstructive sleep apnea": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "阻塞性睡眠呼吸暂停引起的嗜睡"
+    },
+    "melasma": {
+      "body_system": "dermatologic",
+      "etiology": "endocrine",
+      "category_name": "黄褐斑"
+    },
+    "muscle spasticity": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "肌肉痉挛状态"
+    },
+    "gastroparesis": {
+      "body_system": "gastrointestinal",
+      "etiology": "metabolic",
+      "category_name": "胃轻瘫"
+    },
+    "acromegaly": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "肢端肥大症"
+    },
+    "seasonal affective disorder": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "季节性情感障碍"
+    },
+    "trigeminal neuralgia": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "三叉神经痛"
+    },
+    "surgical prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "手术预防"
+    },
+    "pseudomonas aeruginosa infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "铜绿假单胞菌感染"
+    },
+    "cytomegalovirus retinitis": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒感染"
+    },
+    "cytomegalovirus": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒感染"
+    },
+    "bone and joint infection": {
+      "body_system": "musculoskeletal",
+      "etiology": "bacterial",
+      "category_name": "骨和关节感染"
+    },
+    "helicobacter pylori eradication": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "幽门螺杆菌根除"
+    },
+    "nephrotic syndrome": {
+      "body_system": "renal",
+      "etiology": "autoimmune",
+      "category_name": "肾病综合征"
+    },
+    "appetite loss": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "食欲减退"
+    },
+    "complicated skin and skin structure infection": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "复杂性皮肤及皮肤结构感染"
+    },
+    "gastrointestinal stromal tumor": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胃肠道间质瘤"
+    },
+    "leukemias": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "白血病"
+    },
+    "chronic idiopathic urticaria": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "慢性特发性荨麻疹"
+    },
+    "migraine with or without aura": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "偏头痛伴或不伴先兆"
+    },
+    "postpartum hemorrhage": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "产后出血"
+    },
+    "bph": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "良性前列腺增生"
+    },
+    "pain with associated sleeplessness": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "疼痛伴失眠"
+    },
+    "headache with sleeplessness": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "头痛伴失眠"
+    },
+    "hypoestrogenism": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "雌激素过低"
+    },
+    "streptococcal infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "链球菌感染"
+    },
+    "herpes simplex virus infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "单纯疱疹病毒感染"
+    },
+    "varicella zoster virus infection": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "水痘-带状疱疹病毒感染"
+    },
+    "autoimmune disorders": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "自身免疫性疾病"
+    },
+    "tumor lysis syndrome prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "肿瘤溶解综合征预防"
+    },
+    "vasospastic angina": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "血管痉挛性心绞痛"
+    },
+    "breast cancer (hormone receptor-positive)": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "乳腺癌"
+    },
+    "deep vein thrombosis treatment": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "深静脉血栓治疗"
+    },
+    "pulmonary embolism treatment": {
+      "body_system": "respiratory",
+      "etiology": "acute",
+      "category_name": "肺栓塞治疗"
+    },
+    "myocardial infarction prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "心肌梗死预防"
+    },
+    "chlamydia trachomatis infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "沙眼衣原体感染"
+    },
+    "hiccups": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "呃逆"
+    },
+    "alcohol use disorder": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "酒精使用障碍"
+    },
+    "mantle cell lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "套细胞淋巴瘤"
+    },
+    "open-angle glaucoma": {
+      "body_system": "ophthalmic",
+      "etiology": "degenerative",
+      "category_name": "开角型青光眼"
+    },
+    "hyperprolactinemia": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "高催乳素血症"
+    },
+    "edema associated with hepatic cirrhosis": {
+      "body_system": "hepatic",
+      "etiology": "degenerative",
+      "category_name": "肝硬化相关水肿"
+    },
+    "pain management": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "疼痛管理"
+    },
+    "calcium supplementation": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "补钙"
+    },
+    "left ventricular dysfunction after myocardial infarction": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "心肌梗死后左心室功能障碍"
+    },
+    "esophageal candidiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "fungal",
+      "category_name": "食管念珠菌病"
+    },
+    "invasive fungal infections": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "侵袭性真菌感染"
+    },
+    "mrsa infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "耐甲氧西林金黄色葡萄球菌感染"
+    },
+    "acute gouty arthritis": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "急性痛风性关节炎"
+    },
+    "typhoid fever": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "伤寒"
+    },
+    "edema associated with nephrotic syndrome": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "肾病综合征相关水肿"
+    },
+    "cmv infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒感染"
+    },
+    "cervical cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "宫颈癌"
+    },
+    "esophageal cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "食管癌"
+    },
+    "cardiovascular event prevention": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "心血管事件预防"
+    },
+    "oral thrush": {
+      "body_system": "gastrointestinal",
+      "etiology": "fungal",
+      "category_name": "口腔鹅口疮"
+    },
+    "tonic-clonic seizures": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "强直-阵挛发作"
+    },
+    "focal seizures": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "局灶性发作"
+    },
+    "bronchospasm": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "支气管痉挛"
+    },
+    "prevention of stent thrombosis": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "支架血栓形成预防"
+    },
+    "stroke prevention": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "卒中预防"
+    },
+    "eustachian tube congestion": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "咽鼓管充血"
+    },
+    "adjunctive treatment for major depressive disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "重性抑郁障碍辅助治疗"
+    },
+    "post-traumatic stress disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "创伤后应激障碍"
+    },
+    "graft-versus-host disease": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "移植物抗宿主病"
+    },
+    "corns and calluses": {
+      "body_system": "dermatologic",
+      "etiology": "functional",
+      "category_name": "鸡眼和胼胝"
+    },
+    "hyperphosphatemia in chronic kidney disease": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "慢性肾脏病高磷血症"
+    },
+    "hyperphosphatemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "高磷血症"
+    },
+    "prophylaxis of organ transplant rejection": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "器官移植排斥预防"
+    },
+    "infective endocarditis": {
+      "body_system": "cardiovascular",
+      "etiology": "bacterial",
+      "category_name": "感染性心内膜炎"
+    },
+    "amebiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "阿米巴病"
+    },
+    "bronchiectasis": {
+      "body_system": "respiratory",
+      "etiology": "inflammatory",
+      "category_name": "支气管扩张"
+    },
+    "common cold symptoms": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "普通感冒症状"
+    },
+    "xerosis": {
+      "body_system": "dermatologic",
+      "etiology": "degenerative",
+      "category_name": "干燥症"
+    },
+    "rickettsial infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "立克次体感染"
+    },
+    "vitamin e deficiency": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "维生素E缺乏症"
+    },
+    "nonalcoholic steatohepatitis": {
+      "body_system": "hepatic",
+      "etiology": "metabolic",
+      "category_name": "非酒精性脂肪性肝炎"
+    },
+    "severe eosinophilic asthma": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "重度嗜酸粒细胞性哮喘"
+    },
+    "eosinophilic granulomatosis with polyangiitis": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "嗜酸性肉芽肿性多血管炎"
+    },
+    "pertussis": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "百日咳"
+    },
+    "non-hodgkin lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "非霍奇金淋巴瘤"
+    },
+    "lymphomas": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "淋巴瘤"
+    },
+    "minor muscle and joint pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "轻度肌肉关节疼痛"
+    },
+    "parkinsonism": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "帕金森综合征"
+    },
+    "prevention of coronavirus disease 2019 (covid-19)": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "预防2019冠状病毒病"
+    },
+    "goiter": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "甲状腺肿"
+    },
+    "electrolyte imbalance due to diarrhea or vomiting": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "腹泻或呕吐所致电解质失衡"
+    },
+    "mucositis": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "黏膜炎"
+    },
+    "sinus congestion associated with allergies": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "与过敏相关的鼻窦充血"
+    },
+    "actinic keratosis": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "光化性角化病"
+    },
+    "wound healing": {
+      "body_system": "dermatologic",
+      "etiology": "acute",
+      "category_name": "伤口愈合"
+    },
+    "dyspnea": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "呼吸困难"
+    },
+    "staphylococcal enterocolitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "葡萄球菌性小肠结肠炎"
+    },
+    "myoclonic seizure": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "肌阵挛性发作"
+    },
+    "shingles": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "带状疱疹"
+    },
+    "uveitis": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "葡萄膜炎"
+    },
+    "neurocysticercosis": {
+      "body_system": "neurologic",
+      "etiology": "parasitic",
+      "category_name": "神经囊尾蚴病"
+    },
+    "ascariasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "蛔虫病"
+    },
+    "hookworm infection": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "钩虫感染"
+    },
+    "trichuriasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "鞭虫病"
+    },
+    "parasitic worm infections": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "寄生虫蠕虫感染"
+    },
+    "osteogenesis imperfecta": {
+      "body_system": "musculoskeletal",
+      "etiology": "genetic",
+      "category_name": "成骨不全症"
+    },
+    "drug-induced extrapyramidal symptoms": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "药物引起的锥体外系症状"
+    },
+    "fatigue in multiple sclerosis": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "多发性硬化相关疲劳"
+    },
+    "gram-negative bacterial infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "革兰氏阴性菌感染"
+    },
+    "adjuvant breast cancer treatment": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "乳腺癌辅助治疗"
+    },
+    "behçet's disease": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "贝赫切特病"
+    },
+    "shift work sleep disorder": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "轮班工作睡眠障碍"
+    },
+    "babesiosis": {
+      "body_system": "hematologic",
+      "etiology": "parasitic",
+      "category_name": "巴贝虫病"
+    },
+    "malaria treatment": {
+      "body_system": "hematologic",
+      "etiology": "parasitic",
+      "category_name": "疟疾治疗"
+    },
+    "malaria prevention and treatment": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "疟疾预防和治疗"
+    },
+    "uncomplicated skin infection": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "无并发症的皮肤感染"
+    },
+    "mycobacterium avium complex infection prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "鸟分枝杆菌复合体感染预防"
+    },
+    "superficial skin infection": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "浅表皮肤感染"
+    },
+    "wound infection prophylaxis": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "伤口感染预防"
+    },
+    "blepharitis": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "睑缘炎"
+    },
+    "allergic conditions": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "过敏性疾病"
+    },
+    "waldenström's macroglobulinemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "华氏巨球蛋白血症"
+    },
+    "neuroleptic malignant syndrome": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "神经阻滞剂恶性综合征"
+    },
+    "microscopic colitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "显微镜下结肠炎"
+    },
+    "edema associated with renal disease": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "肾病相关水肿"
+    },
+    "major depressive disorder (augmentation)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "重性抑郁障碍"
+    },
+    "vaginal yeast infection": {
+      "body_system": "reproductive",
+      "etiology": "fungal",
+      "category_name": "阴道酵母菌感染"
+    },
+    "diabetic neuropathy": {
+      "body_system": "neurologic",
+      "etiology": "metabolic",
+      "category_name": "糖尿病神经病变"
+    },
+    "advanced ovarian carcinoma": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "晚期卵巢癌"
+    },
+    "germ cell tumors": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "生殖细胞肿瘤"
+    },
+    "tonsillitis": {
+      "body_system": "respiratory",
+      "etiology": "infectious",
+      "category_name": "扁桃体炎"
+    },
+    "acute bacterial skin and skin structure infection": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "急性细菌性皮肤及皮肤结构感染"
+    },
+    "familial adenomatous polyposis": {
+      "body_system": "gastrointestinal",
+      "etiology": "genetic",
+      "category_name": "家族性腺瘤性息肉病"
+    },
+    "rickettsial infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "立克次体感染"
+    },
+    "hypoparathyroidism": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "甲状旁腺功能减退症"
+    },
+    "rickets": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "佝偻病"
+    },
+    "osteomalacia": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "骨软化症"
+    },
+    "intermittent claudication": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "间歇性跛行"
+    },
+    "infectious diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "infectious",
+      "category_name": "感染性腹泻"
+    },
+    "anthrax prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "炭疽预防"
+    },
+    "acne vulgaris (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "寻常痤疮"
+    },
+    "discoid lupus erythematosus": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "盘状红斑狼疮"
+    },
+    "cataplexy in narcolepsy": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "发作性睡病猝倒"
+    },
+    "bipolar mania": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "双相躁狂"
+    },
+    "menopausal hot flashes": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "绝经期潮热"
+    },
+    "peripheral arterial disease": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "外周动脉疾病"
+    },
+    "parkinson's disease psychosis": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "帕金森病精神病"
+    },
+    "gout flares": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "痛风发作"
+    },
+    "menopausal vasomotor symptoms": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "绝经期血管舒缩症状"
+    },
+    "vulvovaginal atrophy": {
+      "body_system": "reproductive",
+      "etiology": "degenerative",
+      "category_name": "外阴阴道萎缩"
+    },
+    "palliative treatment of breast cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "乳腺癌姑息治疗"
+    },
+    "female hypogonadism": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "女性性腺功能减退"
+    },
+    "asthma prophylaxis": {
+      "body_system": "respiratory",
+      "etiology": "inflammatory",
+      "category_name": "哮喘预防"
+    },
+    "acute muscle spasm": {
+      "body_system": "musculoskeletal",
+      "etiology": "acute",
+      "category_name": "急性肌肉痉挛"
+    },
+    "fibromyalgia (low dose)": {
+      "body_system": "musculoskeletal",
+      "etiology": "functional",
+      "category_name": "纤维肌痛"
+    },
+    "melanoma with braf v600e mutation": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "BRAF V600E突变黑色素瘤"
+    },
+    "gestational trophoblastic neoplasia": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "妊娠滋养细胞肿瘤"
+    },
+    "rhabdomyosarcoma": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "横纹肌肉瘤"
+    },
+    "wilms tumor": {
+      "body_system": "renal",
+      "etiology": "neoplastic",
+      "category_name": "肾母细胞瘤"
+    },
+    "bacterial skin infections": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "细菌性皮肤感染"
+    },
+    "leprosy": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "麻风病"
+    },
+    "complicated skin infections": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "复杂性皮肤感染"
+    },
+    "acute lymphoblastic leukemia (philadelphia chromosome-positive)": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性淋巴细胞白血病"
+    },
+    "iron overload": {
+      "body_system": "hematologic",
+      "etiology": "metabolic",
+      "category_name": "铁过载"
+    },
+    "giant cell tumor of bone": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "骨巨细胞瘤"
+    },
+    "bulimia nervosa": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "神经性贪食症"
+    },
+    "nocturnal enuresis": {
+      "body_system": "renal",
+      "etiology": "functional",
+      "category_name": "夜间遗尿症"
+    },
+    "nocturia": {
+      "body_system": "renal",
+      "etiology": "functional",
+      "category_name": "夜尿症"
+    },
+    "diabetes insipidus": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "尿崩症"
+    },
+    "congenital adrenal hyperplasia": {
+      "body_system": "endocrine",
+      "etiology": "genetic",
+      "category_name": "先天性肾上腺皮质增生症"
+    },
+    "actinic keratosis (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "光化性角化病"
+    },
+    "infantile colic": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "婴儿肠绞痛"
+    },
+    "relapsing forms of multiple sclerosis": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "复发型多发性硬化"
+    },
+    "labor induction": {
+      "body_system": "reproductive",
+      "etiology": "symptomatic",
+      "category_name": "引产"
+    },
+    "acute nonspecific diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "急性非特异性腹泻"
+    },
+    "chronic diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "chronic",
+      "category_name": "慢性腹泻"
+    },
+    "gastric adenocarcinoma": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胃腺癌"
+    },
+    "atrial fibrillation conversion to sinus rhythm": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "心房颤动转复窦性心律"
+    },
+    "atrial flutter conversion to sinus rhythm": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "心房扑动转复窦性心律"
+    },
+    "vascular dementia": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "血管性痴呆"
+    },
+    "lewy body dementia": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "路易体痴呆"
+    },
+    "post-traumatic stress disorder nightmares": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "创伤后应激障碍噩梦"
+    },
+    "acute psychotic agitation": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "急性精神病性激越"
+    },
+    "vte prophylaxis and treatment": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "静脉血栓栓塞预防与治疗"
+    },
+    "cardiac arrest": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "心脏骤停"
+    },
+    "percutaneous coronary intervention": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "经皮冠状动脉介入治疗"
+    },
+    "dementia": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "痴呆"
+    },
+    "perioperative hypertension": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "围手术期高血压"
+    },
+    "heavy menstrual bleeding": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "月经过多"
+    },
+    "genital herpes": {
+      "body_system": "reproductive",
+      "etiology": "viral",
+      "category_name": "生殖器疱疹"
+    },
+    "paroxysmal supraventricular tachycardia": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "阵发性室上性心动过速"
+    },
+    "orthostatic hypotension": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "直立性低血压"
+    },
+    "pmdd": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "经前烦躁障碍症"
+    },
+    "acute cystitis": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "急性膀胱炎"
+    },
+    "tularemia": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "兔热病"
+    },
+    "uterine leiomyomata": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "子宫平滑肌瘤"
+    },
+    "radiation-induced nausea and vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "放射性恶心呕吐"
+    },
+    "tinea capitis": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "头癣"
+    },
+    "ocular cycloplegia": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "眼睫状肌麻痹"
+    },
+    "mydriasis": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "瞳孔散大"
+    },
+    "status asthmaticus": {
+      "body_system": "respiratory",
+      "etiology": "acute",
+      "category_name": "哮喘持续状态"
+    },
+    "septic shock": {
+      "body_system": "systemic",
+      "etiology": "infectious",
+      "category_name": "感染性休克"
+    },
+    "oral ulcer": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "口腔溃疡"
+    },
+    "polycythemia vera": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "真性红细胞增多症"
+    },
+    "renal colic": {
+      "body_system": "renal",
+      "etiology": "acute",
+      "category_name": "肾绞痛"
+    },
+    "bone metastases": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "骨转移"
+    },
+    "cataplexy": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "猝倒症"
+    },
+    "hairy cell leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "毛细胞白血病"
+    },
+    "follicular lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "滤泡性淋巴瘤"
+    },
+    "hepatitis b/c": {
+      "body_system": "hepatic",
+      "etiology": "viral",
+      "category_name": "乙型/丙型肝炎"
+    },
+    "invasive aspergillosis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "侵袭性曲霉病"
+    },
+    "candidemia": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "念珠菌血症"
+    },
+    "angina pectoris prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心绞痛预防"
+    },
+    "candidiasis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "念珠菌病"
+    },
+    "fungal infections": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "真菌感染"
+    },
+    "stable angina": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "稳定型心绞痛"
+    },
+    "onchocerciasis": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "盘尾丝虫病"
+    },
+    "rosacea (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "酒渣鼻"
+    },
+    "hypertensive emergency": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "高血压急症"
+    },
+    "pregnancy-induced hypertension": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "妊娠高血压"
+    },
+    "bipolar i disorder maintenance": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相I型障碍维持治疗"
+    },
+    "borderline personality disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "边缘型人格障碍"
+    },
+    "myoclonic seizures": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "肌阵挛发作"
+    },
+    "generalized tonic-clonic seizures": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "全身强直阵挛发作"
+    },
+    "post-mi": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心肌梗死后"
+    },
+    "brain tumors": {
+      "body_system": "neurologic",
+      "etiology": "neoplastic",
+      "category_name": "脑肿瘤"
+    },
+    "brain tumor": {
+      "body_system": "neurologic",
+      "etiology": "neoplastic",
+      "category_name": "脑肿瘤"
+    },
+    "secondary amenorrhea": {
+      "body_system": "reproductive",
+      "etiology": "endocrine",
+      "category_name": "继发性闭经"
+    },
+    "abnormal uterine bleeding": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "异常子宫出血"
+    },
+    "menorrhagia": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "月经过多"
+    },
+    "cachexia": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "恶病质"
+    },
+    "endometrial cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "子宫内膜癌"
+    },
+    "secondary prevention of cardiovascular disease": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心血管疾病二级预防"
+    },
+    "general anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "全身麻醉"
+    },
+    "performance anxiety": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "表演焦虑"
+    },
+    "bipolar i disorder (manic and depressive episodes)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相I型障碍"
+    },
+    "gynecomastia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "男性乳房发育症"
+    },
+    "post-exposure prophylaxis for hiv": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "HIV暴露后预防"
+    },
+    "liver cancer": {
+      "body_system": "hepatic",
+      "etiology": "neoplastic",
+      "category_name": "肝癌"
+    },
+    "latent tuberculosis infection": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "潜伏性结核感染"
+    },
+    "glucocorticoid-induced osteoporosis": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "糖皮质激素性骨质疏松"
+    },
+    "primary dysbetalipoproteinemia": {
+      "body_system": "cardiovascular",
+      "etiology": "genetic",
+      "category_name": "原发性异常β脂蛋白血症"
+    },
+    "corns": {
+      "body_system": "dermatologic",
+      "etiology": "functional",
+      "category_name": "鸡眼"
+    },
+    "metabolic acidosis": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "代谢性酸中毒"
+    },
+    "hyperkalemia": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "高钾血症"
+    },
+    "urinary alkalinization": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "尿液碱化"
+    },
+    "acute promyelocytic leukemia": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性早幼粒细胞白血病"
+    },
+    "primary hyperaldosteronism": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "原发性醛固酮增多症"
+    },
+    "brucellosis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "布鲁氏菌病"
+    },
+    "trachoma": {
+      "body_system": "ophthalmic",
+      "etiology": "bacterial",
+      "category_name": "沙眼"
+    },
+    "ureteral stones": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "输尿管结石"
+    },
+    "complicated skin and skin structure infections": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "复杂性皮肤及皮肤结构感染"
+    },
+    "acute ischemic stroke": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "急性缺血性卒中"
+    },
+    "hypogonadism": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "性腺功能减退症"
+    },
+    "cytokine release syndrome": {
+      "body_system": "systemic",
+      "etiology": "inflammatory",
+      "category_name": "细胞因子释放综合征"
+    },
+    "dermatoses": {
+      "body_system": "dermatologic",
+      "etiology": "symptomatic",
+      "category_name": "皮肤病"
+    },
+    "infantile spasm": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "婴儿痉挛症"
+    },
+    "treatment of deep vein thrombosis": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "深静脉血栓治疗"
+    },
+    "treatment of pulmonary embolism": {
+      "body_system": "respiratory",
+      "etiology": "acute",
+      "category_name": "肺栓塞治疗"
+    },
+    "prevention of mother-to-child transmission of hiv": {
+      "body_system": "reproductive",
+      "etiology": "viral",
+      "category_name": "预防HIV母婴传播"
+    },
+    "acne scarring": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "痤疮瘢痕"
+    },
+    "severe bacterial infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "严重细菌感染"
+    },
+    "multidrug-resistant hiv infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "多重耐药HIV感染"
+    },
+    "heavily treatment-experienced hiv infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "重度治疗经历的HIV感染"
+    },
+    "nausea and vomiting of pregnancy": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "妊娠恶心呕吐"
+    },
+    "rheumatic disorders": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "风湿性疾病"
+    },
+    "prevention of stroke": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "中风预防"
+    },
+    "chronic angina": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "慢性心绞痛"
+    },
+    "chronic angina prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "慢性心绞痛预防"
+    },
+    "prevention of venous thromboembolism": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "静脉血栓栓塞预防"
+    },
+    "anal fissures": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "肛裂"
+    },
+    "chronic rhinosinusitis with nasal polyps": {
+      "body_system": "respiratory",
+      "etiology": "chronic",
+      "category_name": "慢性鼻窦炎伴鼻息肉"
+    },
+    "nausea and vomiting from chemotherapy": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "化疗引起的恶心呕吐"
+    },
+    "covid-19 (severe)": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "重症COVID-19"
+    },
+    "bipolar depression": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相抑郁"
+    },
+    "legionnaires' disease": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "军团病"
+    },
+    "sinus pressure": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "鼻窦压迫感"
+    },
+    "magnesium deficiency": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "镁缺乏"
+    },
+    "diverticulosis": {
+      "body_system": "gastrointestinal",
+      "etiology": "degenerative",
+      "category_name": "憩室病"
+    },
+    "anal pruritus": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "肛门瘙痒"
+    },
+    "covid-19 prevention": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "COVID-19预防"
+    },
+    "cryopyrin-associated periodic syndromes": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "冷吡啉相关周期性综合征"
+    },
+    "major depressive disorder (adjunctive therapy)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "重性抑郁障碍"
+    },
+    "schizophrenia (adjunctive therapy)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "精神分裂症"
+    },
+    "hyperhomocysteinemia": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "高同型半胱氨酸血症"
+    },
+    "chronic weight management": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "长期体重管理"
+    },
+    "acute diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "急性腹泻"
+    },
+    "chronic diarrhea associated with inflammatory bowel disease": {
+      "body_system": "gastrointestinal",
+      "etiology": "autoimmune",
+      "category_name": "炎症性肠病相关慢性腹泻"
+    },
+    "prurigo nodularis": {
+      "body_system": "dermatologic",
+      "etiology": "chronic",
+      "category_name": "结节性痒疹"
+    },
+    "proctitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "直肠炎"
+    },
+    "hyperkeratosis": {
+      "body_system": "dermatologic",
+      "etiology": "chronic",
+      "category_name": "角化过度"
+    },
+    "peptic ulcer bleeding": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "消化性溃疡出血"
+    },
+    "acid indigestion": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "胃酸消化不良"
+    },
+    "female pattern hair loss": {
+      "body_system": "dermatologic",
+      "etiology": "endocrine",
+      "category_name": "女性型脱发"
+    },
+    "allergic rhinitis due to grass pollen": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "草花粉过敏性鼻炎"
+    },
+    "osteoarthritis pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "degenerative",
+      "category_name": "骨关节炎疼痛"
+    },
+    "cervical dystonia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "颈肌张力障碍"
+    },
+    "blepharospasm": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "眼睑痉挛"
+    },
+    "chronic migraine": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "慢性偏头痛"
+    },
+    "strabismus": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "斜视"
+    },
+    "topical skin infections": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "局部皮肤感染"
+    },
+    "dystonia": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "肌张力障碍"
+    },
+    "anxiety symptoms": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "焦虑症状"
+    },
+    "migraine headache": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "偏头痛"
+    },
+    "acute sinusitis": {
+      "body_system": "respiratory",
+      "etiology": "infectious。或者bacterial。我选 infectious。",
+      "category_name": "急性鼻窦炎"
+    },
+    "conjunctivitis (topical)": {
+      "body_system": "ophthalmic",
+      "etiology": "infectious",
+      "category_name": "结膜炎"
+    },
+    "serious infections": {
+      "body_system": "systemic",
+      "etiology": "infectious",
+      "category_name": "严重感染"
+    },
+    "typhoid": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "伤寒"
+    },
+    "alcohol withdrawal syndrome": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "酒精戒断综合征"
+    },
+    "nephrolithiasis prevention": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "肾结石预防"
+    },
+    "candidiasis (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "念珠菌病"
+    },
+    "herpes simplex virus infection resistant to acyclovir": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "对阿昔洛韦耐药的单纯疱疹病毒感染"
+    },
+    "bk virus nephropathy": {
+      "body_system": "renal",
+      "etiology": "viral",
+      "category_name": "BK病毒肾病"
+    },
+    "secondary stroke prevention": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "继发性卒中预防"
+    },
+    "coronary artery disease prevention after stent implantation": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "支架植入术后冠状动脉疾病预防"
+    },
+    "pathological hypersecretory conditions": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "病理性高分泌状态"
+    },
+    "allergic reaction adjuvant therapy": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "过敏反应辅助治疗"
+    },
+    "hyperparathyroidism": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "甲状旁腺功能亢进"
+    },
+    "hypercalcemia of parathyroid carcinoma": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "甲状旁腺癌的高钙血症"
+    },
+    "stomach ulcer": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "胃溃疡"
+    },
+    "bacterial vaginosis (topical)": {
+      "body_system": "reproductive",
+      "etiology": "bacterial",
+      "category_name": "细菌性阴道病"
+    },
+    "bone infection": {
+      "body_system": "musculoskeletal",
+      "etiology": "bacterial",
+      "category_name": "骨感染"
+    },
+    "ovulation induction in polycystic ovary syndrome": {
+      "body_system": "reproductive",
+      "etiology": "metabolic",
+      "category_name": "多囊卵巢综合征的促排卵"
+    },
+    "female infertility due to anovulation": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "无排卵性女性不孕症"
+    },
+    "male infertility (oligospermia)": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "男性不育症"
+    },
+    "seizure disorders": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "癫痫"
+    },
+    "rem sleep behavior disorder": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "快速眼动睡眠行为障碍"
+    },
+    "recent myocardial infarction": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "近期心肌梗死"
+    },
+    "recent stroke": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "近期卒中"
+    },
+    "atrial fibrillation (if warfarin unsuitable)": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "房颤"
+    },
+    "acute alcohol withdrawal": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "急性酒精戒断"
+    },
+    "partial seizures (adjunct)": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "部分性发作"
+    },
+    "treatment-resistant schizophrenia": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "难治性精神分裂症"
+    },
+    "suicidal behavior in schizophrenia or schizoaffective disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "精神分裂症或分裂情感性障碍中的自杀行为"
+    },
+    "diarrhea (short-term)": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "腹泻"
+    },
+    "acute gout flares": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "急性痛风发作"
+    },
+    "familial mediterranean fever": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "家族性地中海热"
+    },
+    "gout prophylaxis": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "痛风预防"
+    },
+    "recurrent pericarditis": {
+      "body_system": "cardiovascular",
+      "etiology": "inflammatory",
+      "category_name": "复发性心包炎"
+    },
+    "type 2 diabetes mellitus (as adjunct)": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "2型糖尿病"
+    },
+    "bile acid malabsorption diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "metabolic",
+      "category_name": "胆汁酸吸收不良性腹泻"
+    },
+    "systemic mastocytosis": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "系统性肥大细胞增多症"
+    },
+    "food allergy prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "食物过敏预防"
+    },
+    "antineutrophil cytoplasmic antibody-associated vasculitis": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "抗中性粒细胞胞浆抗体相关性血管炎"
+    },
+    "appetite stimulation": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "食欲刺激"
+    },
+    "serotonin syndrome": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "血清素综合征"
+    },
+    "stroke prevention in non-valvular atrial fibrillation": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "非瓣膜性房颤卒中预防"
+    },
+    "venous thromboembolism prophylaxis after hip replacement": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "髋关节置换术后静脉血栓栓塞预防"
+    },
+    "non-small cell lung cancer with braf v600e mutation": {
+      "body_system": "respiratory",
+      "etiology": "neoplastic",
+      "category_name": "BRAF V600E突变非小细胞肺癌"
+    },
+    "anaplastic thyroid cancer with braf v600e mutation": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "BRAF V600E突变甲状腺未分化癌"
+    },
+    "metastatic melanoma": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "转移性黑色素瘤"
+    },
+    "wilms' tumor": {
+      "body_system": "renal",
+      "etiology": "neoplastic",
+      "category_name": "肾母细胞瘤"
+    },
+    "ewing's sarcoma": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "尤文肉瘤"
+    },
+    "malignant hyperthermia": {
+      "body_system": "musculoskeletal",
+      "etiology": "genetic",
+      "category_name": "恶性高热"
+    },
+    "muscle spasticity in upper motor neuron disorders": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "上运动神经元病肌痉挛"
+    },
+    "ecstasy intoxication": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "摇头丸中毒"
+    },
+    "dermatitis herpetiformis": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "疱疹样皮炎"
+    },
+    "pneumocystis pneumonia prophylaxis": {
+      "body_system": "respiratory",
+      "etiology": "fungal",
+      "category_name": "肺孢子菌肺炎预防"
+    },
+    "staphylococcus aureus bacteremia": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "金黄色葡萄球菌菌血症"
+    },
+    "right-sided infective endocarditis": {
+      "body_system": "cardiovascular",
+      "etiology": "bacterial",
+      "category_name": "右侧感染性心内膜炎"
+    },
+    "vancomycin-resistant enterococci infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "耐万古霉素肠球菌感染"
+    },
+    "hiv post-exposure prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "HIV暴露后预防"
+    },
+    "chronic iron overload due to blood transfusions": {
+      "body_system": "hematologic",
+      "etiology": "metabolic",
+      "category_name": "输血相关慢性铁过载"
+    },
+    "non-transfusion-dependent thalassemia with iron overload": {
+      "body_system": "hematologic",
+      "etiology": "genetic",
+      "category_name": "非输血依赖性地中海贫血伴铁过载"
+    },
+    "acute iron intoxication": {
+      "body_system": "systemic",
+      "etiology": "acute",
+      "category_name": "急性铁中毒"
+    },
+    "psoriasis (face/groin)": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "银屑病"
+    },
+    "covid-19 requiring oxygen": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "需吸氧的新型冠状病毒肺炎"
+    },
+    "croup": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "哮吼"
+    },
+    "treatment-resistant depression (augmentation)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "难治性抑郁症"
+    },
+    "upper respiratory tract infection": {
+      "body_system": "respiratory",
+      "etiology": "infectious （也可选viral，但要单一，决定用 infectious）",
+      "category_name": "上呼吸道感染"
+    },
+    "immune support": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "免疫支持"
+    },
+    "paroxysmal nocturnal hemoglobinuria": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "阵发性睡眠性血红蛋白尿症"
+    },
+    "atypical hemolytic uremic syndrome": {
+      "body_system": "renal",
+      "etiology": "genetic",
+      "category_name": "非典型溶血性尿毒症综合征"
+    },
+    "generalized myasthenia gravis": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "全身型重症肌无力"
+    },
+    "neuromyelitis optica spectrum disorder": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "视神经脊髓炎谱系疾病"
+    },
+    "heart failure with preserved ejection fraction": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "射血分数保留的心力衰竭"
+    },
+    "deep vein thrombosis prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "深静脉血栓预防"
+    },
+    "venous thromboembolism prophylaxis in medical patients": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "内科患者静脉血栓栓塞预防"
+    },
+    "atrial fibrillation stroke prevention (bridge therapy)": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "房颤卒中预防"
+    },
+    "parkinson's disease (adjunct to levodopa)": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "帕金森病"
+    },
+    "chronic hepatitis b infection": {
+      "body_system": "hepatic",
+      "etiology": "viral",
+      "category_name": "慢性乙型肝炎感染"
+    },
+    "hiv/hepatitis b coinfection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "HIV/乙型肝炎共感染"
+    },
+    "non-metastatic castration-resistant prostate cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "非转移性去势抵抗性前列腺癌"
+    },
+    "metastatic castration-sensitive prostate cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "转移性去势敏感性前列腺癌"
+    },
+    "anaphylaxis": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "过敏症"
+    },
+    "severe asthma exacerbation": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "严重哮喘急性发作"
+    },
+    "bradycardia (if pacing ineffective)": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "心动过缓"
+    },
+    "croup (nebulized)": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "哮吼"
+    },
+    "primary aldosteronism": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "原发性醛固酮增多症"
+    },
+    "anemia of chronic kidney disease": {
+      "body_system": "hematologic",
+      "etiology": "chronic",
+      "category_name": "慢性肾病贫血"
+    },
+    "anemia due to chemotherapy in cancer patients": {
+      "body_system": "hematologic",
+      "etiology": "symptomatic",
+      "category_name": "癌症患者化疗所致贫血"
+    },
+    "anemia in zidovudine-treated hiv patients": {
+      "body_system": "hematologic",
+      "etiology": "symptomatic",
+      "category_name": "齐多夫定治疗的HIV患者贫血"
+    },
+    "preoperative anemia in elective surgery": {
+      "body_system": "hematologic",
+      "etiology": "symptomatic",
+      "category_name": "择期手术术前贫血"
+    },
+    "hypertensive crisis": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "高血压危象"
+    },
+    "nsaid-induced ulcer prevention": {
+      "body_system": "gastrointestinal",
+      "etiology": "chronic",
+      "category_name": "非甾体抗炎药所致溃疡的预防"
+    },
+    "ovarian failure": {
+      "body_system": "reproductive",
+      "etiology": "degenerative",
+      "category_name": "卵巢衰竭"
+    },
+    "vaginal atrophy": {
+      "body_system": "reproductive",
+      "etiology": "degenerative",
+      "category_name": "阴道萎缩"
+    },
+    "absence seizures": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "失神发作"
+    },
+    "contraception (implant)": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "避孕"
+    },
+    "pancreatic neuroendocrine tumors": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胰腺神经内分泌肿瘤"
+    },
+    "tuberous sclerosis complex-associated seizures": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "结节性硬化症相关癫痫发作"
+    },
+    "sitosterolemia": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "谷固醇血症"
+    },
+    "cardiovascular event risk reduction (in combination with statin)": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心血管事件风险降低"
+    },
+    "herpes simplex labialis": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "唇单纯疱疹"
+    },
+    "varicella in immunocompetent patients": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "免疫功能正常患者的水痘"
+    },
+    "urticaria (adjunct)": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "荨麻疹"
+    },
+    "refractory partial seizures": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "难治性部分性癫痫发作"
+    },
+    "diabetic retinopathy": {
+      "body_system": "ophthalmic",
+      "etiology": "metabolic",
+      "category_name": "糖尿病视网膜病变"
+    },
+    "iron deficiency anemia": {
+      "body_system": "hematologic",
+      "etiology": "metabolic",
+      "category_name": "缺铁性贫血"
+    },
+    "iron supplementation": {
+      "body_system": "hematologic",
+      "etiology": "functional",
+      "category_name": "铁补充"
+    },
+    "urinary urgency": {
+      "body_system": "renal",
+      "etiology": "functional",
+      "category_name": "尿急"
+    },
+    "paroxysmal atrial fibrillation/flutter": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "阵发性房颤/房扑"
+    },
+    "ventricular tachycardia": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "室性心动过速"
+    },
+    "vaginal candidiasis": {
+      "body_system": "reproductive",
+      "etiology": "fungal",
+      "category_name": "阴道念珠菌病"
+    },
+    "oropharyngeal candidiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "fungal",
+      "category_name": "口咽念珠菌病"
+    },
+    "systemic candidiasis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "全身性念珠菌病"
+    },
+    "cryptococcal meningitis": {
+      "body_system": "neurologic",
+      "etiology": "fungal",
+      "category_name": "隐球菌性脑膜炎"
+    },
+    "acute myeloid leukemia (part of conditioning)": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性髓系白血病"
+    },
+    "benzodiazepine overdose": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "苯二氮卓类药物过量"
+    },
+    "reversal of conscious sedation": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "镇静作用的逆转"
+    },
+    "inflammatory eye conditions": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "炎性眼病"
+    },
+    "keratitis": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "角膜炎"
+    },
+    "basal cell carcinoma (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "基底细胞癌"
+    },
+    "skin cancer": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "皮肤癌"
+    },
+    "bipolar depression (with olanzapine)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相抑郁"
+    },
+    "bulimia": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "贪食症"
+    },
+    "miosis inhibition during surgery (ophthalmic)": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "手术中瞳孔缩小抑制"
+    },
+    "polycystic ovary syndrome (androgen excess)": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "多囊卵巢综合征"
+    },
+    "megaloblastic anemia": {
+      "body_system": "hematologic",
+      "etiology": "metabolic",
+      "category_name": "巨幼细胞性贫血"
+    },
+    "neural tube defect prevention in pregnancy": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "妊娠期神经管缺陷预防"
+    },
+    "methotrexate toxicity reduction": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "甲氨蝶呤毒性降低"
+    },
+    "prevention of neural tube defects": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "神经管缺陷预防"
+    },
+    "acyclovir-resistant hsv infections": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "阿昔洛韦耐药单纯疱疹病毒感染"
+    },
+    "cytomegalovirus infection in transplant recipients": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "移植受者巨细胞病毒感染"
+    },
+    "seizures (when oral phenytoin not possible)": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "癫痫发作"
+    },
+    "neurosurgical seizure prophylaxis": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "神经外科癫痫预防"
+    },
+    "menstrual migraine": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "月经性偏头痛"
+    },
+    "diabetic peripheral neuropathy": {
+      "body_system": "neurologic",
+      "etiology": "metabolic",
+      "category_name": "糖尿病周围神经病变"
+    },
+    "mri contrast": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "磁共振造影"
+    },
+    "central nervous system imaging": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "中枢神经系统成像"
+    },
+    "magnetic resonance angiography": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "磁共振血管造影"
+    },
+    "breast mri": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "乳腺磁共振成像"
+    },
+    "mri contrast agent": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "磁共振造影剂"
+    },
+    "cytomegalovirus prophylaxis in transplant patients": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "移植患者巨细胞病毒预防"
+    },
+    "cytomegalovirus colitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒结肠炎"
+    },
+    "cytomegalovirus pneumonitis": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒肺炎"
+    },
+    "non-small cell lung cancer with egfr mutations": {
+      "body_system": "respiratory",
+      "etiology": "neoplastic",
+      "category_name": "EGFR突变非小细胞肺癌"
+    },
+    "high cardiovascular risk with low hdl": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "低HDL所致高心血管风险"
+    },
+    "severe hypoglycemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "严重低血糖"
+    },
+    "beta-blocker overdose": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "β受体阻滞剂过量"
+    },
+    "calcium channel blocker overdose": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "钙通道阻滞剂过量"
+    },
+    "esophageal food impaction": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "食管食物嵌顿"
+    },
+    "fungal infections of skin": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "皮肤真菌感染"
+    },
+    "lichen sclerosus": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "硬化性苔藓"
+    },
+    "inflammatory skin conditions": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "炎症性皮肤病"
+    },
+    "venous thromboembolism prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "静脉血栓栓塞预防"
+    },
+    "venous thromboembolism treatment": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "静脉血栓栓塞治疗"
+    },
+    "atrial fibrillation (bridge therapy)": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "心房颤动"
+    },
+    "extracorporeal circuit anticoagulation": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "体外循环抗凝"
+    },
+    "disseminated intravascular coagulation": {
+      "body_system": "hematologic",
+      "etiology": "acute",
+      "category_name": "弥散性血管内凝血"
+    },
+    "iritis": {
+      "body_system": "ophthalmic",
+      "etiology": "inflammatory",
+      "category_name": "虹膜炎"
+    },
+    "heart failure (with nitrates)": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心力衰竭"
+    },
+    "hypertensive crisis in pregnancy": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "妊娠期高血压危象"
+    },
+    "nephrolithiasis prophylaxis": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "肾结石预防"
+    },
+    "hypercalciuria": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "高钙尿症"
+    },
+    "topical dermatologic conditions": {
+      "body_system": "dermatologic",
+      "etiology": "symptomatic",
+      "category_name": "局部皮肤病"
+    },
+    "malaria prophylaxis and treatment": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "疟疾的预防和治疗"
+    },
+    "sjögren's syndrome": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "干燥综合征"
+    },
+    "covid-19 (investigational)": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "COVID-19"
+    },
+    "sickle cell anemia": {
+      "body_system": "hematologic",
+      "etiology": "genetic",
+      "category_name": "镰状细胞贫血"
+    },
+    "acute myeloid leukemia (palliative)": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "急性髓系白血病"
+    },
+    "primary": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "原发性"
+    },
+    "functional gastrointestinal disorders": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "功能性胃肠病"
+    },
+    "biliary colic": {
+      "body_system": "biliary",
+      "etiology": "symptomatic",
+      "category_name": "胆绞痛"
+    },
+    "gi spasms": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "胃肠道痉挛"
+    },
+    "corticosteroid-induced osteoporosis": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "糖皮质激素诱发的骨质疏松症"
+    },
+    "marginal zone lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "边缘区淋巴瘤"
+    },
+    "chronic graft-versus-host disease": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "慢性移植物抗宿主病"
+    },
+    "diffuse large b-cell lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "弥漫性大B细胞淋巴瘤"
+    },
+    "sarcomas": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "肉瘤"
+    },
+    "sarcoma": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "肉瘤"
+    },
+    "myelodysplastic/myeloproliferative diseases": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "骨髓增生异常/骨髓增殖性疾病"
+    },
+    "desmoid tumor": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "硬纤维瘤"
+    },
+    "gouty arthritis": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "痛风性关节炎"
+    },
+    "hemicrania continua": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "持续性偏头痛"
+    },
+    "patent ductus arteriosus closure": {
+      "body_system": "cardiovascular",
+      "etiology": "genetic",
+      "category_name": "动脉导管未闭闭合"
+    },
+    "melanoma (adjuvant)": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "黑色素瘤"
+    },
+    "condylomata acuminata": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "尖锐湿疣"
+    },
+    "rhinorrhea associated with allergic rhinitis (nasal spray)": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "与过敏性鼻炎相关的鼻漏"
+    },
+    "diabetic nephropathy in patients with type 2 diabetes and hypertension": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "2型糖尿病合并高血压患者的糖尿病肾病"
+    },
+    "invasive mucormycosis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "侵袭性毛霉病"
+    },
+    "mucormycosis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "毛霉病"
+    },
+    "tuberculosis (latent infection)": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "结核病"
+    },
+    "tuberculosis (active, in combination)": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "结核病"
+    },
+    "heart failure (adjunct)": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心力衰竭"
+    },
+    "acne vulgaris refractory to other therapy": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "其他治疗无效的寻常痤疮"
+    },
+    "asymptomatic pulmonary aspergillosis": {
+      "body_system": "respiratory",
+      "etiology": "fungal",
+      "category_name": "无症状肺曲霉病"
+    },
+    "histoplasmosis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "组织胞浆菌病"
+    },
+    "blastomycosis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "芽生菌病"
+    },
+    "cryptococcosis (maintenance, non-meningeal)": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "隐球菌病"
+    },
+    "heart failure with reduced ejection fraction (to reduce hospitalizations)": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "射血分数降低的心力衰竭"
+    },
+    "inappropriate sinus tachycardia": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "不适当窦性心动过速"
+    },
+    "cystic fibrosis with g551d mutation or other specified mutations": {
+      "body_system": "respiratory",
+      "etiology": "genetic",
+      "category_name": "囊性纤维化伴G551D突变或其他特定突变"
+    },
+    "scabies (topical/oral)": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "疥疮"
+    },
+    "pediculosis": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "虱病"
+    },
+    "parasitic infections": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "寄生虫感染"
+    },
+    "head lice": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "头虱"
+    },
+    "severe recalcitrant dermatophytosis": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "重度顽固性皮肤癣菌病"
+    },
+    "cushing's syndrome": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "库欣综合征"
+    },
+    "advanced prostate cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "晚期前列腺癌"
+    },
+    "moderate to severe acute pain (short-term)": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "中度至重度急性疼痛"
+    },
+    "preeclampsia/eclampsia": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "子痫前期/子痫"
+    },
+    "diabetic neuropathy pain": {
+      "body_system": "neurologic",
+      "etiology": "metabolic",
+      "category_name": "糖尿病神经病变疼痛"
+    },
+    "seizures (focal and generalized)": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "癫痫发作"
+    },
+    "nsaid-induced gastric ulcer prophylaxis": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "NSAID所致胃溃疡的预防"
+    },
+    "cytomegalovirus infection (investigational)": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒感染"
+    },
+    "precocious puberty": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "性早熟"
+    },
+    "carnitine deficiency": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "肉碱缺乏"
+    },
+    "secondary carnitine deficiency in hemodialysis": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "血液透析中的继发性肉碱缺乏"
+    },
+    "valproic acid-induced hepatotoxicity prophylaxis": {
+      "body_system": "hepatic",
+      "etiology": "acute",
+      "category_name": "丙戊酸所致肝毒性的预防"
+    },
+    "dopa-responsive dystonia": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "多巴反应性肌张力障碍"
+    },
+    "tuberculosis (second-line)": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "结核病"
+    },
+    "thyroid hormone replacement in goiter or thyroid cancer": {
+      "body_system": "endocrine",
+      "etiology": "chronic",
+      "category_name": "甲状腺激素替代治疗用于甲状腺肿或甲状腺癌"
+    },
+    "subclinical hypothyroidism": {
+      "body_system": "endocrine",
+      "etiology": "autoimmune",
+      "category_name": "亚临床甲状腺功能减退症"
+    },
+    "postherpetic neuralgia (topical patch)": {
+      "body_system": "neurologic",
+      "etiology": "chronic",
+      "category_name": "带状疱疹后神经痛"
+    },
+    "mucositis pain (mouthwash)": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "黏膜炎疼痛"
+    },
+    "vancomycin-resistant enterococcus faecium infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "耐万古霉素屎肠球菌感染"
+    },
+    "mrsa pneumonia": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "MRSA肺炎"
+    },
+    "multidrug-resistant tuberculosis": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "耐多药结核病"
+    },
+    "vre infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "VRE感染"
+    },
+    "thyroid suppression test": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "甲状腺抑制试验"
+    },
+    "adjunctive therapy in major depression": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "重性抑郁障碍的辅助治疗"
+    },
+    "bipolar disorder (manic episodes and maintenance)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相障碍"
+    },
+    "cluster headache prophylaxis": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "丛集性头痛的预防"
+    },
+    "neutropenia": {
+      "body_system": "hematologic",
+      "etiology": "symptomatic",
+      "category_name": "中性粒细胞减少症"
+    },
+    "vernal keratoconjunctivitis": {
+      "body_system": "ophthalmic",
+      "etiology": "allergic",
+      "category_name": "春季角结膜炎"
+    },
+    "brain tumors (primary and metastatic)": {
+      "body_system": "neurologic",
+      "etiology": "neoplastic",
+      "category_name": "脑肿瘤"
+    },
+    "ileostomy output reduction": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "回肠造口排出液减少"
+    },
+    "tetanus (adjunct)": {
+      "body_system": "neurologic",
+      "etiology": "bacterial",
+      "category_name": "破伤风"
+    },
+    "psoriasis (with puva therapy)": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "银屑病"
+    },
+    "vitiligo (with puva therapy)": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "白癜风"
+    },
+    "irritable bowel syndrome (fiber supplement)": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "肠易激综合征"
+    },
+    "hypertension in pregnancy": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "妊娠期高血压"
+    },
+    "prevention and treatment of postpartum hemorrhage": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "预防和治疗产后出血"
+    },
+    "prevent/treat postpartum hemorrhage": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "预防/治疗产后出血"
+    },
+    "opioid-induced constipation": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "阿片类药物引起的便秘"
+    },
+    "opioid-induced constipation not responsive to standard laxatives": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "对标准泻药无反应的阿片类药物引起的便秘"
+    },
+    "refractory depression (augmentation)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "难治性抑郁症"
+    },
+    "spinal cord injury (acute)": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "急性脊髓损伤"
+    },
+    "pneumocystis pneumonia (adjunct)": {
+      "body_system": "respiratory",
+      "etiology": "fungal",
+      "category_name": "肺孢子菌肺炎"
+    },
+    "severe gastroesophageal reflux disease": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "重度胃食管反流病"
+    },
+    "lactation induction": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "诱导泌乳"
+    },
+    "clostridioides difficile colitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "艰难梭菌结肠炎"
+    },
+    "diaper dermatitis complicated by candida": {
+      "body_system": "dermatologic",
+      "etiology": "fungal",
+      "category_name": "尿布皮炎并发念珠菌感染"
+    },
+    "refractory insomnia": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "难治性失眠"
+    },
+    "vasovagal syncope": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "血管迷走性晕厥"
+    },
+    "acute decompensated heart failure (short-term)": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "急性失代偿性心力衰竭"
+    },
+    "cardiogenic shock": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "心源性休克"
+    },
+    "skin and soft tissue infection (mrsa)": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "皮肤和软组织感染"
+    },
+    "hypertension (refractory)": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "难治性高血压"
+    },
+    "androgenetic alopecia (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "genetic",
+      "category_name": "雄激素性脱发"
+    },
+    "alopecia areata (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "斑秃"
+    },
+    "prevention of nsaid-induced gastric ulcers": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "预防非甾体抗炎药引起的胃溃疡"
+    },
+    "medical abortion (with mifepristone)": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "药物流产"
+    },
+    "cervical ripening and labor induction": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "宫颈成熟与引产"
+    },
+    "prevention of nsaid-induced ulcers": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "预防非甾体抗炎药引起的溃疡"
+    },
+    "pancreatic adenocarcinoma": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胰腺腺癌"
+    },
+    "bladder cancer (intravesical)": {
+      "body_system": "renal",
+      "etiology": "neoplastic",
+      "category_name": "膀胱癌"
+    },
+    "anal cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "肛门癌"
+    },
+    "adrenocortical carcinoma": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "肾上腺皮质癌"
+    },
+    "cushing's disease": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "库欣病"
+    },
+    "multiple sclerosis (relapsing)": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "多发性硬化"
+    },
+    "sleep apnea": {
+      "body_system": "respiratory",
+      "etiology": "functional",
+      "category_name": "睡眠呼吸暂停"
+    },
+    "inflammatory skin conditions (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "炎症性皮肤病"
+    },
+    "hives": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "荨麻疹"
+    },
+    "dyspnea in advanced disease": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "晚期疾病中的呼吸困难"
+    },
+    "conjunctivitis (ophthalmic)": {
+      "body_system": "ophthalmic",
+      "etiology": "infectious",
+      "category_name": "结膜炎"
+    },
+    "mrsa nasal colonization": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "MRSA鼻腔定植"
+    },
+    "minor wound infection prophylaxis": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "小伤口感染预防"
+    },
+    "nasal mrsa decolonization": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "鼻腔MRSA去定植"
+    },
+    "vasculitis": {
+      "body_system": "cardiovascular",
+      "etiology": "autoimmune",
+      "category_name": "血管炎"
+    },
+    "interstitial lung disease associated with connective tissue disease": {
+      "body_system": "respiratory",
+      "etiology": "autoimmune",
+      "category_name": "与结缔组织病相关的间质性肺病"
+    },
+    "opioid overdose": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "阿片类药物过量"
+    },
+    "respiratory depression from opioids": {
+      "body_system": "respiratory",
+      "etiology": "acute",
+      "category_name": "阿片类药物引起的呼吸抑制"
+    },
+    "pruritus due to opioids": {
+      "body_system": "dermatologic",
+      "etiology": "symptomatic",
+      "category_name": "阿片类药物引起的瘙痒"
+    },
+    "opioid use disorder relapse prevention": {
+      "body_system": "psychiatric",
+      "etiology": "psychiatric",
+      "category_name": "阿片使用障碍复吸预防"
+    },
+    "multiple sclerosis (low dose)": {
+      "body_system": "neurologic",
+      "etiology": "autoimmune",
+      "category_name": "多发性硬化"
+    },
+    "skin infection prophylaxis (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "皮肤感染预防"
+    },
+    "bowel preparation": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "肠道准备"
+    },
+    "skin infection": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "皮肤感染"
+    },
+    "reversal of nondepolarizing neuromuscular blockade": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "非去极化神经肌肉阻滞的逆转"
+    },
+    "acute colonic pseudo-obstruction": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "急性结肠假性梗阻"
+    },
+    "atherosclerosis regression": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "动脉粥样硬化逆转"
+    },
+    "niacin deficiency": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "烟酸缺乏症"
+    },
+    "photodamage": {
+      "body_system": "dermatologic",
+      "etiology": "degenerative",
+      "category_name": "光损伤"
+    },
+    "skin cancer prevention": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "皮肤癌预防"
+    },
+    "preterm labor (tocolysis)": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "早产"
+    },
+    "achilles tendonitis": {
+      "body_system": "musculoskeletal",
+      "etiology": "inflammatory",
+      "category_name": "跟腱炎"
+    },
+    "prevention of vasospasm after subarachnoid hemorrhage": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "蛛网膜下腔出血后血管痉挛的预防"
+    },
+    "vasospasm after subarachnoid hemorrhage": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "蛛网膜下腔出血后血管痉挛"
+    },
+    "diarrhea caused by cryptosporidium": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "隐孢子虫或贾第鞭毛虫引起的腹泻"
+    },
+    "diarrhea caused by giardia": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "贾第鞭毛虫引起的腹泻"
+    },
+    "clostridioides difficile infection": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "艰难梭菌感染"
+    },
+    "cryptosporidiosis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "隐孢子虫病"
+    },
+    "urinary tract infection prophylaxis": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "尿路感染预防"
+    },
+    "severe hypotension": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "严重低血压"
+    },
+    "cardiopulmonary resuscitation": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "心肺复苏"
+    },
+    "intestinal candidiasis (non-systemic)": {
+      "body_system": "gastrointestinal",
+      "etiology": "fungal",
+      "category_name": "肠道念珠菌病"
+    },
+    "uncomplicated gonorrhea": {
+      "body_system": "reproductive",
+      "etiology": "bacterial",
+      "category_name": "单纯性淋病"
+    },
+    "bacterial conjunctivitis (ophthalmic)": {
+      "body_system": "ophthalmic",
+      "etiology": "bacterial",
+      "category_name": "细菌性结膜炎"
+    },
+    "bipolar i disorder (manic or mixed)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相I型障碍"
+    },
+    "chemotherapy-induced nausea and vomiting (refractory)": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "化疗引起的恶心呕吐"
+    },
+    "nsaid-induced ulcer prophylaxis": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "非甾体抗炎药相关性溃疡的预防"
+    },
+    "functional dyspepsia": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "功能性消化不良"
+    },
+    "gastroenteritis vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "infectious",
+      "category_name": "胃肠炎呕吐"
+    },
+    "pregnancy-related nausea": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "妊娠相关恶心"
+    },
+    "hyperemesis gravidarum": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "妊娠剧吐"
+    },
+    "obesity management": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "肥胖管理"
+    },
+    "type 2 diabetes mellitus with overweight": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "2型糖尿病伴超重"
+    },
+    "influenza treatment": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "流感治疗"
+    },
+    "influenza prophylaxis": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "流感预防"
+    },
+    "avian influenza": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "禽流感"
+    },
+    "restless legs syndrome (low dose)": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "不宁腿综合征"
+    },
+    "facial erythema of rosacea (topical)": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "酒渣鼻面部红斑"
+    },
+    "conjunctival decongestant": {
+      "body_system": "ophthalmic",
+      "etiology": "symptomatic",
+      "category_name": "结膜充血缓解"
+    },
+    "ocular infections (topical)": {
+      "body_system": "ophthalmic",
+      "etiology": "infectious",
+      "category_name": "眼部感染"
+    },
+    "aids-related kaposi's sarcoma": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "艾滋病相关卡波西肉瘤"
+    },
+    "bipolar i disorder (acute)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相I型障碍"
+    },
+    "osteolytic bone metastases of breast cancer": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "乳腺癌溶骨性骨转移"
+    },
+    "osteolytic lesions of multiple myeloma": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "多发性骨髓瘤溶骨性病变"
+    },
+    "visceral spasm": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "内脏痉挛"
+    },
+    "cerebral vasospasm": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "脑血管痉挛"
+    },
+    "erectile dysfunction (intracavernosal)": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "勃起功能障碍"
+    },
+    "vasospasm": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "血管痉挛"
+    },
+    "intestinal amebiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "肠阿米巴病"
+    },
+    "cutaneous leishmaniasis": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "皮肤利什曼病"
+    },
+    "chemotherapy-induced neutropenia": {
+      "body_system": "hematologic",
+      "etiology": "symptomatic",
+      "category_name": "化疗引起的中性粒细胞减少症"
+    },
+    "hematopoietic subsyndrome of acute radiation syndrome": {
+      "body_system": "hematologic",
+      "etiology": "",
+      "category_name": "急性辐射综合征造血亚综合征"
+    },
+    "classical hodgkin lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "经典型霍奇金淋巴瘤"
+    },
+    "urothelial carcinoma": {
+      "body_system": "renal",
+      "etiology": "neoplastic",
+      "category_name": "尿路上皮癌"
+    },
+    "microsatellite instability-high cancer": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "高度微卫星不稳定性癌症"
+    },
+    "triple-negative breast cancer": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "三阴性乳腺癌"
+    },
+    "herpes labialis (cold sores)": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "唇疱疹"
+    },
+    "streptococcal infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "链球菌感染"
+    },
+    "meningococcal disease": {
+      "body_system": "neurologic",
+      "etiology": "bacterial",
+      "category_name": "脑膜炎球菌病"
+    },
+    "rheumatic fever prophylaxis": {
+      "body_system": "cardiovascular",
+      "etiology": "autoimmune",
+      "category_name": "风湿热预防"
+    },
+    "african trypanosomiasis": {
+      "body_system": "neurologic",
+      "etiology": "parasitic",
+      "category_name": "非洲锥虫病"
+    },
+    "obstetric analgesia": {
+      "body_system": "reproductive",
+      "etiology": "symptomatic",
+      "category_name": "产科镇痛"
+    },
+    "elevated intracranial pressure": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "颅内压增高"
+    },
+    "interstitial cystitis": {
+      "body_system": "renal",
+      "etiology": "autoimmune",
+      "category_name": "间质性膀胱炎"
+    },
+    "alcoholic hepatitis": {
+      "body_system": "hepatic",
+      "etiology": "metabolic",
+      "category_name": "酒精性肝炎"
+    },
+    "venous leg ulcers": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "静脉性腿部溃疡"
+    },
+    "peripheral vascular disease": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "外周血管疾病"
+    },
+    "primary generalized tonic-clonic seizures": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "原发性全面性强直-阵挛发作"
+    },
+    "stable coronary artery disease": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "稳定型冠状动脉疾病"
+    },
+    "pediculosis pubis": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "阴虱病"
+    },
+    "lice": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "虱病"
+    },
+    "severe nausea and vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "严重恶心和呕吐"
+    },
+    "urinary tract pain": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "尿路疼痛"
+    },
+    "bladder discomfort": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "膀胱不适"
+    },
+    "social phobia": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "社交恐惧症"
+    },
+    "obesity (short-term adjunct)": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "肥胖症"
+    },
+    "xerostomia": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "口腔干燥症"
+    },
+    "sjogren's syndrome": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "干燥综合征"
+    },
+    "bacterial sepsis": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "细菌性脓毒症"
+    },
+    "type 1 & 2 diabetes": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "1型和2型糖尿病"
+    },
+    "primary prevention of coronary heart disease": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "冠心病一级预防"
+    },
+    "schistosomiasis": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "血吸虫病"
+    },
+    "liver fluke infection": {
+      "body_system": "hepatic",
+      "etiology": "parasitic",
+      "category_name": "肝吸虫感染"
+    },
+    "tapeworm infection": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "绦虫感染"
+    },
+    "pheochromocytoma": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "嗜铬细胞瘤"
+    },
+    "ptsd nightmares": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "创伤后应激障碍噩梦"
+    },
+    "cancer chemotherapy-induced nausea and vomiting": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "癌症化疗引起的恶心呕吐"
+    },
+    "radical cure of plasmodium vivax malaria": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "间日疟的根治"
+    },
+    "radical cure of plasmodium ovale malaria": {
+      "body_system": "systemic",
+      "etiology": "parasitic",
+      "category_name": "卵形疟的根治"
+    },
+    "adjunctive therapy for bacterial infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "细菌感染的辅助治疗"
+    },
+    "enhance penicillin efficacy": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "增强青霉素疗效"
+    },
+    "hormone replacement therapy": {
+      "body_system": "endocrine",
+      "etiology": "degenerative",
+      "category_name": "激素替代疗法"
+    },
+    "amenorrhea": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "闭经"
+    },
+    "prevention of endometrial hyperplasia": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "预防子宫内膜增生"
+    },
+    "recurrent preterm birth prevention": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "预防复发性早产"
+    },
+    "maintenance of anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "麻醉维持"
+    },
+    "sedation in intensive care unit": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "重症监护室镇静"
+    },
+    "refractory status epilepticus": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "难治性癫痫持续状态"
+    },
+    "induction/maintenance of anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "麻醉诱导/维持"
+    },
+    "portal hypertension": {
+      "body_system": "hepatic",
+      "etiology": "chronic",
+      "category_name": "门静脉高压症"
+    },
+    "thyroid storm": {
+      "body_system": "endocrine",
+      "etiology": "acute",
+      "category_name": "甲状腺危象"
+    },
+    "heparin overdose": {
+      "body_system": "hematologic",
+      "etiology": "acute",
+      "category_name": "肝素过量"
+    },
+    "reversal of heparin anticoagulation": {
+      "body_system": "hematologic",
+      "etiology": "acute",
+      "category_name": "逆转肝素抗凝作用"
+    },
+    "heparin reversal": {
+      "body_system": "hematologic",
+      "etiology": "acute",
+      "category_name": "肝素逆转"
+    },
+    "latent tuberculosis": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "潜伏性结核"
+    },
+    "reversal of nondepolarizing neuromuscular blockers": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "非去极化神经肌肉阻滞剂的逆转"
+    },
+    "postural orthostatic tachycardia syndrome": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "体位性心动过速综合征"
+    },
+    "nocturnal leg cramps": {
+      "body_system": "musculoskeletal",
+      "etiology": "symptomatic",
+      "category_name": "夜间腿部痉挛"
+    },
+    "osteoporosis treatment": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "骨质疏松治疗"
+    },
+    "breast cancer risk reduction": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "乳腺癌风险降低"
+    },
+    "osteoporosis prevention/treatment in postmenopausal women": {
+      "body_system": "musculoskeletal",
+      "etiology": "metabolic",
+      "category_name": "绝经后妇女骨质疏松预防/治疗"
+    },
+    "breast cancer prevention": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "乳腺癌预防"
+    },
+    "tumor lysis syndrome": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "肿瘤溶解综合征"
+    },
+    "metastatic colorectal cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "转移性结直肠癌"
+    },
+    "glioblastoma": {
+      "body_system": "neurologic",
+      "etiology": "neoplastic",
+      "category_name": "胶质母细胞瘤"
+    },
+    "sars-cov-2 infection": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "SARS-CoV-2感染"
+    },
+    "ebola virus disease": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "埃博拉病毒病"
+    },
+    "secondarily infected traumatic skin lesions": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "继发感染的外伤性皮肤损伤"
+    },
+    "respiratory syncytial virus infection": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "呼吸道合胞病毒感染"
+    },
+    "viral hemorrhagic fever": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "病毒性出血热"
+    },
+    "mycobacterium avium complex infection treatment": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "鸟分枝杆菌复合体感染治疗"
+    },
+    "mycobacterium avium complex": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "鸟分枝杆菌复合体感染"
+    },
+    "meningococcal carrier state": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "脑膜炎球菌携带状态"
+    },
+    "staphylococcal prosthetic valve endocarditis": {
+      "body_system": "cardiovascular",
+      "etiology": "bacterial",
+      "category_name": "葡萄球菌性人工瓣膜心内膜炎"
+    },
+    "mrsa decolonization": {
+      "body_system": "respiratory",
+      "etiology": "bacterial",
+      "category_name": "耐甲氧西林金黄色葡萄球菌去定植"
+    },
+    "irritable bowel syndrome with diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "腹泻型肠易激综合征"
+    },
+    "small intestinal bacterial overgrowth": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "小肠细菌过度生长"
+    },
+    "amyotrophic lateral sclerosis": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "肌萎缩侧索硬化"
+    },
+    "huntington's disease": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "亨廷顿病"
+    },
+    "influenza a": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "甲型流感"
+    },
+    "influenza b": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "乙型流感"
+    },
+    "agitation in dementia": {
+      "body_system": "neurologic",
+      "etiology": "degenerative",
+      "category_name": "痴呆相关激越"
+    },
+    "irritability in autism": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "孤独症相关易激惹"
+    },
+    "pharmacokinetic booster for other protease inhibitors": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "其他蛋白酶抑制剂的药代动力学增强剂"
+    },
+    "prevention of venous thromboembolism after surgery": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "术后静脉血栓栓塞的预防"
+    },
+    "regional anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "区域麻醉"
+    },
+    "pain management during labor": {
+      "body_system": "reproductive",
+      "etiology": "symptomatic",
+      "category_name": "分娩疼痛管理"
+    },
+    "local / regional anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "局部/区域麻醉"
+    },
+    "epidural anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "硬膜外麻醉"
+    },
+    "myelofibrosis": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "骨髓纤维化"
+    },
+    "preanesthetic sedation": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "麻醉前镇静"
+    },
+    "hyperphosphatemia in end-stage renal disease": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "终末期肾病相关高磷血症"
+    },
+    "hyperphosphatemia in ckd": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "慢性肾脏病相关高磷血症"
+    },
+    "lower urinary tract symptoms": {
+      "body_system": "renal",
+      "etiology": "symptomatic",
+      "category_name": "下尿路症状"
+    },
+    "lymphangioleiomyomatosis": {
+      "body_system": "respiratory",
+      "etiology": "neoplastic",
+      "category_name": "淋巴管平滑肌瘤病"
+    },
+    "coronary stent coating": {
+      "body_system": "cardiovascular",
+      "etiology": "degenerative",
+      "category_name": "冠状动脉支架涂层"
+    },
+    "tuberous sclerosis complex": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "结节性硬化症"
+    },
+    "prevention of in-stent restenosis": {
+      "body_system": "cardiovascular",
+      "etiology": "inflammatory",
+      "category_name": "预防支架内再狭窄"
+    },
+    "urine alkalinization": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "尿液碱化"
+    },
+    "prader-willi syndrome": {
+      "body_system": "endocrine",
+      "etiology": "genetic",
+      "category_name": "普拉德-威利综合征"
+    },
+    "short stature homeobox gene deficiency": {
+      "body_system": "endocrine",
+      "etiology": "genetic",
+      "category_name": "矮小同源盒基因缺陷症"
+    },
+    "short stature": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "矮小症"
+    },
+    "sga infants with growth failure": {
+      "body_system": "endocrine",
+      "etiology": "functional",
+      "category_name": "小于胎龄儿生长迟缓"
+    },
+    "differentiated thyroid carcinoma": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "分化型甲状腺癌"
+    },
+    "desmoid tumors": {
+      "body_system": "musculoskeletal",
+      "etiology": "neoplastic",
+      "category_name": "硬纤维瘤"
+    },
+    "differentiated thyroid cancer": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "分化型甲状腺癌"
+    },
+    "hirsutism": {
+      "body_system": "endocrine",
+      "etiology": "symptomatic",
+      "category_name": "多毛症"
+    },
+    "lead poisoning": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "铅中毒"
+    },
+    "mercury poisoning": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "汞中毒"
+    },
+    "arsenic poisoning": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "砷中毒"
+    },
+    "heavy metal poisoning": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "重金属中毒"
+    },
+    "septicemia": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "败血症"
+    },
+    "complicated intra-abdominal infections": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "复杂性腹腔内感染"
+    },
+    "acinetobacter infection": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "不动杆菌感染"
+    },
+    "chronic neck and back pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "chronic",
+      "category_name": "慢性颈部和背部疼痛"
+    },
+    "giant cell arteritis": {
+      "body_system": "cardiovascular",
+      "etiology": "autoimmune",
+      "category_name": "巨细胞动脉炎"
+    },
+    "systemic juvenile idiopathic arthritis": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "全身型幼年特发性关节炎"
+    },
+    "polyarticular juvenile idiopathic arthritis": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "多关节型幼年特发性关节炎"
+    },
+    "edema due to heart failure": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心力衰竭所致水肿"
+    },
+    "edema due to renal disease": {
+      "body_system": "renal",
+      "etiology": "chronic",
+      "category_name": "肾脏疾病所致水肿"
+    },
+    "edema due to hepatic disease": {
+      "body_system": "hepatic",
+      "etiology": "chronic",
+      "category_name": "肝脏疾病所致水肿"
+    },
+    "acute kidney injury": {
+      "body_system": "renal",
+      "etiology": "acute",
+      "category_name": "急性肾损伤"
+    },
+    "moderate to moderately severe pain": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "中度至中重度疼痛"
+    },
+    "short-term prevention of bleeding in hemophilia": {
+      "body_system": "hematologic",
+      "etiology": "genetic",
+      "category_name": "血友病短期预防出血"
+    },
+    "hereditary angioedema": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "遗传性血管性水肿"
+    },
+    "trauma-related hemorrhage": {
+      "body_system": "systemic",
+      "etiology": "acute",
+      "category_name": "创伤相关出血"
+    },
+    "uterine fibroids": {
+      "body_system": "reproductive",
+      "etiology": "neoplastic",
+      "category_name": "子宫肌瘤"
+    },
+    "in vitro fertilization": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "体外受精"
+    },
+    "cycloplegia": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "睫状肌麻痹"
+    },
+    "nail softening": {
+      "body_system": "dermatologic",
+      "etiology": "symptomatic",
+      "category_name": "指甲软化"
+    },
+    "dry skin": {
+      "body_system": "dermatologic",
+      "etiology": "symptomatic",
+      "category_name": "皮肤干燥"
+    },
+    "occlusion of central venous catheters": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "中心静脉导管堵塞"
+    },
+    "gallstone dissolution": {
+      "body_system": "biliary",
+      "etiology": "metabolic",
+      "category_name": "胆结石溶解"
+    },
+    "primary biliary cholangitis": {
+      "body_system": "biliary",
+      "etiology": "autoimmune",
+      "category_name": "原发性胆汁性胆管炎"
+    },
+    "cystic fibrosis-associated liver disease": {
+      "body_system": "hepatic",
+      "etiology": "genetic",
+      "category_name": "囊性纤维化相关肝病"
+    },
+    "cytomegalovirus prophylaxis": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "移植中巨细胞病毒预防"
+    },
+    "congenital cytomegalovirus infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "先天性巨细胞病毒感染"
+    },
+    "post-myocardial infarction": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "心肌梗死后"
+    },
+    "serious gram-positive bacterial infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "严重革兰氏阳性细菌感染"
+    },
+    "serious bacterial infections": {
+      "body_system": "systemic",
+      "etiology": "bacterial",
+      "category_name": "严重细菌感染"
+    },
+    "thyroid cancer": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "甲状腺癌"
+    },
+    "smokeless tobacco cessation": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "无烟烟草戒断"
+    },
+    "prevention of varicella": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "水痘预防"
+    },
+    "vasodilatory shock": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "血管扩张性休克"
+    },
+    "adjunct in tension headache": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "紧张性头痛的辅助治疗"
+    },
+    "post-dural puncture headache": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "硬脊膜穿刺后头痛"
+    },
+    "severe allergic reactions": {
+      "body_system": "systemic",
+      "etiology": "allergic",
+      "category_name": "严重过敏反应"
+    },
+    "expectorant": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "祛痰"
+    },
+    "prevention of exercise-induced bronchospasm": {
+      "body_system": "respiratory",
+      "etiology": "functional",
+      "category_name": "预防运动诱发的支气管痉挛"
+    },
+    "bipolar i disorder (manic and mixed episodes)": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "双相I型障碍"
+    },
+    "tourette syndrome": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "抽动秽语综合征"
+    },
+    "agitation associated with schizophrenia": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "与精神分裂症相关的激越"
+    },
+    "agitation associated with bipolar i disorder": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "与双相I型障碍相关的激越"
+    },
+    "urethritis": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "尿道炎"
+    },
+    "chronic bacterial prostatitis": {
+      "body_system": "reproductive",
+      "etiology": "bacterial",
+      "category_name": "慢性细菌性前列腺炎"
+    },
+    "salmonellosis": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "沙门氏菌病"
+    },
+    "hodgkin lymphoma": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "霍奇金淋巴瘤"
+    },
+    "stomach cancer": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "胃癌"
+    },
+    "basal cell carcinoma": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "基底细胞癌"
+    },
+    "heterozygous familial hypercholesterolemia": {
+      "body_system": "endocrine",
+      "etiology": "genetic",
+      "category_name": "杂合子家族性高胆固醇血症"
+    },
+    "established atherosclerotic cardiovascular disease": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "已确诊的动脉粥样硬化性心血管疾病"
+    },
+    "primary hyperlipidemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "原发性高脂血症"
+    },
+    "cardiovascular risk reduction": {
+      "body_system": "cardiovascular",
+      "etiology": "metabolic",
+      "category_name": "降低心血管风险"
+    },
+    "lupus nephritis": {
+      "body_system": "renal",
+      "etiology": "autoimmune",
+      "category_name": "狼疮性肾炎"
+    },
+    "sleeplessness": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "失眠"
+    },
+    "relief of nasal congestion due to allergies or common cold": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "缓解由过敏或普通感冒引起的鼻塞"
+    },
+    "upper respiratory symptoms associated with allergic rhinitis": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "与过敏性鼻炎相关的上呼吸道症状"
+    },
+    "productive cough": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "排痰性咳嗽"
+    },
+    "fatigue associated with pain": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "与疼痛相关的疲劳"
+    },
+    "bowel preparation before surgery": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "术前肠道准备"
+    },
+    "anal pain associated with constipation": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "与便秘相关的肛门疼痛"
+    },
+    "hypophosphatemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "低磷血症"
+    },
+    "urinary acidification": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "尿液酸化"
+    },
+    "kidney stone prevention": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "肾结石预防"
+    },
+    "macrophage activation syndrome": {
+      "body_system": "systemic",
+      "etiology": "autoimmune",
+      "category_name": "巨噬细胞活化综合征"
+    },
+    "interleukin-1 receptor antagonist deficiency": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "白细胞介素-1受体拮抗剂缺乏症"
+    },
+    "treatment of mild to moderate coronavirus disease 2019 (covid-19) in high-risk patients aged 12 years and older": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "12岁及以上高危患者轻至中度2019冠状病毒病的治疗"
+    },
+    "covid-19 prevention in children 5-11 years": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "5-11岁儿童COVID-19预防"
+    },
+    "covid-19 prevention in individuals 12 years and older": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "12岁及以上个体COVID-19预防"
+    },
+    "covid-19 prevention in children 6 months to 4 years": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "6个月至4岁儿童的新冠肺炎预防"
+    },
+    "psychotic depression": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "精神病性抑郁症"
+    },
+    "induction and maintenance of general anesthesia": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "全身麻醉的诱导与维持"
+    },
+    "procedural sedation": {
+      "body_system": "neurologic",
+      "etiology": "functional",
+      "category_name": "程序性镇静"
+    },
+    "major depressive disorder with acute suicidal ideation or behavior": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "伴有急性自杀意念或行为的重度抑郁症"
+    },
+    "diabetic ketoacidosis": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "糖尿病酮症酸中毒"
+    },
+    "type 1 diabetes mellitus with severe insulin resistance": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "伴严重胰岛素抵抗的1型糖尿病"
+    },
+    "type 2 diabetes mellitus with severe insulin resistance": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "伴严重胰岛素抵抗的2型糖尿病"
+    },
+    "vasoactive intestinal peptide tumors": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "血管活性肠肽瘤"
+    },
+    "esophageal varices bleeding": {
+      "body_system": "gastrointestinal",
+      "etiology": "chronic",
+      "category_name": "食管静脉曲张出血"
+    },
+    "carcinoid tumors": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "类癌"
+    },
+    "delay onset of clinical type 1 diabetes mellitus": {
+      "body_system": "endocrine",
+      "etiology": "autoimmune",
+      "category_name": "延缓临床1型糖尿病发病"
+    },
+    "non-alcoholic fatty liver disease": {
+      "body_system": "hepatic",
+      "etiology": "metabolic",
+      "category_name": "非酒精性脂肪性肝病"
+    },
+    "chromium deficiency": {
+      "body_system": "systemic",
+      "etiology": "metabolic",
+      "category_name": "铬缺乏症"
+    },
+    "glycemic control in type 2 diabetes mellitus": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "2型糖尿病的血糖控制"
+    },
+    "dyslipidemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "血脂异常"
+    },
+    "postprandial hyperglycemia": {
+      "body_system": "endocrine",
+      "etiology": "metabolic",
+      "category_name": "餐后高血糖"
+    },
+    "ileostomy high-output management": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "回肠造口高排出量管理"
+    },
+    "antibiotic-associated diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "infectious",
+      "category_name": "抗生素相关性腹泻"
+    },
+    "traveler's diarrhea prevention": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "旅行者腹泻的预防"
+    },
+    "non-infectious diarrhea in hiv patients on antiretroviral therapy": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "接受抗逆转录病毒治疗的HIV患者的非感染性腹泻"
+    },
+    "chemotherapy-induced diarrhea": {
+      "body_system": "gastrointestinal",
+      "etiology": "functional",
+      "category_name": "化疗引起的腹泻"
+    },
+    "fluid maintenance": {
+      "body_system": "systemic",
+      "etiology": "symptomatic",
+      "category_name": "液体维持"
+    },
+    "energy replenishment during sports": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "运动中能量补充"
+    },
+    "heat cramps": {
+      "body_system": "musculoskeletal",
+      "etiology": "functional",
+      "category_name": "热痉挛"
+    },
+    "moderate-to-severe atopic dermatitis": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "中重度特应性皮炎"
+    },
+    "moderate-to-severe asthma": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "中重度哮喘"
+    },
+    "chronic rhinosinusitis with nasal polyposis": {
+      "body_system": "respiratory",
+      "etiology": "chronic",
+      "category_name": "慢性鼻窦炎伴鼻息肉"
+    },
+    "eczema of the ear canal": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "耳道湿疹"
+    },
+    "pruritus associated with eczema": {
+      "body_system": "dermatologic",
+      "etiology": "allergic",
+      "category_name": "湿疹相关瘙痒"
+    },
+    "lichen simplex chronicus": {
+      "body_system": "dermatologic",
+      "etiology": "chronic",
+      "category_name": "慢性单纯性苔藓"
+    },
+    "balantidiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "parasitic",
+      "category_name": "小袋虫病"
+    },
+    "skin infections": {
+      "body_system": "dermatologic",
+      "etiology": "infectious",
+      "category_name": "皮肤感染"
+    },
+    "altitude sickness": {
+      "body_system": "systemic",
+      "etiology": "acute",
+      "category_name": "高原病"
+    },
+    "patent ductus arteriosus (in infants)": {
+      "body_system": "cardiovascular",
+      "etiology": "functional",
+      "category_name": "动脉导管未闭"
+    },
+    "oral pain": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "口腔疼痛"
+    },
+    "pharyngeal pain": {
+      "body_system": "respiratory",
+      "etiology": "symptomatic",
+      "category_name": "咽痛"
+    },
+    "esophagitis": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "食管炎"
+    },
+    "minor burns": {
+      "body_system": "dermatologic",
+      "etiology": "acute",
+      "category_name": "轻度烧伤"
+    },
+    "pre-procedural anesthesia": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "操作前麻醉"
+    },
+    "topical anesthesia": {
+      "body_system": "systemic",
+      "etiology": "functional",
+      "category_name": "表面麻醉"
+    },
+    "urethral anesthesia for catheterization": {
+      "body_system": "renal",
+      "etiology": "functional",
+      "category_name": "导尿用尿道麻醉"
+    },
+    "lactation failure": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "泌乳失败"
+    },
+    "intestinal colic": {
+      "body_system": "gastrointestinal",
+      "etiology": "symptomatic",
+      "category_name": "肠绞痛"
+    },
+    "bradycardia": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "心动过缓"
+    },
+    "prevention of uric acid kidney stones": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "预防尿酸肾结石"
+    },
+    "kidney stones (uric acid)": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "肾结石"
+    },
+    "recurrent calcium oxalate stones in hyperuricosuria": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "高尿酸尿症中复发性草酸钙结石"
+    },
+    "tumor lysis syndrome prophylaxis/hyperuricemia in chemotherapy patients": {
+      "body_system": "systemic",
+      "etiology": "neoplastic",
+      "category_name": "肿瘤溶解综合征预防/化疗患者高尿酸血症"
+    },
+    "pericarditis": {
+      "body_system": "cardiovascular",
+      "etiology": "inflammatory",
+      "category_name": "心包炎"
+    },
+    "keloids": {
+      "body_system": "dermatologic",
+      "etiology": "genetic",
+      "category_name": "瘢痕疙瘩"
+    },
+    "nausea and vomiting associated with chemotherapy": {
+      "body_system": "gastrointestinal",
+      "etiology": "neoplastic",
+      "category_name": "化疗相关的恶心呕吐"
+    },
+    "house dust mite-induced allergic rhinitis with or without conjunctivitis": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "屋尘螨致过敏性鼻炎伴或不伴结膜炎"
+    },
+    "grass pollen-induced allergic rhinitis with or without conjunctivitis": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "草花粉致过敏性鼻炎伴或不伴结膜炎"
+    },
+    "allergic rhinitis due to house dust mites": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "屋尘螨过敏性鼻炎"
+    },
+    "allergic rhinitis due to ragweed pollen": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "豚草花粉过敏性鼻炎"
+    },
+    "herpes genitalis": {
+      "body_system": "reproductive",
+      "etiology": "viral",
+      "category_name": "生殖器疱疹"
+    },
+    "mucocutaneous herpes simplex virus infection": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "皮肤黏膜单纯疱疹病毒感染"
+    },
+    "pain and pruritus associated with cold sores": {
+      "body_system": "dermatologic",
+      "etiology": "viral",
+      "category_name": "唇疱疹相关疼痛和瘙痒"
+    },
+    "pre-eclampsia": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "先兆子痫"
+    },
+    "eclampsia": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "子痫"
+    },
+    "asymptomatic left ventricular dysfunction": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "无症状左心室功能不全"
+    },
+    "liddle's syndrome": {
+      "body_system": "renal",
+      "etiology": "genetic",
+      "category_name": "Liddle综合征"
+    },
+    "rheumatoid arthritis pain": {
+      "body_system": "musculoskeletal",
+      "etiology": "autoimmune",
+      "category_name": "类风湿关节炎疼痛"
+    },
+    "postoperative hypertension": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "术后高血压"
+    },
+    "moderate to severe hypertension": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "中重度高血压"
+    },
+    "severe hypothyroidism": {
+      "body_system": "endocrine",
+      "etiology": "chronic",
+      "category_name": "重度甲状腺功能减退"
+    },
+    "inflammatory bowel disease (crohn's disease, ulcerative colitis)": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "炎症性肠病"
+    },
+    "mastocytosis": {
+      "body_system": "hematologic",
+      "etiology": "neoplastic",
+      "category_name": "肥大细胞增多症"
+    },
+    "crohn's disease with rectal involvement": {
+      "body_system": "gastrointestinal",
+      "etiology": "inflammatory",
+      "category_name": "克罗恩病累及直肠"
+    },
+    "struvite kidney stone": {
+      "body_system": "renal",
+      "etiology": "bacterial",
+      "category_name": "鸟粪石肾结石"
+    },
+    "cryptorchidism": {
+      "body_system": "reproductive",
+      "etiology": "genetic",
+      "category_name": "隐睾症"
+    },
+    "dravet syndrome": {
+      "body_system": "neurologic",
+      "etiology": "genetic",
+      "category_name": "Dravet综合征"
+    },
+    "proopiomelanocortin deficiency": {
+      "body_system": "endocrine",
+      "etiology": "genetic",
+      "category_name": "前阿片黑素细胞皮质激素原缺乏症"
+    },
+    "leptin receptor deficiency": {
+      "body_system": "endocrine",
+      "etiology": "genetic",
+      "category_name": "瘦素受体缺乏症"
+    },
+    "bardet-biedl syndrome": {
+      "body_system": "systemic",
+      "etiology": "genetic",
+      "category_name": "巴德-毕德氏综合征"
     }
   },
   "l3_indication_to_atc": {
@@ -1312,6 +7162,1184 @@
         "PCSK9抑制剂"
       ],
       "description": "降脂治疗"
+    },
+    "respiratory_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "respiratory系统慢性/退行性疾病用药"
+    },
+    "hepatic_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "hepatic系统慢性/退行性疾病用药"
+    },
+    "musculoskeletal_mechanical": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "musculoskeletal系统mechanical类疾病用药"
+    },
+    "ophthalmic_inflammatory": {
+      "atc_codes": [
+        "M01"
+      ],
+      "drug_classes": [
+        "NSAIDs",
+        "糖皮质激素"
+      ],
+      "description": "ophthalmic系统炎症性疾病用药"
+    },
+    "renal_infectious": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "renal系统细菌/感染性疾病用药"
+    },
+    "musculoskeletal_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "musculoskeletal系统急性/症状性/功能性疾病用药"
+    },
+    "respiratory_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "respiratory系统急性/症状性/功能性疾病用药"
+    },
+    "neurologic_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "neurologic系统急性/症状性/功能性疾病用药"
+    },
+    "dermatologic_infectious": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "dermatologic系统细菌/感染性疾病用药"
+    },
+    "psychiatric_psychiatric": {
+      "atc_codes": [
+        "N06"
+      ],
+      "drug_classes": [
+        "SSRI",
+        "SNRI",
+        "抗精神病药"
+      ],
+      "description": "psychiatric系统精神疾病用药"
+    },
+    "cardiovascular_other": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "cardiovascular系统other类疾病用药"
+    },
+    "neurologic_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "neurologic系统慢性/退行性疾病用药"
+    },
+    "dermatologic_allergic": {
+      "atc_codes": [
+        "R06"
+      ],
+      "drug_classes": [
+        "抗组胺药"
+      ],
+      "description": "dermatologic系统过敏性疾病用药"
+    },
+    "dermatologic_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "dermatologic系统急性/症状性/功能性疾病用药"
+    },
+    "gastrointestinal_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "gastrointestinal系统细菌/感染性疾病用药"
+    },
+    "musculoskeletal_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "musculoskeletal系统急性/症状性/功能性疾病用药"
+    },
+    "dermatologic_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "dermatologic系统细菌/感染性疾病用药"
+    },
+    "systemic_allergic": {
+      "atc_codes": [
+        "R06"
+      ],
+      "drug_classes": [
+        "抗组胺药"
+      ],
+      "description": "systemic系统过敏性疾病用药"
+    },
+    "neurologic_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "neurologic系统急性/症状性/功能性疾病用药"
+    },
+    "renal_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "renal系统代谢性疾病用药"
+    },
+    "reproductive_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "reproductive系统急性/症状性/功能性疾病用药"
+    },
+    "respiratory_infectious": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "respiratory系统细菌/感染性疾病用药"
+    },
+    "neurologic_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "neurologic系统慢性/退行性疾病用药"
+    },
+    "systemic_inflammatory": {
+      "atc_codes": [
+        "M01"
+      ],
+      "drug_classes": [
+        "NSAIDs",
+        "糖皮质激素"
+      ],
+      "description": "systemic系统炎症性疾病用药"
+    },
+    "hematologic_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "hematologic系统肿瘤用药"
+    },
+    "gastrointestinal_fungal": {
+      "atc_codes": [
+        "J02"
+      ],
+      "drug_classes": [
+        "抗真菌药"
+      ],
+      "description": "gastrointestinal系统真菌感染用药"
+    },
+    "systemic_infectious": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "systemic系统细菌/感染性疾病用药"
+    },
+    "cardiovascular_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "cardiovascular系统急性/症状性/功能性疾病用药"
+    },
+    "dermatologic_fungal": {
+      "atc_codes": [
+        "J02"
+      ],
+      "drug_classes": [
+        "抗真菌药"
+      ],
+      "description": "dermatologic系统真菌感染用药"
+    },
+    "reproductive_viral": {
+      "atc_codes": [
+        "J05"
+      ],
+      "drug_classes": [
+        "抗病毒药"
+      ],
+      "description": "reproductive系统病毒感染用药"
+    },
+    "respiratory_fungal": {
+      "atc_codes": [
+        "J02"
+      ],
+      "drug_classes": [
+        "抗真菌药"
+      ],
+      "description": "respiratory系统真菌感染用药"
+    },
+    "reproductive_fungal": {
+      "atc_codes": [
+        "J02"
+      ],
+      "drug_classes": [
+        "抗真菌药"
+      ],
+      "description": "reproductive系统真菌感染用药"
+    },
+    "ophthalmic_allergic": {
+      "atc_codes": [
+        "R06"
+      ],
+      "drug_classes": [
+        "抗组胺药"
+      ],
+      "description": "ophthalmic系统过敏性疾病用药"
+    },
+    "neurologic_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "neurologic系统遗传性疾病用药（对症为主）"
+    },
+    "neurologic_infectious": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "neurologic系统细菌/感染性疾病用药"
+    },
+    "renal_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "renal系统急性/症状性/功能性疾病用药"
+    },
+    "systemic_parasitic": {
+      "atc_codes": [
+        "P01"
+      ],
+      "drug_classes": [
+        "抗寄生虫药"
+      ],
+      "description": "systemic系统寄生虫感染用药"
+    },
+    "cardiovascular_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "cardiovascular系统细菌/感染性疾病用药"
+    },
+    "systemic_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "systemic系统急性/症状性/功能性疾病用药"
+    },
+    "reproductive_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "reproductive系统慢性/退行性疾病用药"
+    },
+    "cardiovascular_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "cardiovascular系统急性/症状性/功能性疾病用药"
+    },
+    "systemic_autoimmune": {
+      "atc_codes": [
+        "L04"
+      ],
+      "drug_classes": [
+        "免疫抑制剂"
+      ],
+      "description": "systemic系统自身免疫病用药"
+    },
+    "reproductive_psychiatric": {
+      "atc_codes": [
+        "N06"
+      ],
+      "drug_classes": [
+        "SSRI",
+        "SNRI",
+        "抗精神病药"
+      ],
+      "description": "reproductive系统精神疾病用药"
+    },
+    "hepatic_viral": {
+      "atc_codes": [
+        "J05"
+      ],
+      "drug_classes": [
+        "抗病毒药"
+      ],
+      "description": "hepatic系统病毒感染用药"
+    },
+    "dermatologic_viral": {
+      "atc_codes": [
+        "J05"
+      ],
+      "drug_classes": [
+        "抗病毒药"
+      ],
+      "description": "dermatologic系统病毒感染用药"
+    },
+    "renal_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "renal系统肿瘤用药"
+    },
+    "musculoskeletal_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "musculoskeletal系统细菌/感染性疾病用药"
+    },
+    "neurologic_autoimmune": {
+      "atc_codes": [
+        "L04"
+      ],
+      "drug_classes": [
+        "免疫抑制剂"
+      ],
+      "description": "neurologic系统自身免疫病用药"
+    },
+    "neurologic_viral": {
+      "atc_codes": [
+        "J05"
+      ],
+      "drug_classes": [
+        "抗病毒药"
+      ],
+      "description": "neurologic系统病毒感染用药"
+    },
+    "dermatologic_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "dermatologic系统急性/症状性/功能性疾病用药"
+    },
+    "reproductive_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "reproductive系统细菌/感染性疾病用药"
+    },
+    "respiratory_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "respiratory系统急性/症状性/功能性疾病用药"
+    },
+    "dermatologic_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "dermatologic系统慢性/退行性疾病用药"
+    },
+    "systemic_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "systemic系统肿瘤用药"
+    },
+    "dermatologic_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "dermatologic系统肿瘤用药"
+    },
+    "cardiovascular_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "cardiovascular系统遗传性疾病用药（对症为主）"
+    },
+    "gastrointestinal_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "gastrointestinal系统急性/症状性/功能性疾病用药"
+    },
+    "systemic_other": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "systemic系统other类疾病用药"
+    },
+    "hematologic_other": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "hematologic系统other类疾病用药"
+    },
+    "respiratory_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "respiratory系统遗传性疾病用药（对症为主）"
+    },
+    "systemic_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "systemic系统代谢性疾病用药"
+    },
+    "cardiovascular_congenital": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "cardiovascular系统congenital类疾病用药"
+    },
+    "dermatologic_other": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "dermatologic系统other类疾病用药"
+    },
+    "dermatologic_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "dermatologic系统遗传性疾病用药（对症为主）"
+    },
+    "endocrine_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "endocrine系统肿瘤用药"
+    },
+    "gastrointestinal_parasitic": {
+      "atc_codes": [
+        "P01"
+      ],
+      "drug_classes": [
+        "抗寄生虫药"
+      ],
+      "description": "gastrointestinal系统寄生虫感染用药"
+    },
+    "neurologic_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "neurologic系统细菌/感染性疾病用药"
+    },
+    "reproductive_endocrine": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "reproductive系统endocrine类疾病用药"
+    },
+    "dermatologic_endocrine": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "dermatologic系统endocrine类疾病用药"
+    },
+    "gastrointestinal_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "gastrointestinal系统代谢性疾病用药"
+    },
+    "renal_autoimmune": {
+      "atc_codes": [
+        "L04"
+      ],
+      "drug_classes": [
+        "免疫抑制剂"
+      ],
+      "description": "renal系统自身免疫病用药"
+    },
+    "reproductive_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "reproductive系统急性/症状性/功能性疾病用药"
+    },
+    "endocrine_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "endocrine系统急性/症状性/功能性疾病用药"
+    },
+    "respiratory_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "respiratory系统急性/症状性/功能性疾病用药"
+    },
+    "cardiovascular_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "cardiovascular系统慢性/退行性疾病用药"
+    },
+    "hepatic_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "hepatic系统慢性/退行性疾病用药"
+    },
+    "cardiovascular_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "cardiovascular系统急性/症状性/功能性疾病用药"
+    },
+    "dermatologic_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "dermatologic系统急性/症状性/功能性疾病用药"
+    },
+    "neurologic_parasitic": {
+      "atc_codes": [
+        "P01"
+      ],
+      "drug_classes": [
+        "抗寄生虫药"
+      ],
+      "description": "neurologic系统寄生虫感染用药"
+    },
+    "musculoskeletal_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "musculoskeletal系统遗传性疾病用药（对症为主）"
+    },
+    "hematologic_parasitic": {
+      "atc_codes": [
+        "P01"
+      ],
+      "drug_classes": [
+        "抗寄生虫药"
+      ],
+      "description": "hematologic系统寄生虫感染用药"
+    },
+    "neurologic_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "neurologic系统代谢性疾病用药"
+    },
+    "gastrointestinal_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "gastrointestinal系统遗传性疾病用药（对症为主）"
+    },
+    "musculoskeletal_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "musculoskeletal系统急性/症状性/功能性疾病用药"
+    },
+    "musculoskeletal_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "musculoskeletal系统肿瘤用药"
+    },
+    "hematologic_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "hematologic系统代谢性疾病用药"
+    },
+    "endocrine_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "endocrine系统遗传性疾病用药（对症为主）"
+    },
+    "reproductive_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "reproductive系统急性/症状性/功能性疾病用药"
+    },
+    "gastrointestinal_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "gastrointestinal系统慢性/退行性疾病用药"
+    },
+    "ophthalmic_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "ophthalmic系统急性/症状性/功能性疾病用药"
+    },
+    "renal_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "renal系统急性/症状性/功能性疾病用药"
+    },
+    "neurologic_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "neurologic系统肿瘤用药"
+    },
+    "hepatic_neoplastic": {
+      "atc_codes": [
+        "L01"
+      ],
+      "drug_classes": [
+        "抗肿瘤药"
+      ],
+      "description": "hepatic系统肿瘤用药"
+    },
+    "ophthalmic_bacterial": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "ophthalmic系统细菌/感染性疾病用药"
+    },
+    "gastrointestinal_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "gastrointestinal系统慢性/退行性疾病用药"
+    },
+    "systemic_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "systemic系统遗传性疾病用药（对症为主）"
+    },
+    "dermatologic_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "dermatologic系统慢性/退行性疾病用药"
+    },
+    "respiratory_infectious。或者bacterial。我选 infectious。": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "respiratory系统infectious。或者bacterial。我选 infectious。类疾病用药"
+    },
+    "ophthalmic_infectious": {
+      "atc_codes": [
+        "J01"
+      ],
+      "drug_classes": [
+        "抗生素"
+      ],
+      "description": "ophthalmic系统细菌/感染性疾病用药"
+    },
+    "renal_viral": {
+      "atc_codes": [
+        "J05"
+      ],
+      "drug_classes": [
+        "抗病毒药"
+      ],
+      "description": "renal系统病毒感染用药"
+    },
+    "reproductive_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "reproductive系统代谢性疾病用药"
+    },
+    "cardiovascular_inflammatory": {
+      "atc_codes": [
+        "M01"
+      ],
+      "drug_classes": [
+        "NSAIDs",
+        "糖皮质激素"
+      ],
+      "description": "cardiovascular系统炎症性疾病用药"
+    },
+    "hematologic_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "hematologic系统遗传性疾病用药（对症为主）"
+    },
+    "respiratory_infectious （也可选viral，但要单一，决定用 infectious）": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "respiratory系统infectious （也可选viral，但要单一，决定用 infectious）类疾病用药"
+    },
+    "systemic_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "systemic系统急性/症状性/功能性疾病用药"
+    },
+    "renal_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "renal系统遗传性疾病用药（对症为主）"
+    },
+    "hematologic_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "hematologic系统慢性/退行性疾病用药"
+    },
+    "hematologic_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "hematologic系统急性/症状性/功能性疾病用药"
+    },
+    "ophthalmic_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "ophthalmic系统代谢性疾病用药"
+    },
+    "hematologic_functional": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "hematologic系统急性/症状性/功能性疾病用药"
+    },
+    "neurologic_fungal": {
+      "atc_codes": [
+        "J02"
+      ],
+      "drug_classes": [
+        "抗真菌药"
+      ],
+      "description": "neurologic系统真菌感染用药"
+    },
+    "gastrointestinal_viral": {
+      "atc_codes": [
+        "J05"
+      ],
+      "drug_classes": [
+        "抗病毒药"
+      ],
+      "description": "gastrointestinal系统病毒感染用药"
+    },
+    "hematologic_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "hematologic系统急性/症状性/功能性疾病用药"
+    },
+    "biliary_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "biliary系统急性/症状性/功能性疾病用药"
+    },
+    "dermatologic_parasitic": {
+      "atc_codes": [
+        "P01"
+      ],
+      "drug_classes": [
+        "抗寄生虫药"
+      ],
+      "description": "dermatologic系统寄生虫感染用药"
+    },
+    "hepatic_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "hepatic系统急性/症状性/功能性疾病用药"
+    },
+    "endocrine_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "endocrine系统慢性/退行性疾病用药"
+    },
+    "cardiovascular_autoimmune": {
+      "atc_codes": [
+        "L04"
+      ],
+      "drug_classes": [
+        "免疫抑制剂"
+      ],
+      "description": "cardiovascular系统自身免疫病用药"
+    },
+    "respiratory_autoimmune": {
+      "atc_codes": [
+        "L04"
+      ],
+      "drug_classes": [
+        "免疫抑制剂"
+      ],
+      "description": "respiratory系统自身免疫病用药"
+    },
+    "musculoskeletal_inflammatory": {
+      "atc_codes": [
+        "M01"
+      ],
+      "drug_classes": [
+        "NSAIDs",
+        "糖皮质激素"
+      ],
+      "description": "musculoskeletal系统炎症性疾病用药"
+    },
+    "ophthalmic_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "ophthalmic系统急性/症状性/功能性疾病用药"
+    },
+    "hepatic_parasitic": {
+      "atc_codes": [
+        "P01"
+      ],
+      "drug_classes": [
+        "抗寄生虫药"
+      ],
+      "description": "hepatic系统寄生虫感染用药"
+    },
+    "endocrine_degenerative": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "endocrine系统慢性/退行性疾病用药"
+    },
+    "endocrine_acute": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "endocrine系统急性/症状性/功能性疾病用药"
+    },
+    "endocrine_symptomatic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "对症治疗药"
+      ],
+      "description": "endocrine系统急性/症状性/功能性疾病用药"
+    },
+    "musculoskeletal_chronic": {
+      "atc_codes": [
+        "N02"
+      ],
+      "drug_classes": [
+        "慢性病管理用药"
+      ],
+      "description": "musculoskeletal系统慢性/退行性疾病用药"
+    },
+    "biliary_metabolic": {
+      "atc_codes": [
+        "A10"
+      ],
+      "drug_classes": [
+        "代谢调节药"
+      ],
+      "description": "biliary系统代谢性疾病用药"
+    },
+    "biliary_autoimmune": {
+      "atc_codes": [
+        "L04"
+      ],
+      "drug_classes": [
+        "免疫抑制剂"
+      ],
+      "description": "biliary系统自身免疫病用药"
+    },
+    "hepatic_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "hepatic系统遗传性疾病用药（对症为主）"
+    },
+    "reproductive_genetic": {
+      "atc_codes": [
+        "A16"
+      ],
+      "drug_classes": [
+        "对症支持治疗"
+      ],
+      "description": "reproductive系统遗传性疾病用药（对症为主）"
     }
   }
 }
