@@ -1,5 +1,6 @@
 package com.medical.controller;
 
+import com.medical.dto.request.CreateUserRequest;
 import com.medical.dto.request.StatusUpdateRequest;
 import com.medical.dto.request.TrainingStartRequest;
 import com.medical.dto.response.ApiResponse;
@@ -7,6 +8,7 @@ import com.medical.dto.response.EpochDto;
 import com.medical.dto.response.TrainingRunDto;
 import com.medical.dto.response.UserDto;
 import com.medical.entity.User;
+import com.medical.security.SecurityUtils;
 import com.medical.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final SecurityUtils securityUtils;
 
     @GetMapping("/users")
     public ApiResponse<List<UserDto>> getUsers(@RequestAttribute String username) {
@@ -28,6 +31,19 @@ public class AdminController {
             .map(this::toDto)
             .collect(Collectors.toList());
         return ApiResponse.success(dtos);
+    }
+
+    @PostMapping("/users")
+    public ApiResponse<UserDto> createUser(@RequestBody CreateUserRequest request) {
+        User user = adminService.createUser(request.getUsername(), request.getPassword(), request.getRole());
+        return ApiResponse.success("创建成功", toDto(user));
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ApiResponse<Void> deleteUser(@PathVariable Long id) {
+        Long currentUserId = securityUtils.getCurrentUserId();
+        adminService.deleteUser(id, currentUserId);
+        return ApiResponse.success("删除成功", null);
     }
 
     @PatchMapping("/users/{id}/status")

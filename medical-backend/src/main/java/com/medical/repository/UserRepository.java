@@ -17,4 +17,14 @@ public interface UserRepository {
 
     @Update("UPDATE sys_user SET enabled = #{enabled}, updated_at = #{updatedAt} WHERE id = #{id}")
     void update(User user);
+
+    @Insert("INSERT INTO sys_user (username, password_hash, role, enabled) VALUES (#{username}, #{passwordHash}, #{role}, #{enabled})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(User user);
+
+    @Delete("DELETE FROM sys_user WHERE id = #{id}")
+    int deleteById(Long id);
+
+    @Select("SELECT COUNT(*) FROM sys_user WHERE role = #{role} AND enabled = TRUE")
+    int countByRole(String role);
 }

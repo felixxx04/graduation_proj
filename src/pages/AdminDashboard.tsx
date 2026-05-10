@@ -98,6 +98,11 @@ export default function AdminDashboard() {
 
   const [ledgerFilter, setLedgerFilter] = useState<LedgerFilter>('all')
 
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newUsername, setNewUsername] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [newRole, setNewRole] = useState('patient')
+
   const loadUsers = useCallback(async () => {
     setLoadingUsers(true)
     try {
@@ -177,6 +182,42 @@ export default function AdminDashboard() {
       setUsers((prev) => prev.map((item) => (item.id === target.id ? updated : item)))
     } catch (error) {
       setActionError(getErrorMessage(error, '更新用户状态失败'))
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const createUser = async () => {
+    if (!newUsername.trim() || !newPassword.trim()) return
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      const created = await api.post<AdminUserItem>('/api/admin/users', {
+        username: newUsername.trim(),
+        password: newPassword,
+        role: newRole,
+      })
+      setUsers((prev) => [...prev, created])
+      setShowCreateModal(false)
+      setNewUsername('')
+      setNewPassword('')
+      setNewRole('patient')
+    } catch (error) {
+      setActionError(getErrorMessage(error, '创建用户失败'))
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const deleteUser = async (target: AdminUserItem) => {
+    if (!window.confirm(`确定删除用户 "${target.username}"？`)) return
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      await api.delete<void>(`/api/admin/users/${target.id}`)
+      setUsers((prev) => prev.filter((item) => item.id !== target.id))
+    } catch (error) {
+      setActionError(getErrorMessage(error, '删除用户失败'))
     } finally {
       setActionLoading(false)
     }
@@ -283,10 +324,16 @@ export default function AdminDashboard() {
       </section>
 
       <section>
-        <h2 className="mb-3 flex items-center gap-2 text-ia-card-title font-heading font-bold">
-          <Users className="h-4 w-4 text-brand-sky" />
-          用户管理
-        </h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-ia-card-title font-heading font-bold">
+            <Users className="h-4 w-4 text-brand-sky" />
+            用户管理
+          </h2>
+          <Button size="sm" className="gap-1.5 cursor-pointer" onClick={() => setShowCreateModal(true)}>
+            <UserIcon className="h-3.5 w-3.5" />
+            新增用户
+          </Button>
+        </div>
         <Card hover="none">
           <CardContent className="pt-4">
             <div className="overflow-x-auto rounded-sm border border-white/[0.06]">
@@ -312,10 +359,16 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td>
-                        <Button variant="outline" size="sm" className="h-7 gap-1.5 text-ia-label cursor-pointer" disabled={actionLoading} onClick={() => void toggleUserStatus(item)}>
-                          {item.status === 'ACTIVE' ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
-                          {item.status === 'ACTIVE' ? '禁用' : '启用'}
-                        </Button>
+                        <div className="flex gap-1.5">
+                          <Button variant="outline" size="sm" className="h-7 gap-1.5 text-ia-label cursor-pointer" disabled={actionLoading} onClick={() => void toggleUserStatus(item)}>
+                            {item.status === 'ACTIVE' ? <Lock className="h-3 w-3" /> : <Unlock className="h-3 w-3" />}
+                            {item.status === 'ACTIVE' ? '禁用' : '启用'}
+                          </Button>
+                          <Button variant="outline" size="sm" className="h-7 gap-1.5 text-ia-label cursor-pointer text-destructive border-destructive/30 hover:bg-destructive/8" disabled={actionLoading} onClick={() => void deleteUser(item)}>
+                            <Trash2 className="h-3 w-3" />
+                            删除
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -328,6 +381,42 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </section>
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={(e) => e.target === e.currentTarget && setShowCreateModal(false)}>
+          <div className="bg-surface-elevated rounded-sm p-6 max-w-sm w-full shadow-lg border border-border">
+            <h3 className="text-ia-card-title font-heading font-bold mb-4">新增用户</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-ia-caption font-heading font-semibold mb-1">用户名</label>
+                <input value={newUsername} onChange={(e) => setNewUsername(e.target.value)}
+                  className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body focus-visible:outline-none focus-visible:border-brand-sky"
+                  placeholder="请输入用户名" />
+              </div>
+              <div>
+                <label className="block text-ia-caption font-heading font-semibold mb-1">密码</label>
+                <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
+                  className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body focus-visible:outline-none focus-visible:border-brand-sky"
+                  placeholder="至少6个字符" />
+              </div>
+              <div>
+                <label className="block text-ia-caption font-heading font-semibold mb-1">角色</label>
+                <select value={newRole} onChange={(e) => setNewRole(e.target.value)}
+                  className="flex h-10 w-full rounded-sm border border-white/[0.06] bg-surface-elevated px-3 py-2 text-ia-body focus-visible:outline-none focus-visible:border-brand-sky">
+                  <option value="patient">患者</option>
+                  <option value="doctor">医生</option>
+                  <option value="admin">管理员</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <Button className="flex-1" onClick={createUser} loading={actionLoading}>创建</Button>
+              <Button variant="outline" className="flex-1" onClick={() => setShowCreateModal(false)}>取消</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section>
         <h2 className="mb-3 flex items-center gap-2 text-ia-card-title font-heading font-bold">
