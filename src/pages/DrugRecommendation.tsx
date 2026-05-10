@@ -299,7 +299,6 @@ export default function DrugRecommendation() {
       setInputMode('db')
     } catch (e) {
       // 自动保存失败不影响推荐结果
-      console.warn('Auto-save patient failed:', e)
     }
   }
 

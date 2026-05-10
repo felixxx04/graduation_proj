@@ -126,7 +126,7 @@ export default function ReviewPanel({ recommendationId: _recommendationId, disea
           <label className="block text-xs mb-1" style={{ color: '#888' }}>诊疗建议模板（可选）：</label>
           <select
             value={selectedTemplate}
-            onChange={e => { setSelectedTemplate(e.target.value); if (e.target.value && e.target.value !== '自定义') setTreatmentAdvice(TREATMENT_TEMPLATES.find(t => t.name === e.target.value)?.text || '') }}
+            onChange={e => { setSelectedTemplate(e.target.value); if (e.target.value && e.target.value !== '自定义' && !treatmentAdvice.trim()) setTreatmentAdvice(TREATMENT_TEMPLATES.find(t => t.name === e.target.value)?.text || '') }}
             className="w-full p-2 rounded-md text-sm mb-2"
             style={{ background: '#0f172a', color: '#ccc', border: '1px solid #333' }}
           >
