@@ -32,7 +32,6 @@ import { api, getErrorMessage } from '@/lib/api'
 import { gaussianSigma, laplaceScale } from '@/lib/privacy'
 import { usePatientStore, PatientGender } from '@/lib/patientStore'
 import { TextExpander } from '@/components/ui/text-expander'
-import ReviewPanel from '../components/ReviewPanel'
 import {
   BarChart,
   Bar,
@@ -138,6 +137,7 @@ interface DrugResult {
   dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
   matchedDisease?: string
   routingPath?: string
+  reviewStatus?: 'pending' | 'confirmed' | 'modified' | 'rejected'
 }
 
 type InputMode = 'db' | 'manual'
@@ -934,6 +934,28 @@ export default function DrugRecommendation() {
                                     {rec.explanation.evidenceLevel === 'on_label' ? '说明书内' : '超说明书'}
                                   </span>
                                 )}
+                                {rec.reviewStatus && (
+                                  <span style={{
+                                    display: 'inline-block',
+                                    marginLeft: '6px',
+                                    padding: '1px 6px',
+                                    borderRadius: '3px',
+                                    fontSize: '10px',
+                                    fontWeight: 600,
+                                    background:
+                                      rec.reviewStatus === 'confirmed' ? '#052e16' :
+                                      rec.reviewStatus === 'modified' ? '#1e3a5f' :
+                                      rec.reviewStatus === 'rejected' ? '#450a0a' : '#1a1a2e',
+                                    color:
+                                      rec.reviewStatus === 'confirmed' ? '#22c55e' :
+                                      rec.reviewStatus === 'modified' ? '#60a5fa' :
+                                      rec.reviewStatus === 'rejected' ? '#f87171' : '#888',
+                                  }}>
+                                    {rec.reviewStatus === 'pending' ? '待审核' :
+                                     rec.reviewStatus === 'confirmed' ? '已确认' :
+                                     rec.reviewStatus === 'modified' ? '已修改' : '已拒绝'}
+                                  </span>
+                                )}
                               </span>
                             </h4>
                             {rec.englishName && (
@@ -1169,38 +1191,6 @@ export default function DrugRecommendation() {
                       </div>
                     )}
                   </div>
-                )}
-
-                {/* Doctor Review Panel */}
-                {recommendations.length > 0 && (
-                  <ReviewPanel
-                    recommendationId={recommendationId}
-                    diseaseCn={patientData.diseases}
-                    drugs={recommendations.map((r) => ({
-                      drugName: r.drugName,
-                      englishName: r.englishName || '',
-                      category: r.category,
-                      safetyType: r.safetyType || 'safe',
-                      score: r.score,
-                    }))}
-                    onSubmitReview={async (decision, selectedDrug, reason) => {
-                      try {
-                        await fetch('/api/review/log', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            recommendationId,
-                            diseaseCn: patientData.diseases,
-                            doctorDecision: decision,
-                            doctorSelectedDrug: selectedDrug || null,
-                            doctorReason: reason || null,
-                          }),
-                        });
-                      } catch (err) {
-                        console.error('Failed to submit review:', err);
-                      }
-                    }}
-                  />
                 )}
 
                 {/* Detailed Drug Information */}

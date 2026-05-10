@@ -12,7 +12,7 @@ interface ReviewPanelProps {
   recommendationId: string;
   diseaseCn: string;
   drugs: DrugOption[];
-  onSubmitReview: (decision: 'confirm' | 'modify' | 'reject', selectedDrug?: string, reason?: string) => void;
+  onSubmitReview: (decision: 'confirm' | 'modify' | 'reject', selectedDrug?: string, reason?: string, template?: string, advice?: string) => void;
 }
 
 export default function ReviewPanel({ recommendationId: _recommendationId, diseaseCn, drugs, onSubmitReview }: ReviewPanelProps) {
@@ -21,9 +21,20 @@ export default function ReviewPanel({ recommendationId: _recommendationId, disea
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const TREATMENT_TEMPLATES = [
+    { name: '标准用法', text: '建议使用[药物名]，每日[N]次，每次[剂量]，连用[N]天。' },
+    { name: '递增剂量', text: '起始剂量[小剂量]，根据耐受情况逐步调整至[目标剂量]。' },
+    { name: '联合用药', text: '建议[药物A]联合[药物B]，注意监测[相互作用/不良反应]。' },
+    { name: '对症治疗', text: '针对[症状]进行对症治疗，如症状持续或加重请及时复诊。' },
+    { name: '自定义', text: '' },
+  ];
+
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [treatmentAdvice, setTreatmentAdvice] = useState('');
+
   const handleSubmit = () => {
     if (!decision) return;
-    onSubmitReview(decision, selectedDrug || undefined, reason || undefined);
+    onSubmitReview(decision, selectedDrug || undefined, reason || undefined, selectedTemplate || undefined, treatmentAdvice || undefined);
     setSubmitted(true);
   };
 
@@ -104,6 +115,32 @@ export default function ReviewPanel({ recommendationId: _recommendationId, disea
             onChange={e => setReason(e.target.value)}
             placeholder="请输入审核意见..."
             rows={2}
+            className="w-full p-2 rounded-md text-sm resize-y"
+            style={{ background: '#0f172a', color: '#ccc', border: '1px solid #333' }}
+          />
+        </div>
+      )}
+
+      {decision && (
+        <div className="mb-3">
+          <label className="block text-xs mb-1" style={{ color: '#888' }}>诊疗建议模板（可选）：</label>
+          <select
+            value={selectedTemplate}
+            onChange={e => { setSelectedTemplate(e.target.value); if (e.target.value && e.target.value !== '自定义') setTreatmentAdvice(TREATMENT_TEMPLATES.find(t => t.name === e.target.value)?.text || '') }}
+            className="w-full p-2 rounded-md text-sm mb-2"
+            style={{ background: '#0f172a', color: '#ccc', border: '1px solid #333' }}
+          >
+            <option value="">-- 选择模板 --</option>
+            {TREATMENT_TEMPLATES.map(t => (
+              <option key={t.name} value={t.name}>{t.name}</option>
+            ))}
+          </select>
+          <label className="block text-xs mb-1" style={{ color: '#888' }}>诊疗建议（可编辑）：</label>
+          <textarea
+            value={treatmentAdvice}
+            onChange={e => setTreatmentAdvice(e.target.value)}
+            placeholder="请输入诊疗建议..."
+            rows={3}
             className="w-full p-2 rounded-md text-sm resize-y"
             style={{ background: '#0f172a', color: '#ccc', border: '1px solid #333' }}
           />
