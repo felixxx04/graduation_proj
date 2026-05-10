@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS review_log (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    recommendation_id VARCHAR(32) NOT NULL,
+    recommendation_id BIGINT NOT NULL,
     patient_id BIGINT,
     disease_cn VARCHAR(100) NOT NULL,
     disease_standardized VARCHAR(200),

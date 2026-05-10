@@ -23,7 +23,7 @@ public interface ReviewLogRepository {
     ReviewLog findById(@Param("id") Long id);
 
     @Select("SELECT * FROM review_log WHERE recommendation_id = #{recommendationId}")
-    List<ReviewLog> findByRecommendationId(@Param("recommendationId") String recommendationId);
+    List<ReviewLog> findByRecommendationId(@Param("recommendationId") Long recommendationId);
 
     @Select("SELECT * FROM review_log WHERE patient_id = #{patientId} ORDER BY created_at DESC")
     List<ReviewLog> findByPatientId(@Param("patientId") Long patientId);
@@ -50,5 +50,5 @@ public interface ReviewLogRepository {
     List<ReviewLog> findPending();
 
     @Update("UPDATE recommendation SET review_status = #{status} WHERE id = #{recommendationId}")
-    int updateRecommendationStatus(@Param("recommendationId") String recommendationId, @Param("status") String status);
+    int updateRecommendationStatus(@Param("recommendationId") Long recommendationId, @Param("status") String status);
 }

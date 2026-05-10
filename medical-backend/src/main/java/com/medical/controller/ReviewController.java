@@ -32,7 +32,7 @@ public class ReviewController {
     }
 
     @GetMapping("/log/{recommendationId}")
-    public ApiResponse<List<ReviewLog>> getReview(@PathVariable String recommendationId) {
+    public ApiResponse<List<ReviewLog>> getReview(@PathVariable Long recommendationId) {
         List<ReviewLog> logs = reviewLogRepository.findByRecommendationId(recommendationId);
         return ApiResponse.success(logs);
     }

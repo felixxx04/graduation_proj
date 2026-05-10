@@ -6,7 +6,7 @@ import { Shield, Clock, CheckCircle, XCircle, Edit } from 'lucide-react'
 
 interface PendingReview {
   id: number
-  recommendationId: string
+  recommendationId: number
   patientId: number
   diseaseCn: string
   diseaseStandardized: string

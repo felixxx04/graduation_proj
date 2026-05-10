@@ -9,7 +9,7 @@ interface DrugOption {
 }
 
 interface ReviewPanelProps {
-  recommendationId: string;
+  recommendationId: number;
   diseaseCn: string;
   drugs: DrugOption[];
   onSubmitReview: (decision: 'confirm' | 'modify' | 'reject', selectedDrug?: string, reason?: string, template?: string, advice?: string) => void;
