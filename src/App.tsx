@@ -11,7 +11,7 @@ import MyRecords from './pages/MyRecords'
 import ReviewDashboard from './pages/ReviewDashboard'
 import DrugDatabase from './pages/DrugDatabase'
 import RecommendationStats from './pages/RecommendationStats'
-import { RequireAuthModal, RequireRole } from './components/AuthGuards'
+import { RequireRole } from './components/AuthGuards'
 
 function App() {
   return (
@@ -25,8 +25,8 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
 
-          {/* Any authenticated user */}
-          <Route element={<RequireAuthModal />}>
+          {/* Patient only */}
+          <Route element={<RequireRole role="patient" />}>
             <Route path="recommendation/*" element={<DrugRecommendation />} />
             <Route path="my-records/*" element={<MyRecords />} />
           </Route>

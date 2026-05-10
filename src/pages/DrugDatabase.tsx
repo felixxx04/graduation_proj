@@ -9,10 +9,10 @@ interface Drug {
   name: string
   genericName: string
   category: string
-  indications: any
-  contraindications: any
-  sideEffects: any
-  interactions: any
+  indications: string | string[]
+  contraindications: string | string[]
+  sideEffects: string | string[]
+  interactions: string | string[]
   pregnancyCategory: string
   typicalDosage: string
   typicalFrequency: string

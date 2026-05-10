@@ -369,7 +369,8 @@ export default function DrugRecommendation() {
           qualityWarning: item.qualityWarning,
           dpConfidence: item.dpConfidence,
           matchedDisease: item.matchedDisease,
-          routingPath: (item as any).routingPath,
+          routingPath: (item as RecommendationResultItem).routingPath,
+          reviewStatus: 'pending' as const,
         }))
       )
       setShowResults(true)
