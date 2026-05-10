@@ -30,6 +30,11 @@ public class PatientService {
         return patientRepository.findAllProfiles();
     }
 
+    public List<PatientProfile> getMyPatients(Long userId) {
+        return patientRepository.findProfilesByUserId(userId);
+    }
+    }
+
     public PatientProfile getPatientById(Long id) {
         PatientProfile profile = patientRepository.findProfileById(id);
         if (profile == null) {
@@ -40,8 +45,14 @@ public class PatientService {
 
     @Transactional
     public PatientProfile createPatient(PatientRequest request) {
+        return createPatient(request, null);
+    }
+
+    @Transactional
+    public PatientProfile createPatient(PatientRequest request, Long userId) {
         // 1. 创建患者基础信息
         Patient patient = new Patient();
+        patient.setUserId(userId);
         patient.setName(request.getName());
         patient.setGender(request.getGender());
         patient.setBirthDate(calculateBirthDate(request.getAge()));

@@ -14,9 +14,12 @@ public interface PatientRepository {
     @Select("SELECT * FROM patient WHERE id = #{id}")
     Patient findById(Long id);
 
-    @Insert("INSERT INTO patient(name, gender, birth_date, phone) VALUES(#{name}, #{gender}, #{birthDate}, #{phone})")
+    @Insert("INSERT INTO patient(user_id, name, gender, birth_date, phone) VALUES(#{userId}, #{name}, #{gender}, #{birthDate}, #{phone})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Patient patient);
+
+    @Select("SELECT * FROM patient WHERE user_id = #{userId} ORDER BY id DESC")
+    List<Patient> findByUserId(Long userId);
 
     @Update("UPDATE patient SET name=#{name}, gender=#{gender}, birth_date=#{birthDate}, phone=#{phone} WHERE id=#{id}")
     int update(Patient patient);
@@ -87,4 +90,36 @@ public interface PatientRepository {
         @Result(property = "currentMedications", column = "currentMedicationsJson", typeHandler = com.medical.repository.handler.JsonStringListHandler.class),
     })
     PatientProfile findProfileById(Long id);
+
+    @Select("""
+        SELECT
+            p.id, p.name, p.gender, p.birth_date AS birthDate, p.phone, p.created_at AS createdAt,
+            hr.age, hr.height, hr.weight, hr.blood_type AS bloodType,
+            hr.chronic_diseases AS chronicDiseasesJson,
+            hr.allergies AS allergiesJson,
+            hr.current_medications AS currentMedicationsJson,
+            hr.medical_history AS medicalHistory, hr.symptoms
+        FROM patient p
+        LEFT JOIN patient_health_record hr ON p.id = hr.patient_id AND (hr.is_latest = TRUE OR hr.is_latest IS NULL)
+        WHERE p.user_id = #{userId}
+        ORDER BY p.id DESC
+        """)
+    @Results({
+        @Result(property = "id", column = "id"),
+        @Result(property = "name", column = "name"),
+        @Result(property = "gender", column = "gender"),
+        @Result(property = "birthDate", column = "birthDate"),
+        @Result(property = "phone", column = "phone"),
+        @Result(property = "age", column = "age"),
+        @Result(property = "height", column = "height"),
+        @Result(property = "weight", column = "weight"),
+        @Result(property = "bloodType", column = "bloodType"),
+        @Result(property = "medicalHistory", column = "medicalHistory"),
+        @Result(property = "symptoms", column = "symptoms"),
+        @Result(property = "createdAt", column = "createdAt"),
+        @Result(property = "chronicDiseases", column = "chronicDiseasesJson", typeHandler = com.medical.repository.handler.JsonStringListHandler.class),
+        @Result(property = "allergies", column = "allergiesJson", typeHandler = com.medical.repository.handler.JsonStringListHandler.class),
+        @Result(property = "currentMedications", column = "currentMedicationsJson", typeHandler = com.medical.repository.handler.JsonStringListHandler.class),
+    })
+    List<PatientProfile> findProfilesByUserId(Long userId);
 }

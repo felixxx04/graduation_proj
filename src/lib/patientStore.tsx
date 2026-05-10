@@ -138,7 +138,7 @@ export function PatientStoreProvider({ children }: { children: React.ReactNode }
   const [error, setError] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
-    if (!isAuthenticated || (user?.role !== 'admin' && user?.role !== 'doctor')) {
+    if (!isAuthenticated) {
       setPatients([])
       setError(null)
       setIsLoading(false)
@@ -147,7 +147,9 @@ export function PatientStoreProvider({ children }: { children: React.ReactNode }
 
     setIsLoading(true)
     try {
-      const data = await api.get<BackendPatient[]>('/api/patients')
+      const url = user?.role === 'patient' ? '/api/patients/me'
+        : '/api/patients'
+      const data = await api.get<BackendPatient[]>(url)
       setPatients(data.map(normalizePatient))
       setError(null)
     } catch (err) {

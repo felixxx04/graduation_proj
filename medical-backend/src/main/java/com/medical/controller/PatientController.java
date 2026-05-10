@@ -4,6 +4,7 @@ import com.medical.dto.request.ClinicalMetricsRequest;
 import com.medical.dto.request.PatientRequest;
 import com.medical.dto.response.ApiResponse;
 import com.medical.dto.response.PatientProfile;
+import com.medical.security.SecurityUtils;
 import com.medical.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
+    private final SecurityUtils securityUtils;
 
     @GetMapping
     public ApiResponse<List<PatientProfile>> getAllPatients() {
         return ApiResponse.success(patientService.getAllPatients());
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<List<PatientProfile>> getMyPatients() {
+        Long userId = securityUtils.getCurrentUserId();
+        return ApiResponse.success(patientService.getMyPatients(userId));
     }
 
     @GetMapping("/{id}")
@@ -28,7 +36,9 @@ public class PatientController {
 
     @PostMapping
     public ApiResponse<PatientProfile> createPatient(@Valid @RequestBody PatientRequest request) {
-        return ApiResponse.success("创建成功", patientService.createPatient(request));
+        Long userId = "patient".equals(securityUtils.getCurrentUserRole())
+            ? securityUtils.getCurrentUserId() : null;
+        return ApiResponse.success("创建成功", patientService.createPatient(request, userId));
     }
 
     @PutMapping("/{id}")

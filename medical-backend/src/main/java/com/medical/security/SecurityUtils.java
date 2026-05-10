@@ -23,4 +23,17 @@ public class SecurityUtils {
             .map(User::getId)
             .orElseThrow(() -> new IllegalStateException("认证用户不存在于数据库中"));
     }
+
+    public String getCurrentUserRole() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "未认证，请先登录");
+        }
+        return auth.getAuthorities().stream()
+            .findFirst()
+            .map(Object::toString)
+            .orElse("ROLE_UNKNOWN")
+            .replace("ROLE_", "")
+            .toLowerCase();
+    }
 }
