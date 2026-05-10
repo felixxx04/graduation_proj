@@ -18,8 +18,17 @@ public class ReviewController {
     @PostMapping("/log")
     public ApiResponse<Map<String, Object>> submitReview(@RequestBody ReviewLog log) {
         reviewLogRepository.insert(log);
-        Map<String, Object> resp = Map.of("id", log.getId());
+        String decision = log.getDoctorDecision();
+        String newStatus = "confirm".equals(decision) ? "confirmed" :
+                          "modify".equals(decision) ? "modified" : "rejected";
+        reviewLogRepository.updateRecommendationStatus(log.getRecommendationId(), newStatus);
+        Map<String, Object> resp = Map.of("id", log.getId(), "reviewStatus", newStatus);
         return ApiResponse.success(resp);
+    }
+
+    @GetMapping("/pending")
+    public ApiResponse<List<ReviewLog>> getPendingReviews() {
+        return ApiResponse.success(reviewLogRepository.findPending());
     }
 
     @GetMapping("/log/{recommendationId}")

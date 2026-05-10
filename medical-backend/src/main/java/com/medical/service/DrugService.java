@@ -27,4 +27,8 @@ public class DrugService {
     public List<Drug> getDrugsByCategory(String category) {
         return drugRepository.findByCategory(category);
     }
+
+    public List<Drug> searchDrugs(String keyword) {
+        return drugRepository.searchByName(keyword);
+    }
 }

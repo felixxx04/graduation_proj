@@ -14,4 +14,7 @@ public interface DrugRepository {
     
     @Select("SELECT * FROM drug WHERE category = #{category}")
     List<Drug> findByCategory(String category);
+
+    @Select("SELECT * FROM drug WHERE name LIKE CONCAT('%', #{keyword}, '%') OR generic_name LIKE CONCAT('%', #{keyword}, '%')")
+    List<Drug> searchByName(String keyword);
 }

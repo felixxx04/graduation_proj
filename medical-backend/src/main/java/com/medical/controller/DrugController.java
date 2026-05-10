@@ -27,4 +27,17 @@ public class DrugController {
     public ApiResponse<List<Drug>> getDrugsByCategory(@PathVariable String category) {
         return ApiResponse.success(drugService.getDrugsByCategory(category));
     }
+
+    @GetMapping("/database")
+    public ApiResponse<List<Drug>> getDrugDatabase(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category) {
+        if (search != null && !search.isBlank()) {
+            return ApiResponse.success(drugService.searchDrugs(search));
+        }
+        if (category != null && !category.isBlank()) {
+            return ApiResponse.success(drugService.getDrugsByCategory(category));
+        }
+        return ApiResponse.success(drugService.getAllDrugs());
+    }
 }

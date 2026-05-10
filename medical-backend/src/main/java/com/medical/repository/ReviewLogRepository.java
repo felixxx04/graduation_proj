@@ -11,10 +11,10 @@ public interface ReviewLogRepository {
     @Insert("""
         INSERT INTO review_log (recommendation_id, patient_id, disease_cn,
           disease_standardized, routing_path, system_drugs, doctor_decision,
-          doctor_selected_drug, doctor_reason, doctor_id)
+          doctor_selected_drug, doctor_reason, treatment_advice, treatment_template, doctor_id)
         VALUES (#{recommendationId}, #{patientId}, #{diseaseCn},
           #{diseaseStandardized}, #{routingPath}, #{systemDrugs}, #{doctorDecision},
-          #{doctorSelectedDrug}, #{doctorReason}, #{doctorId})
+          #{doctorSelectedDrug}, #{doctorReason}, #{treatmentAdvice}, #{treatmentTemplate}, #{doctorId})
         """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(ReviewLog log);
@@ -40,4 +40,15 @@ public interface ReviewLogRepository {
     int countByDiseaseAndDecision(
         @Param("diseaseCn") String diseaseCn,
         @Param("decision") String decision);
+
+    @Select("""
+        SELECT rl.* FROM review_log rl
+        JOIN recommendation r ON rl.recommendation_id = r.id
+        WHERE r.review_status = 'pending'
+        ORDER BY rl.created_at DESC
+        """)
+    List<ReviewLog> findPending();
+
+    @Update("UPDATE recommendation SET review_status = #{status} WHERE id = #{recommendationId}")
+    int updateRecommendationStatus(@Param("recommendationId") String recommendationId, @Param("status") String status);
 }
