@@ -48,11 +48,7 @@ export default function HomePage() {
         <div className="relative z-10 grid lg:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16">
           {/* Left content */}
           <div className="flex flex-col justify-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-sky/20 bg-brand-sky/8 text-xs text-brand-sky font-medium mb-6 w-fit">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-sky animate-brand-pulse" />
-              AI-Powered Clinical Decision Support
-            </div>
-
+            
             <h1 className="text-4xl md:text-5xl lg:text-[3rem] font-extrabold text-foreground mb-4 leading-[1.1] tracking-[-0.03em]">
               精准用药推荐<br />
               <span className="gradient-text">守护患者隐私</span>
@@ -70,11 +66,11 @@ export default function HomePage() {
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              {canAccessFeature(user?.role, 'visualization') && (
-                <Link to="/visualization">
+              {canAccessFeature(user?.role, 'recommendation_stats') && (
+                <Link to="/recommendation-stats">
                   <Button variant="outline" size="lg" className="gap-2">
                     <BarChart3 className="h-4 w-4" />
-                    效果可视化
+                    推荐统计
                   </Button>
                 </Link>
               )}
