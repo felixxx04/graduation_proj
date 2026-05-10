@@ -54,6 +54,7 @@ interface RecommendationExplanationFeature {
 interface RecommendationExplanation {
   features: RecommendationExplanationFeature[]
   warnings: string[]
+  evidenceLevel?: string
 }
 
 interface RecommendationResultItem {
@@ -79,6 +80,7 @@ interface RecommendationResultItem {
   qualityWarning?: string
   dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
   matchedDisease?: string
+  routingPath?: string
 }
 
 interface ExcludedDrug {
@@ -135,6 +137,7 @@ interface DrugResult {
   qualityWarning?: string
   dpConfidence?: { low: number; high: number; ciHalfWidth: number } | null
   matchedDisease?: string
+  routingPath?: string
 }
 
 type InputMode = 'db' | 'manual'
@@ -368,6 +371,7 @@ export default function DrugRecommendation() {
           qualityWarning: item.qualityWarning,
           dpConfidence: item.dpConfidence,
           matchedDisease: item.matchedDisease,
+          routingPath: (item as any).routingPath,
         }))
       )
       setShowResults(true)
@@ -916,6 +920,20 @@ export default function DrugRecommendation() {
                               <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                                 {rec.drugName}
                                 <SafetyBadge level={rec.safetyType || 'safe'} />
+                                {rec.explanation?.evidenceLevel && (
+                                  <span style={{
+                                    display: 'inline-block',
+                                    marginLeft: '6px',
+                                    padding: '1px 6px',
+                                    borderRadius: '3px',
+                                    fontSize: '10px',
+                                    fontWeight: 600,
+                                    background: rec.explanation.evidenceLevel === 'on_label' ? '#052e16' : '#451a03',
+                                    color: rec.explanation.evidenceLevel === 'on_label' ? '#22c55e' : '#f59e0b',
+                                  }}>
+                                    {rec.explanation.evidenceLevel === 'on_label' ? '说明书内' : '超说明书'}
+                                  </span>
+                                )}
                               </span>
                             </h4>
                             {rec.englishName && (
@@ -954,6 +972,23 @@ export default function DrugRecommendation() {
                               </span>
                             )}
                           </div>
+
+                          {/* Routing Path Explanation */}
+                          {rec.category && rec.matchedDisease && rec.matchedDisease !== '未知' && (
+                            <div style={{
+                              fontSize: '11px',
+                              color: '#888',
+                              marginTop: '6px',
+                              padding: '4px 8px',
+                              background: '#16213e',
+                              borderRadius: '4px',
+                              lineHeight: '1.5',
+                            }}>
+                              <span style={{ color: '#00d4aa' }}>推荐路径：</span>
+                              疾病匹配 → <span style={{ color: '#ffd93d' }}>{rec.matchedDisease}</span>
+                              {rec.category && <> → <span style={{ color: '#6c5ce7' }}>{rec.category}</span></>}
+                            </div>
+                          )}
                         </div>
                         <div className="text-right">
                           <div className={`text-xl font-heading font-bold ${getConfidenceColor(rec.confidence)}`}>
