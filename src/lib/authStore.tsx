@@ -1,7 +1,7 @@
 ﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { api, clearAuthToken, getAuthToken, getErrorMessage, setAuthToken } from './api'
 
-export type UserRole = 'user' | 'admin' | 'doctor'
+export type UserRole = 'admin' | 'doctor' | 'patient'
 
 export type AuthUser = {
   id: number
@@ -39,7 +39,9 @@ function normalizeUser(user: BackendUser): AuthUser {
   return {
     id: user.id,
     username: user.username,
-    role: user.role === 'admin' ? 'admin' : user.role === 'doctor' ? 'doctor' : 'user',
+    role: (user.role === 'admin' || user.role === 'doctor' || user.role === 'patient')
+      ? user.role as UserRole
+      : 'patient',
     status: user.status,
   }
 }

@@ -15,6 +15,8 @@ import {
   Lock,
   Heart,
   ChevronRight,
+  FileText,
+  Pill,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -48,10 +50,13 @@ export default function Layout() {
   const navigation = useMemo(
     () => [
       { name: '首页', href: '/', icon: Activity },
-      ...(canAccessFeature(user?.role, 'patients') ? [{ name: '患者档案', href: '/patients', icon: Users }] : []),
-      ...(canAccessFeature(user?.role, 'privacy') ? [{ name: '隐私配置', href: '/privacy', icon: Shield }] : []),
       ...(canAccessFeature(user?.role, 'recommendation') ? [{ name: '用药推荐', href: '/recommendation', icon: Stethoscope }] : []),
-      ...(canAccessFeature(user?.role, 'visualization') ? [{ name: '效果可视化', href: '/visualization', icon: BarChart3 }] : []),
+      ...(canAccessFeature(user?.role, 'my_records') ? [{ name: '我的记录', href: '/my-records', icon: FileText }] : []),
+      ...(canAccessFeature(user?.role, 'patients') ? [{ name: '患者档案', href: '/patients', icon: Users }] : []),
+      ...(canAccessFeature(user?.role, 'review') ? [{ name: '推荐审核', href: '/review', icon: Shield }] : []),
+      ...(canAccessFeature(user?.role, 'drug_database') ? [{ name: '药物数据库', href: '/drug-database', icon: Pill }] : []),
+      ...(canAccessFeature(user?.role, 'recommendation_stats') ? [{ name: '推荐统计', href: '/recommendation-stats', icon: BarChart3 }] : []),
+      ...(canAccessFeature(user?.role, 'privacy') ? [{ name: '隐私配置', href: '/privacy', icon: Lock }] : []),
       ...(canAccessFeature(user?.role, 'admin') ? [{ name: '后台管理', href: '/admin', icon: Settings }] : []),
     ],
     [user?.role]
@@ -172,7 +177,7 @@ export default function Layout() {
                   <div className="min-w-0">
                     <div className="text-ia-caption font-heading font-semibold truncate leading-none">{user.username}</div>
                     <div className="text-ia-label text-muted-foreground leading-none mt-0.5">
-                      {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '研究员'}
+                      {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '患者'}
                     </div>
                   </div>
                 </div>
@@ -218,7 +223,7 @@ export default function Layout() {
                       <div>
                         <div className="text-ia-body font-heading font-semibold">{user.username}</div>
                         <div className="text-ia-label text-muted-foreground">
-                          {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '研究员'}
+                          {user.role === 'admin' ? '管理员' : user.role === 'doctor' ? '医生' : '患者'}
                         </div>
                       </div>
                     </div>
@@ -341,7 +346,12 @@ export default function Layout() {
                     </div>
                   </form>
 
-                  <div className="grid grid-cols-2 gap-2 pt-1">
+                  <div className="grid grid-cols-3 gap-2 pt-1">
+                    <div className="rounded-md border border-ia-border p-2.5">
+                      <div className="text-ia-label text-muted-foreground mb-1">患者账号</div>
+                      <div className="text-ia-caption font-heading font-semibold">patient1</div>
+                      <div className="text-ia-label text-muted-foreground">admin123</div>
+                    </div>
                     <div className="rounded-md border border-ia-border p-2.5">
                       <div className="text-ia-label text-muted-foreground mb-1">医生账号</div>
                       <div className="text-ia-caption font-heading font-semibold">doctor1</div>
