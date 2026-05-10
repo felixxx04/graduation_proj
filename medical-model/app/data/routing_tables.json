@@ -2322,10 +2322,20 @@
       "etiology": "symptomatic",
       "category_name": "排便费力"
     },
+    "thyroid cancer": {
+      "body_system": "endocrine",
+      "etiology": "neoplastic",
+      "category_name": "甲状腺癌"
+    },
     "thyroid cancer (tsh suppression)": {
       "body_system": "endocrine",
       "etiology": "neoplastic",
       "category_name": "甲状腺癌"
+    },
+    "helicobacter pylori eradication": {
+      "body_system": "gastrointestinal",
+      "etiology": "bacterial",
+      "category_name": "幽门螺杆菌根除"
     },
     "helicobacter pylori eradication (adjunctive)": {
       "body_system": "gastrointestinal",
@@ -2471,11 +2481,6 @@
       "body_system": "musculoskeletal",
       "etiology": "bacterial",
       "category_name": "骨和关节感染"
-    },
-    "helicobacter pylori eradication": {
-      "body_system": "gastrointestinal",
-      "etiology": "bacterial",
-      "category_name": "幽门螺杆菌根除"
     },
     "nephrotic syndrome": {
       "body_system": "renal",
@@ -2831,6 +2836,11 @@
       "body_system": "neurologic",
       "etiology": "degenerative",
       "category_name": "帕金森综合征"
+    },
+    "prevention of coronavirus disease 2019": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "预防2019冠状病毒病"
     },
     "prevention of coronavirus disease 2019 (covid-19)": {
       "body_system": "respiratory",
@@ -3992,6 +4002,11 @@
       "etiology": "inflammatory",
       "category_name": "胃溃疡"
     },
+    "bacterial vaginosis": {
+      "body_system": "reproductive",
+      "etiology": "bacterial",
+      "category_name": "细菌性阴道病"
+    },
     "bacterial vaginosis (topical)": {
       "body_system": "reproductive",
       "etiology": "bacterial",
@@ -4011,6 +4026,11 @@
       "body_system": "reproductive",
       "etiology": "functional",
       "category_name": "无排卵性女性不孕症"
+    },
+    "male infertility": {
+      "body_system": "reproductive",
+      "etiology": "functional",
+      "category_name": "男性不育症"
     },
     "male infertility (oligospermia)": {
       "body_system": "reproductive",
@@ -4046,6 +4066,11 @@
       "body_system": "neurologic",
       "etiology": "psychiatric",
       "category_name": "急性酒精戒断"
+    },
+    "partial seizures": {
+      "body_system": "neurologic",
+      "etiology": "symptomatic",
+      "category_name": "部分性癫痫发作"
     },
     "partial seizures (adjunct)": {
       "body_system": "neurologic",
@@ -4282,6 +4307,11 @@
       "etiology": "acute",
       "category_name": "内科患者静脉血栓栓塞预防"
     },
+    "atrial fibrillation stroke prevention": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "房颤卒中预防"
+    },
     "atrial fibrillation stroke prevention (bridge therapy)": {
       "body_system": "cardiovascular",
       "etiology": "chronic",
@@ -4321,6 +4351,11 @@
       "body_system": "respiratory",
       "etiology": "allergic",
       "category_name": "严重哮喘急性发作"
+    },
+    "bradycardia": {
+      "body_system": "cardiovascular",
+      "etiology": "symptomatic",
+      "category_name": "心动过缓"
     },
     "bradycardia (if pacing ineffective)": {
       "body_system": "cardiovascular",
@@ -4401,6 +4436,11 @@
       "body_system": "systemic",
       "etiology": "genetic",
       "category_name": "谷固醇血症"
+    },
+    "cardiovascular event risk reduction": {
+      "body_system": "cardiovascular",
+      "etiology": "chronic",
+      "category_name": "心血管事件风险降低"
     },
     "cardiovascular event risk reduction (in combination with statin)": {
       "body_system": "cardiovascular",
@@ -4502,6 +4542,11 @@
       "etiology": "inflammatory",
       "category_name": "角膜炎"
     },
+    "basal cell carcinoma": {
+      "body_system": "dermatologic",
+      "etiology": "neoplastic",
+      "category_name": "基底细胞癌"
+    },
     "basal cell carcinoma (topical)": {
       "body_system": "dermatologic",
       "etiology": "neoplastic",
@@ -4522,10 +4567,20 @@
       "etiology": "psychiatric",
       "category_name": "贪食症"
     },
+    "miosis inhibition during surgery": {
+      "body_system": "ophthalmic",
+      "etiology": "functional",
+      "category_name": "手术中瞳孔缩小抑制"
+    },
     "miosis inhibition during surgery (ophthalmic)": {
       "body_system": "ophthalmic",
       "etiology": "functional",
       "category_name": "手术中瞳孔缩小抑制"
+    },
+    "polycystic ovary syndrome": {
+      "body_system": "reproductive",
+      "etiology": "hormonal",
+      "category_name": "多囊卵巢综合征"
     },
     "polycystic ovary syndrome (androgen excess)": {
       "body_system": "endocrine",
@@ -4832,6 +4887,11 @@
       "etiology": "viral",
       "category_name": "尖锐湿疣"
     },
+    "rhinorrhea associated with allergic rhinitis": {
+      "body_system": "respiratory",
+      "etiology": "allergic",
+      "category_name": "与过敏性鼻炎相关的鼻漏"
+    },
     "rhinorrhea associated with allergic rhinitis (nasal spray)": {
       "body_system": "respiratory",
       "etiology": "allergic",
@@ -4887,6 +4947,11 @@
       "etiology": "fungal",
       "category_name": "芽生菌病"
     },
+    "cryptococcosis": {
+      "body_system": "systemic",
+      "etiology": "fungal",
+      "category_name": "隐球菌病"
+    },
     "cryptococcosis (maintenance, non-meningeal)": {
       "body_system": "systemic",
       "etiology": "fungal",
@@ -4906,6 +4971,11 @@
       "body_system": "respiratory",
       "etiology": "genetic",
       "category_name": "囊性纤维化伴G551D突变或其他特定突变"
+    },
+    "scabies": {
+      "body_system": "dermatologic",
+      "etiology": "parasitic",
+      "category_name": "疥疮"
     },
     "scabies (topical/oral)": {
       "body_system": "dermatologic",
@@ -4942,6 +5012,11 @@
       "etiology": "neoplastic",
       "category_name": "晚期前列腺癌"
     },
+    "moderate to severe acute pain": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "中度至重度急性疼痛"
+    },
     "moderate to severe acute pain (short-term)": {
       "body_system": "neurologic",
       "etiology": "acute",
@@ -4966,6 +5041,11 @@
       "body_system": "gastrointestinal",
       "etiology": "acute",
       "category_name": "NSAID所致胃溃疡的预防"
+    },
+    "cytomegalovirus infection": {
+      "body_system": "systemic",
+      "etiology": "viral",
+      "category_name": "巨细胞病毒感染"
     },
     "cytomegalovirus infection (investigational)": {
       "body_system": "systemic",
@@ -5016,6 +5096,11 @@
       "body_system": "neurologic",
       "etiology": "chronic",
       "category_name": "带状疱疹后神经痛"
+    },
+    "mucositis pain": {
+      "body_system": "gastrointestinal",
+      "etiology": "acute",
+      "category_name": "黏膜炎疼痛"
     },
     "mucositis pain (mouthwash)": {
       "body_system": "gastrointestinal",
@@ -5082,6 +5167,11 @@
       "etiology": "symptomatic",
       "category_name": "回肠造口排出液减少"
     },
+    "tetanus": {
+      "body_system": "neurologic",
+      "etiology": "bacterial",
+      "category_name": "破伤风"
+    },
     "tetanus (adjunct)": {
       "body_system": "neurologic",
       "etiology": "bacterial",
@@ -5091,6 +5181,11 @@
       "body_system": "dermatologic",
       "etiology": "autoimmune",
       "category_name": "银屑病"
+    },
+    "vitiligo": {
+      "body_system": "dermatologic",
+      "etiology": "autoimmune",
+      "category_name": "白癜风"
     },
     "vitiligo (with puva therapy)": {
       "body_system": "dermatologic",
@@ -5127,15 +5222,30 @@
       "etiology": "symptomatic",
       "category_name": "对标准泻药无反应的阿片类药物引起的便秘"
     },
+    "refractory depression": {
+      "body_system": "neurologic",
+      "etiology": "psychiatric",
+      "category_name": "难治性抑郁症"
+    },
     "refractory depression (augmentation)": {
       "body_system": "neurologic",
       "etiology": "psychiatric",
       "category_name": "难治性抑郁症"
     },
+    "spinal cord injury": {
+      "body_system": "neurologic",
+      "etiology": "acute",
+      "category_name": "急性脊髓损伤"
+    },
     "spinal cord injury (acute)": {
       "body_system": "neurologic",
       "etiology": "acute",
       "category_name": "急性脊髓损伤"
+    },
+    "pneumocystis pneumonia": {
+      "body_system": "respiratory",
+      "etiology": "fungal",
+      "category_name": "肺孢子菌肺炎"
     },
     "pneumocystis pneumonia (adjunct)": {
       "body_system": "respiratory",
@@ -5172,6 +5282,11 @@
       "etiology": "functional",
       "category_name": "血管迷走性晕厥"
     },
+    "acute decompensated heart failure": {
+      "body_system": "cardiovascular",
+      "etiology": "acute",
+      "category_name": "急性失代偿性心力衰竭"
+    },
     "acute decompensated heart failure (short-term)": {
       "body_system": "cardiovascular",
       "etiology": "acute",
@@ -5192,6 +5307,11 @@
       "etiology": "chronic",
       "category_name": "难治性高血压"
     },
+    "androgenetic alopecia": {
+      "body_system": "dermatologic",
+      "etiology": "hormonal",
+      "category_name": "雄激素性脱发"
+    },
     "androgenetic alopecia (topical)": {
       "body_system": "dermatologic",
       "etiology": "genetic",
@@ -5206,6 +5326,11 @@
       "body_system": "gastrointestinal",
       "etiology": "symptomatic",
       "category_name": "预防非甾体抗炎药引起的胃溃疡"
+    },
+    "medical abortion": {
+      "body_system": "reproductive",
+      "etiology": "acute",
+      "category_name": "药物流产"
     },
     "medical abortion (with mifepristone)": {
       "body_system": "reproductive",
@@ -5327,6 +5452,11 @@
       "etiology": "autoimmune",
       "category_name": "多发性硬化"
     },
+    "skin infection prophylaxis": {
+      "body_system": "dermatologic",
+      "etiology": "bacterial",
+      "category_name": "皮肤感染预防"
+    },
     "skin infection prophylaxis (topical)": {
       "body_system": "dermatologic",
       "etiology": "bacterial",
@@ -5371,6 +5501,11 @@
       "body_system": "dermatologic",
       "etiology": "neoplastic",
       "category_name": "皮肤癌预防"
+    },
+    "preterm labor": {
+      "body_system": "reproductive",
+      "etiology": "hormonal",
+      "category_name": "早产"
     },
     "preterm labor (tocolysis)": {
       "body_system": "reproductive",
@@ -5426,6 +5561,11 @@
       "body_system": "cardiovascular",
       "etiology": "acute",
       "category_name": "心肺复苏"
+    },
+    "intestinal candidiasis": {
+      "body_system": "gastrointestinal",
+      "etiology": "fungal",
+      "category_name": "肠道念珠菌病"
     },
     "intestinal candidiasis (non-systemic)": {
       "body_system": "gastrointestinal",
@@ -5507,6 +5647,11 @@
       "etiology": "functional",
       "category_name": "不宁腿综合征"
     },
+    "facial erythema of rosacea": {
+      "body_system": "dermatologic",
+      "etiology": "inflammatory",
+      "category_name": "酒渣鼻面部红斑"
+    },
     "facial erythema of rosacea (topical)": {
       "body_system": "dermatologic",
       "etiology": "inflammatory",
@@ -5516,6 +5661,11 @@
       "body_system": "ophthalmic",
       "etiology": "symptomatic",
       "category_name": "结膜充血缓解"
+    },
+    "ocular infections": {
+      "body_system": "ophthalmic",
+      "etiology": "infectious",
+      "category_name": "眼部感染"
     },
     "ocular infections (topical)": {
       "body_system": "ophthalmic",
@@ -6272,11 +6422,6 @@
       "etiology": "bacterial",
       "category_name": "严重细菌感染"
     },
-    "thyroid cancer": {
-      "body_system": "endocrine",
-      "etiology": "neoplastic",
-      "category_name": "甲状腺癌"
-    },
     "smokeless tobacco cessation": {
       "body_system": "neurologic",
       "etiology": "psychiatric",
@@ -6362,11 +6507,6 @@
       "etiology": "neoplastic",
       "category_name": "胃癌"
     },
-    "basal cell carcinoma": {
-      "body_system": "dermatologic",
-      "etiology": "neoplastic",
-      "category_name": "基底细胞癌"
-    },
     "heterozygous familial hypercholesterolemia": {
       "body_system": "endocrine",
       "etiology": "genetic",
@@ -6451,6 +6591,11 @@
       "body_system": "systemic",
       "etiology": "genetic",
       "category_name": "白细胞介素-1受体拮抗剂缺乏症"
+    },
+    "treatment of mild to moderate coronavirus disease 2019 in high-risk patients aged 12 years and older": {
+      "body_system": "respiratory",
+      "etiology": "viral",
+      "category_name": "12岁及以上高危患者轻至中度2019冠状病毒病的治疗"
     },
     "treatment of mild to moderate coronavirus disease 2019 (covid-19) in high-risk patients aged 12 years and older": {
       "body_system": "respiratory",
@@ -6687,15 +6832,15 @@
       "etiology": "symptomatic",
       "category_name": "肠绞痛"
     },
-    "bradycardia": {
-      "body_system": "cardiovascular",
-      "etiology": "symptomatic",
-      "category_name": "心动过缓"
-    },
     "prevention of uric acid kidney stones": {
       "body_system": "renal",
       "etiology": "metabolic",
       "category_name": "预防尿酸肾结石"
+    },
+    "kidney stones": {
+      "body_system": "renal",
+      "etiology": "metabolic",
+      "category_name": "肾结石"
     },
     "kidney stones (uric acid)": {
       "body_system": "renal",
@@ -6877,11 +7022,6 @@
       "etiology": "symptomatic",
       "category_name": "皮肤瘙痒"
     },
-    "androgenetic alopecia": {
-      "body_system": "dermatologic",
-      "etiology": "hormonal",
-      "category_name": "雄激素性脱发"
-    },
     "cutaneous candidiasis": {
       "body_system": "dermatologic",
       "etiology": "fungal",
@@ -6917,11 +7057,6 @@
       "etiology": "neoplastic",
       "category_name": "神经母细胞瘤"
     },
-    "scabies": {
-      "body_system": "dermatologic",
-      "etiology": "parasitic",
-      "category_name": "疥疮"
-    },
     "acute bacterial exacerbation of chronic bronchitis": {
       "body_system": "respiratory",
       "etiology": "infectious",
@@ -6931,21 +7066,6 @@
       "body_system": "cardiovascular",
       "etiology": "ischemic",
       "category_name": "急性心肌梗死"
-    },
-    "polycystic ovary syndrome": {
-      "body_system": "reproductive",
-      "etiology": "hormonal",
-      "category_name": "多囊卵巢综合征"
-    },
-    "vitiligo": {
-      "body_system": "dermatologic",
-      "etiology": "autoimmune",
-      "category_name": "白癜风"
-    },
-    "bacterial vaginosis": {
-      "body_system": "reproductive",
-      "etiology": "bacterial",
-      "category_name": "细菌性阴道病"
     },
     "neurogenic detrusor overactivity": {
       "body_system": "renal",
@@ -7092,11 +7212,6 @@
       "etiology": "deficiency",
       "category_name": "叶酸缺乏"
     },
-    "partial seizures": {
-      "body_system": "neurologic",
-      "etiology": "symptomatic",
-      "category_name": "部分性癫痫发作"
-    },
     "central precocious puberty": {
       "body_system": "endocrine",
       "etiology": "hormonal",
@@ -7182,11 +7297,6 @@
       "etiology": "deficiency",
       "category_name": "烟酸缺乏"
     },
-    "preterm labor": {
-      "body_system": "reproductive",
-      "etiology": "hormonal",
-      "category_name": "早产"
-    },
     "giardiasis": {
       "body_system": "gastrointestinal",
       "etiology": "parasitic",
@@ -7201,11 +7311,6 @@
       "body_system": "neurologic",
       "etiology": "degenerative",
       "category_name": "帕金森病痴呆"
-    },
-    "moderate to severe acute pain": {
-      "body_system": "neurologic",
-      "etiology": "acute",
-      "category_name": "中度至重度急性疼痛"
     },
     "mild to moderate ulcerative colitis": {
       "body_system": "gastrointestinal",
@@ -7231,11 +7336,6 @@
       "body_system": "endocrine",
       "etiology": "autoimmune",
       "category_name": "格雷夫斯病"
-    },
-    "tetanus": {
-      "body_system": "neurologic",
-      "etiology": "bacterial",
-      "category_name": "破伤风"
     },
     "ectopic pregnancy": {
       "body_system": "reproductive",
@@ -7332,11 +7432,6 @@
       "etiology": "bacterial",
       "category_name": "炭疽"
     },
-    "pneumocystis pneumonia": {
-      "body_system": "respiratory",
-      "etiology": "fungal",
-      "category_name": "肺孢子菌肺炎"
-    },
     "pediculosis capitis": {
       "body_system": "dermatologic",
       "etiology": "parasitic",
@@ -7381,11 +7476,6 @@
       "body_system": "systemic",
       "etiology": "autoimmune",
       "category_name": "系统性硬化症指端溃疡"
-    },
-    "facial erythema of rosacea": {
-      "body_system": "dermatologic",
-      "etiology": "inflammatory",
-      "category_name": "酒渣鼻面部红斑"
     },
     "sexual dysfunction from antidepressants": {
       "body_system": "psychiatric",
@@ -7527,10 +7617,20 @@
       "etiology": "deficiency",
       "category_name": "中枢性尿崩症"
     },
+    "hemophilia a": {
+      "body_system": "hematologic",
+      "etiology": "deficiency",
+      "category_name": "血友病A"
+    },
     "hemophilia a (mild)": {
       "body_system": "hematologic",
       "etiology": "deficiency",
       "category_name": "血友病A"
+    },
+    "von willebrand disease": {
+      "body_system": "hematologic",
+      "etiology": "deficiency",
+      "category_name": "血管性血友病"
     },
     "von willebrand disease (type 1)": {
       "body_system": "hematologic",

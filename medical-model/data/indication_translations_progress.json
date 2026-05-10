@@ -1589,10 +1589,20 @@
     "body_system": "gastrointestinal",
     "etiology": "symptomatic"
   },
+  "thyroid cancer": {
+    "chinese": "甲状腺癌",
+    "body_system": "endocrine",
+    "etiology": "neoplastic"
+  },
   "thyroid cancer (tsh suppression)": {
     "chinese": "甲状腺癌（TSH抑制）",
     "body_system": "endocrine",
     "etiology": "neoplastic"
+  },
+  "helicobacter pylori eradication": {
+    "chinese": "幽门螺杆菌根除",
+    "body_system": "gastrointestinal",
+    "etiology": "bacterial"
   },
   "helicobacter pylori eradication (adjunctive)": {
     "chinese": "幽门螺杆菌根除（辅助治疗）",
@@ -1742,11 +1752,6 @@
   "bone and joint infection": {
     "chinese": "骨和关节感染",
     "body_system": "musculoskeletal",
-    "etiology": "bacterial"
-  },
-  "helicobacter pylori eradication": {
-    "chinese": "幽门螺杆菌根除",
-    "body_system": "gastrointestinal",
     "etiology": "bacterial"
   },
   "dental infection": {
@@ -2478,6 +2483,11 @@
     "chinese": "帕金森综合征",
     "body_system": "neurologic",
     "etiology": "degenerative"
+  },
+  "prevention of coronavirus disease 2019": {
+    "chinese": "预防2019冠状病毒病（COVID-19）",
+    "body_system": "respiratory",
+    "etiology": "viral"
   },
   "prevention of coronavirus disease 2019 (covid-19)": {
     "chinese": "预防2019冠状病毒病（COVID-19）",
@@ -3298,6 +3308,11 @@
     "chinese": "神经肌肉阻滞逆转",
     "body_system": "neurologic",
     "etiology": "functional"
+  },
+  "niacin deficiency": {
+    "chinese": "烟酸缺乏症",
+    "body_system": "systemic",
+    "etiology": "metabolic"
   },
   "niacin deficiency (pellagra)": {
     "chinese": "niacin deficiency (pellagra)",
@@ -4174,6 +4189,11 @@
     "body_system": "reproductive",
     "etiology": "functional"
   },
+  "male infertility": {
+    "chinese": "男性不育症（少精症）",
+    "body_system": "reproductive",
+    "etiology": "functional"
+  },
   "male infertility (oligospermia)": {
     "chinese": "男性不育症（少精症）",
     "body_system": "reproductive",
@@ -4414,8 +4434,18 @@
     "body_system": "endocrine",
     "etiology": "deficiency"
   },
+  "hemophilia a": {
+    "chinese": "血友病A（轻型）",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
+  },
   "hemophilia a (mild)": {
     "chinese": "血友病A（轻型）",
+    "body_system": "hematologic",
+    "etiology": "deficiency"
+  },
+  "von willebrand disease": {
+    "chinese": "血管性血友病（1型）",
     "body_system": "hematologic",
     "etiology": "deficiency"
   },
@@ -4474,6 +4504,11 @@
     "body_system": "",
     "etiology": ""
   },
+  "anaphylaxis": {
+    "chinese": "过敏症",
+    "body_system": "systemic",
+    "etiology": "allergic"
+  },
   "anaphylaxis (adjunct)": {
     "chinese": "anaphylaxis (adjunct)",
     "body_system": "",
@@ -4499,8 +4534,18 @@
     "body_system": "",
     "etiology": ""
   },
+  "hypertrophic cardiomyopathy": {
+    "chinese": "hypertrophic cardiomyopathy (for outflow obstruction)",
+    "body_system": "",
+    "etiology": ""
+  },
   "hypertrophic cardiomyopathy (for outflow obstruction)": {
     "chinese": "hypertrophic cardiomyopathy (for outflow obstruction)",
+    "body_system": "",
+    "etiology": ""
+  },
+  "cocaine dependence": {
+    "chinese": "cocaine dependence (investigational)",
     "body_system": "",
     "etiology": ""
   },
@@ -4649,6 +4694,11 @@
     "body_system": "cardiovascular",
     "etiology": "acute"
   },
+  "atrial fibrillation stroke prevention": {
+    "chinese": "房颤卒中预防（桥接治疗）",
+    "body_system": "cardiovascular",
+    "etiology": "chronic"
+  },
   "atrial fibrillation stroke prevention (bridge therapy)": {
     "chinese": "房颤卒中预防（桥接治疗）",
     "body_system": "cardiovascular",
@@ -4679,15 +4729,15 @@
     "body_system": "reproductive",
     "etiology": "neoplastic"
   },
-  "anaphylaxis": {
-    "chinese": "过敏症",
-    "body_system": "systemic",
-    "etiology": "allergic"
-  },
   "severe asthma exacerbation": {
     "chinese": "严重哮喘急性发作",
     "body_system": "respiratory",
     "etiology": "allergic"
+  },
+  "bradycardia": {
+    "chinese": "心动过缓",
+    "body_system": "cardiovascular",
+    "etiology": "symptomatic"
   },
   "bradycardia (if pacing ineffective)": {
     "chinese": "心动过缓（起搏无效时）",
@@ -4819,6 +4869,11 @@
     "body_system": "systemic",
     "etiology": "genetic"
   },
+  "cardiovascular event risk reduction": {
+    "chinese": "心血管事件风险降低（与他汀类联用）",
+    "body_system": "cardiovascular",
+    "etiology": "chronic"
+  },
   "cardiovascular event risk reduction (in combination with statin)": {
     "chinese": "心血管事件风险降低（与他汀类联用）",
     "body_system": "cardiovascular",
@@ -4919,6 +4974,11 @@
     "body_system": "ophthalmic",
     "etiology": "inflammatory"
   },
+  "basal cell carcinoma": {
+    "chinese": "基底细胞癌",
+    "body_system": "dermatologic",
+    "etiology": "neoplastic"
+  },
   "basal cell carcinoma (topical)": {
     "chinese": "基底细胞癌（局部治疗）",
     "body_system": "dermatologic",
@@ -4938,6 +4998,11 @@
     "chinese": "贪食症",
     "body_system": "neurologic",
     "etiology": "psychiatric"
+  },
+  "miosis inhibition during surgery": {
+    "chinese": "手术中瞳孔缩小抑制（眼科用药）",
+    "body_system": "ophthalmic",
+    "etiology": "functional"
   },
   "miosis inhibition during surgery (ophthalmic)": {
     "chinese": "手术中瞳孔缩小抑制（眼科用药）",
@@ -5254,6 +5319,11 @@
     "body_system": "dermatologic",
     "etiology": "viral"
   },
+  "rhinorrhea associated with allergic rhinitis": {
+    "chinese": "与过敏性鼻炎相关的鼻漏（鼻喷雾剂）",
+    "body_system": "respiratory",
+    "etiology": "allergic"
+  },
   "rhinorrhea associated with allergic rhinitis (nasal spray)": {
     "chinese": "与过敏性鼻炎相关的鼻漏（鼻喷雾剂）",
     "body_system": "respiratory",
@@ -5306,6 +5376,11 @@
   },
   "blastomycosis": {
     "chinese": "芽生菌病",
+    "body_system": "systemic",
+    "etiology": "fungal"
+  },
+  "cryptococcosis": {
+    "chinese": "隐球菌病（维持治疗，非脑膜炎）",
     "body_system": "systemic",
     "etiology": "fungal"
   },
@@ -5389,6 +5464,11 @@
     "body_system": "gastrointestinal",
     "etiology": "acute"
   },
+  "cytomegalovirus infection": {
+    "chinese": "巨细胞病毒感染（研究性用药）",
+    "body_system": "systemic",
+    "etiology": "viral"
+  },
   "cytomegalovirus infection (investigational)": {
     "chinese": "巨细胞病毒感染（研究性用药）",
     "body_system": "systemic",
@@ -5438,6 +5518,11 @@
     "chinese": "带状疱疹后神经痛（外用贴剂）",
     "body_system": "neurologic",
     "etiology": "chronic"
+  },
+  "mucositis pain": {
+    "chinese": "黏膜炎疼痛（漱口液）",
+    "body_system": "gastrointestinal",
+    "etiology": "acute"
   },
   "mucositis pain (mouthwash)": {
     "chinese": "黏膜炎疼痛（漱口液）",
@@ -5694,10 +5779,20 @@
     "body_system": "gastrointestinal",
     "etiology": "symptomatic"
   },
+  "refractory depression": {
+    "chinese": "难治性抑郁症（增效治疗）",
+    "body_system": "neurologic",
+    "etiology": "psychiatric"
+  },
   "refractory depression (augmentation)": {
     "chinese": "难治性抑郁症（增效治疗）",
     "body_system": "neurologic",
     "etiology": "psychiatric"
+  },
+  "spinal cord injury": {
+    "chinese": "急性脊髓损伤",
+    "body_system": "neurologic",
+    "etiology": "acute"
   },
   "spinal cord injury (acute)": {
     "chinese": "急性脊髓损伤",
@@ -5739,6 +5834,11 @@
     "body_system": "neurologic",
     "etiology": "functional"
   },
+  "acute decompensated heart failure": {
+    "chinese": "急性失代偿性心力衰竭（短期）",
+    "body_system": "cardiovascular",
+    "etiology": "acute"
+  },
   "acute decompensated heart failure (short-term)": {
     "chinese": "急性失代偿性心力衰竭（短期）",
     "body_system": "cardiovascular",
@@ -5773,6 +5873,11 @@
     "chinese": "预防非甾体抗炎药引起的胃溃疡",
     "body_system": "gastrointestinal",
     "etiology": "symptomatic"
+  },
+  "medical abortion": {
+    "chinese": "药物流产（联合米非司酮）",
+    "body_system": "reproductive",
+    "etiology": "acute"
   },
   "medical abortion (with mifepristone)": {
     "chinese": "药物流产（联合米非司酮）",
@@ -5899,6 +6004,11 @@
     "body_system": "neurologic",
     "etiology": "autoimmune"
   },
+  "skin infection prophylaxis": {
+    "chinese": "皮肤感染预防（外用）",
+    "body_system": "dermatologic",
+    "etiology": "bacterial"
+  },
   "skin infection prophylaxis (topical)": {
     "chinese": "皮肤感染预防（外用）",
     "body_system": "dermatologic",
@@ -5927,11 +6037,6 @@
   "atherosclerosis regression": {
     "chinese": "动脉粥样硬化逆转",
     "body_system": "cardiovascular",
-    "etiology": "metabolic"
-  },
-  "niacin deficiency": {
-    "chinese": "烟酸缺乏症",
-    "body_system": "systemic",
     "etiology": "metabolic"
   },
   "photodamage": {
@@ -6008,6 +6113,11 @@
     "chinese": "心肺复苏",
     "body_system": "cardiovascular",
     "etiology": "acute"
+  },
+  "intestinal candidiasis": {
+    "chinese": "肠道念珠菌病（非全身性）",
+    "body_system": "gastrointestinal",
+    "etiology": "fungal"
   },
   "intestinal candidiasis (non-systemic)": {
     "chinese": "肠道念珠菌病（非全身性）",
@@ -6098,6 +6208,11 @@
     "chinese": "结膜充血缓解",
     "body_system": "ophthalmic",
     "etiology": "symptomatic"
+  },
+  "ocular infections": {
+    "chinese": "眼部感染（外用）",
+    "body_system": "ophthalmic",
+    "etiology": "infectious"
   },
   "ocular infections (topical)": {
     "chinese": "眼部感染（外用）",
@@ -7019,11 +7134,6 @@
     "body_system": "systemic",
     "etiology": "bacterial"
   },
-  "thyroid cancer": {
-    "chinese": "甲状腺癌",
-    "body_system": "endocrine",
-    "etiology": "neoplastic"
-  },
   "smokeless tobacco cessation": {
     "chinese": "无烟烟草戒断",
     "body_system": "neurologic",
@@ -7294,11 +7404,6 @@
     "body_system": "gastrointestinal",
     "etiology": "neoplastic"
   },
-  "basal cell carcinoma": {
-    "chinese": "基底细胞癌",
-    "body_system": "dermatologic",
-    "etiology": "neoplastic"
-  },
   "heterozygous familial hypercholesterolemia": {
     "chinese": "杂合子家族性高胆固醇血症",
     "body_system": "endocrine",
@@ -7383,6 +7488,11 @@
     "chinese": "白细胞介素-1受体拮抗剂缺乏症",
     "body_system": "systemic",
     "etiology": "genetic"
+  },
+  "treatment of mild to moderate coronavirus disease 2019 in high-risk patients aged 12 years and older": {
+    "chinese": "12岁及以上高危患者轻至中度2019冠状病毒病（COVID-19）的治疗",
+    "body_system": "respiratory",
+    "etiology": "viral"
   },
   "treatment of mild to moderate coronavirus disease 2019 (covid-19) in high-risk patients aged 12 years and older": {
     "chinese": "12岁及以上高危患者轻至中度2019冠状病毒病（COVID-19）的治疗",
@@ -7619,13 +7729,13 @@
     "body_system": "gastrointestinal",
     "etiology": "symptomatic"
   },
-  "bradycardia": {
-    "chinese": "心动过缓",
-    "body_system": "cardiovascular",
-    "etiology": "symptomatic"
-  },
   "prevention of uric acid kidney stones": {
     "chinese": "预防尿酸肾结石",
+    "body_system": "renal",
+    "etiology": "metabolic"
+  },
+  "kidney stones": {
+    "chinese": "肾结石（尿酸）",
     "body_system": "renal",
     "etiology": "metabolic"
   },
