@@ -14,5 +14,6 @@ public class RecommendationHistoryItem {
     private String primaryDisease;
     private Boolean dpEnabled;
     private Double epsilonUsed;
+    private String reviewStatus;
     private LocalDateTime createdAt;
 }

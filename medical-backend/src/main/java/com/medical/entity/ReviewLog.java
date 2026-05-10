@@ -15,6 +15,8 @@ public class ReviewLog {
     private String doctorDecision;
     private String doctorSelectedDrug;
     private String doctorReason;
+    private String treatmentAdvice;
+    private String treatmentTemplate;
     private Long doctorId;
     private LocalDateTime createdAt;
 }

@@ -467,6 +467,7 @@ public class RecommendationService {
         recommendation.setDpEnabled(dpEnabled);
         recommendation.setEpsilonUsed(epsilonUsed);
         recommendation.setRecommendationType("realtime");
+        recommendation.setReviewStatus("pending");
         recommendationRepository.insert(recommendation);
         if (dpEnabled && epsilonUsed.compareTo(BigDecimal.ZERO) > 0) {
             privacyRepository.addBudgetUsed(userId, epsilonUsed);
@@ -507,6 +508,11 @@ public class RecommendationService {
         return records.stream().map(this::toHistoryItem).collect(Collectors.toList());
     }
 
+    public List<RecommendationHistoryItem> getHistoryByUserId(Long userId) {
+        List<Recommendation> records = recommendationRepository.findByUserId(userId);
+        return records.stream().map(this::toHistoryItem).collect(Collectors.toList());
+    }
+
     public List<RecommendationHistoryItem> getAllHistory() {
         List<Recommendation> records = recommendationRepository.findAll();
         return records.stream().map(this::toHistoryItem).collect(Collectors.toList());
@@ -543,6 +549,7 @@ public class RecommendationService {
             .primaryDisease(primaryDisease)
             .dpEnabled(rec.getDpEnabled())
             .epsilonUsed(rec.getEpsilonUsed() != null ? rec.getEpsilonUsed().doubleValue() : null)
+            .reviewStatus(rec.getReviewStatus())
             .createdAt(rec.getCreatedAt())
             .build();
     }

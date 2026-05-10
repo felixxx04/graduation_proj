@@ -14,5 +14,6 @@ public class Recommendation {
     private Boolean dpEnabled;
     private BigDecimal epsilonUsed;
     private String recommendationType;  // realtime / batch
+    private String reviewStatus;
     private LocalDateTime createdAt;
 }

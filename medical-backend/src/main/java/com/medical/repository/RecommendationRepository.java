@@ -3,6 +3,7 @@ package com.medical.repository;
 import com.medical.entity.Recommendation;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface RecommendationRepository {
@@ -18,12 +19,22 @@ public interface RecommendationRepository {
 
     @Insert("""
         INSERT INTO recommendation
-        (patient_id, user_id, input_data, result_data, dp_enabled, epsilon_used, recommendation_type)
-        VALUES (#{patientId}, #{userId}, #{inputData}, #{resultData}, #{dpEnabled}, #{epsilonUsed}, #{recommendationType})
+        (patient_id, user_id, input_data, result_data, dp_enabled, epsilon_used, recommendation_type, review_status)
+        VALUES (#{patientId}, #{userId}, #{inputData}, #{resultData}, #{dpEnabled}, #{epsilonUsed}, #{recommendationType}, #{reviewStatus})
         """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Recommendation recommendation);
 
+    @Select("SELECT * FROM recommendation WHERE user_id = #{userId} ORDER BY created_at DESC")
+    List<Recommendation> findByUserId(Long userId);
+
     @Select("SELECT COUNT(*) FROM recommendation WHERE DATE(created_at) = CURDATE()")
     int countToday();
+
+    @Select("SELECT COUNT(*) FROM recommendation")
+    int count();
+
+    @Select("SELECT review_status, COUNT(*) as cnt FROM recommendation GROUP BY review_status")
+    @Results(@Result(column = "cnt", property = "value"))
+    List<Map<String, Object>> countByStatus();
 }
