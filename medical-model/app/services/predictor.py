@@ -15,6 +15,7 @@ from app.models.deepfm import DeepFM
 from app.pipeline.feature_encoder import FeatureEncoder
 from app.services.safety_filter import SafetyFilter, RuleMarker
 from app.utils.privacy import laplace_noise, gaussian_noise
+from app.utils.feedback_learner import get_feedback_learner
 from app.utils.privacy_budget import get_budget_tracker, BudgetWarningLevel
 from app.utils.clinical_matcher import match_indication
 from app.pipeline.record_builder import build_feature_record
@@ -1011,6 +1012,28 @@ class RecommendationPredictor:
             if has_lost_diseases and not has_indication and raw_score > 0.3:
                 raw_score *= 0.15  # 大幅降权：高分但无适应症匹配=模型偏差
 
+            # Feedback penalty: learned from doctor rejections
+            feedback = get_feedback_learner()
+            disease_en = drug.get('matched_disease_en', '')
+            if not disease_en:
+                # Try to get from patient data
+                diseases = patient_data.get('diseases', []) or []
+                primary_diseases = patient_data.get('primary_input_diseases', []) or []
+                candidate_diseases = primary_diseases or diseases
+                if candidate_diseases:
+                    disease_en = str(candidate_diseases[0]).lower()
+
+            if disease_en:
+                fb_drug_name = drug.get('generic_name', drug.get('name', ''))
+                drug_class_en = str(drug.get('drug_class_en', '')).lower()
+                penalty = feedback.get_penalty(disease_en, drug_class_en)
+                if penalty < 1.0:
+                    drug_penalty = feedback.get_drug_penalty(disease_en, fb_drug_name)
+                    effective_penalty = min(penalty, drug_penalty)
+                    raw_score *= effective_penalty
+                    if effective_penalty < 0.8:
+                        logger.debug(f"Feedback penalty applied: {fb_drug_name} for {disease_en} = {effective_penalty:.1f}x")
+
             # DP噪声（仅作用于排序层）
             final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(
                 raw_score, dp_config, has_indication=has_indication
@@ -1132,6 +1155,16 @@ class RecommendationPredictor:
                             base_score = max(base_score, 0.8)  # raw匹配略低于结构化
                             matched = True
                             break
+
+            # Feedback penalty for rule-based ranking
+            feedback = get_feedback_learner()
+            disease_en = str(patient_data.get('diseases', [''])[0] if patient_data.get('diseases') else '').lower()
+            if disease_en:
+                drug_class_en = str(drug.get('drug_class_en', '')).lower()
+                penalty = feedback.get_penalty(disease_en, drug_class_en)
+                if penalty < 1.0:
+                    drug_penalty = feedback.get_drug_penalty(disease_en, drug_name)
+                    base_score *= min(penalty, drug_penalty)
 
             # DP噪声
             final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(base_score, dp_config)
