@@ -33,7 +33,6 @@ public class PatientService {
     public List<PatientProfile> getMyPatients(Long userId) {
         return patientRepository.findProfilesByUserId(userId);
     }
-    }
 
     public PatientProfile getPatientById(Long id) {
         PatientProfile profile = patientRepository.findProfileById(id);
