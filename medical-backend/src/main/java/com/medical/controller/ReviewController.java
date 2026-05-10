@@ -3,8 +3,11 @@ package com.medical.controller;
 import com.medical.dto.response.ApiResponse;
 import com.medical.entity.ReviewLog;
 import com.medical.repository.ReviewLogRepository;
+import com.medical.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -14,13 +17,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewLogRepository reviewLogRepository;
+    private final SecurityUtils securityUtils;
 
     @PostMapping("/log")
     public ApiResponse<Map<String, Object>> submitReview(@RequestBody ReviewLog log) {
+        if (log.getRecommendationId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "推荐ID不能为空");
+        }
+        if (log.getDoctorDecision() == null
+                || !List.of("confirm", "modify", "reject").contains(log.getDoctorDecision())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "审核决策无效，必须为confirm/modify/reject");
+        }
+
+        log.setDoctorId(securityUtils.getCurrentUserId());
+
         reviewLogRepository.insert(log);
-        String decision = log.getDoctorDecision();
-        String newStatus = "confirm".equals(decision) ? "confirmed" :
-                          "modify".equals(decision) ? "modified" : "rejected";
+        String newStatus = "confirm".equals(log.getDoctorDecision()) ? "confirmed" :
+                          "modify".equals(log.getDoctorDecision()) ? "modified" : "rejected";
         reviewLogRepository.updateRecommendationStatus(log.getRecommendationId(), newStatus);
         Map<String, Object> resp = Map.of("id", log.getId(), "reviewStatus", newStatus);
         return ApiResponse.success(resp);

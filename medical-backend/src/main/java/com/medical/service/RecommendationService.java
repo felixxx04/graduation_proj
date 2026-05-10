@@ -7,10 +7,9 @@ import com.medical.dto.response.RecommendationHistoryItem;
 import com.medical.entity.Drug;
 import com.medical.entity.HealthRecord;
 import com.medical.entity.Recommendation;
-import com.medical.entity.User;
 import com.medical.repository.RecommendationRepository;
+import com.medical.security.SecurityUtils;
 import com.medical.repository.PrivacyRepository;
-import com.medical.repository.UserRepository;
 import com.medical.repository.HealthRecordRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,8 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.PostConstruct;
@@ -41,8 +38,8 @@ public class RecommendationService {
     private final DrugService drugService;
     private final RecommendationRepository recommendationRepository;
     private final PrivacyRepository privacyRepository;
-    private final UserRepository userRepository;
     private final HealthRecordRepository healthRecordRepository;
+    private final SecurityUtils securityUtils;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     private volatile boolean drugsLoaded = false;
@@ -444,8 +441,10 @@ public class RecommendationService {
     }
 
     private void saveRecommendation(Map<String, Object> request, Map<String, Object> result) {
-        Long userId = getCurrentUserId();
-        if (userId == null) {
+        Long userId;
+        try {
+            userId = securityUtils.getCurrentUserId();
+        } catch (Exception e) {
             log.warn("No authenticated user found, skipping recommendation save");
             return;
         }
@@ -482,26 +481,6 @@ public class RecommendationService {
         }
     }
 
-    private Long getCurrentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            log.debug("No authentication found in SecurityContext");
-            return null;
-        }
-        String username = auth.getName();
-        if (username == null || username.isEmpty()) {
-            log.debug("Authentication principal has no username");
-            return null;
-        }
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isEmpty()) {
-            log.error("Authenticated user not found in database: {}", username);
-            throw new IllegalStateException("Authenticated user not found: " + username);
-        }
-        User user = userOptional.get();
-        log.debug("Resolved user ID {} for username '{}'", user.getId(), username);
-        return user.getId();
-    }
 
     public List<RecommendationHistoryItem> getHistoryByPatientId(Long patientId) {
         List<Recommendation> records = recommendationRepository.findByPatientId(patientId);
