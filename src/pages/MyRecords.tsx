@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { api } from '@/lib/api'
 import { Clock, CheckCircle, XCircle, Edit, FileText, ChevronDown, ChevronUp } from 'lucide-react'
+import { REVIEW_REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
 
 interface HistoryItem {
   id: number
@@ -12,13 +13,6 @@ interface HistoryItem {
   epsilonUsed: number | null
   reviewStatus: string | null
   createdAt: string
-}
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  pending:   { label: '待审核', color: '#888', bg: '#1a1a2e' },
-  confirmed: { label: '已确认', color: '#22c55e', bg: '#052e16' },
-  modified:  { label: '已修改', color: '#60a5fa', bg: '#1e3a5f' },
-  rejected:  { label: '已拒绝', color: '#f87171', bg: '#450a0a' },
 }
 
 const STATUS_ICON: Record<string, JSX.Element> = {
@@ -62,7 +56,7 @@ export default function MyRecords() {
         <div className="space-y-3">
           {records.map(record => {
             const status = record.reviewStatus || 'pending'
-            const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending
+            const cfg = REVIEW_STATUS_CONFIG[status] || REVIEW_STATUS_CONFIG.pending
             return (
               <Card key={record.id} hover="none">
                 <CardContent className="p-4">

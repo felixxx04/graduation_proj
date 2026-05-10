@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { api } from '@/lib/api'
 import ReviewPanel from '../components/ReviewPanel'
 import { Shield, Clock, CheckCircle, XCircle, Edit } from 'lucide-react'
+import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
 
 interface PendingReview {
   id: number
@@ -24,10 +25,16 @@ interface DrugOption {
   score: number
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: JSX.Element }> = {
-  confirm: { label: '已确认', color: '#22c55e', icon: <CheckCircle className="h-4 w-4" /> },
-  modify:  { label: '已修改', color: '#60a5fa', icon: <Edit className="h-4 w-4" /> },
-  reject:  { label: '已拒绝', color: '#f87171', icon: <XCircle className="h-4 w-4" /> },
+const REVIEW_KEY_MAP: Record<string, string> = {
+  confirm: 'confirmed',
+  modify: 'modified',
+  reject: 'rejected',
+}
+
+const STATUS_ICON: Record<string, JSX.Element> = {
+  confirm: <CheckCircle className="h-4 w-4" />,
+  modify:  <Edit className="h-4 w-4" />,
+  reject:  <XCircle className="h-4 w-4" />,
 }
 
 function parseDrugs(systemDrugs: string): DrugOption[] {
@@ -80,9 +87,10 @@ export default function ReviewDashboard() {
 
   const statusBadge = (decision: string | null) => {
     if (!decision) return <Clock className="h-4 w-4 text-muted-foreground" />
-    const cfg = STATUS_CONFIG[decision]
-    if (!cfg) return <Clock className="h-4 w-4 text-muted-foreground" />
-    return <span style={{ color: cfg.color }}>{cfg.icon}</span>
+    const sharedKey = REVIEW_KEY_MAP[decision]
+    const sharedCfg = sharedKey ? REVIEW_STATUS_CONFIG[sharedKey] : null
+    if (!sharedCfg) return <Clock className="h-4 w-4 text-muted-foreground" />
+    return <span style={{ color: sharedCfg.color }}>{STATUS_ICON[decision]}</span>
   }
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">加载中...</div>

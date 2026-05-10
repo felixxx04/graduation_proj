@@ -6,6 +6,7 @@ import { api } from '@/lib/api'
 import { usePrivacyStore } from '@/lib/privacyStore'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { BarChart3, TrendingUp, Activity, Shield, Sparkles } from 'lucide-react'
+import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
 
 export default function RecommendationStats() {
   const { config, budget } = usePrivacyStore()
@@ -29,11 +30,10 @@ export default function RecommendationStats() {
     finally { setDemoLoading(false) }
   }
 
-  const statusLabels: Record<string, string> = { pending: '待审核', confirmed: '已确认', modified: '已修改', rejected: '已拒绝' }
-  const statusColors: Record<string, string> = { pending: '#888', confirmed: '#22c55e', modified: '#60a5fa', rejected: '#f87171' }
-  const statusData = stats ? Object.entries(stats.statusDistribution).map(([k, v]) => ({
-    name: statusLabels[k] || k, value: v, color: statusColors[k] || '#888',
-  })) : []
+  const statusData = stats ? Object.entries(stats.statusDistribution).map(([k, v]) => {
+    const cfg = REVIEW_STATUS_CONFIG[k]
+    return { name: cfg?.label || k, value: v, color: cfg?.color || '#888' }
+  }) : []
 
   return (
     <div className="space-y-6">
