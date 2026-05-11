@@ -1020,8 +1020,8 @@ class RecommendationPredictor:
             if not disease_en:
                 # Try to get from patient data
                 diseases = patient_data.get('diseases', []) or []
-                primary_diseases = patient_data.get('primary_input_diseases', []) or []
-                candidate_diseases = primary_diseases or diseases
+                primary_diseases = list(patient_data.get('primary_input_diseases', []) or [])
+                candidate_diseases = primary_diseases or list(diseases or [])
                 if candidate_diseases:
                     disease_en = str(candidate_diseases[0]).lower()
 
@@ -1158,7 +1158,8 @@ class RecommendationPredictor:
 
             # Feedback penalty for rule-based ranking
             feedback = get_feedback_learner()
-            disease_en = str(patient_data.get('diseases', [''])[0] if patient_data.get('diseases') else '').lower()
+            diseases_for_fb = list(patient_data.get('diseases') or [])
+            disease_en = str(diseases_for_fb[0] if diseases_for_fb else '').lower()
             if disease_en:
                 drug_class_en = str(drug.get('drug_class_en', '')).lower()
                 penalty = feedback.get_penalty(disease_en, drug_class_en)
