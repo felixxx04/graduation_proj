@@ -6,9 +6,10 @@ import { api } from '@/lib/api'
 import { usePrivacyStore } from '@/lib/privacyStore'
 import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
-  LineChart, Line, PieChart, Pie, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart, Line,
 } from 'recharts'
+import TreemapChart from '../components/TreemapChart'
 import { BarChart3, TrendingUp, Activity, Shield, Sparkles, Pill } from 'lucide-react'
 
 interface StatsData {
@@ -22,9 +23,6 @@ interface StatsData {
   topDrugs: { name: string; count: number }[]
   categoryDistribution: { name: string; value: number }[]
 }
-
-const CATEGORY_COLORS = ['#38bdf8', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316']
-
 export default function RecommendationStats() {
   const { config, budget } = usePrivacyStore()
   const [stats, setStats] = useState<StatsData | null>(null)
@@ -132,37 +130,37 @@ export default function RecommendationStats() {
           </CardContent>
         </Card>
 
-        {/* 药物分类占比 */}
+        {/* 药物分类占比 — Treemap */}
         <Card hover="none">
-          <CardHeader><CardTitle className="text-base">药物分类占比</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">药物分类分布</CardTitle></CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie data={stats?.categoryDistribution || []} cx="50%" cy="50%" innerRadius={40} outerRadius={80} paddingAngle={2} dataKey="value" nameKey="name">
-                  {(stats?.categoryDistribution || []).map((_, i) => <Cell key={i} fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} formatter={(v: number, n: string) => [`${v} 次`, n]} />
-                <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <TreemapChart data={stats?.categoryDistribution || []} />
           </CardContent>
         </Card>
 
-        {/* 审核状态分布 */}
+        {/* 审核状态分布 — 进度条 */}
         <Card hover="none">
           <CardHeader><CardTitle className="text-base">审核状态分布</CardTitle></CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={statusData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} allowDecimals={false} />
-                <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} />
-                <Bar dataKey="value" name="数量" radius={[3, 3, 0, 0]}>
-                  {statusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="space-y-3 pt-1">
+              {statusData.map((item) => {
+                const maxVal = Math.max(...statusData.map(d => d.value), 1)
+                return (
+                  <div key={item.name}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span style={{ color: item.color }}>{item.name}</span>
+                      <span className="text-muted-foreground">{item.value}</span>
+                    </div>
+                    <div className="h-5 rounded-sm overflow-hidden" style={{ background: '#1e293b' }}>
+                      <div
+                        className="h-full rounded-sm transition-all duration-500"
+                        style={{ width: `${(item.value / maxVal) * 100}%`, background: item.color }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       </div>
