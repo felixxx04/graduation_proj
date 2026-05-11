@@ -37,4 +37,17 @@ public interface RecommendationRepository {
     @Select("SELECT review_status, COUNT(*) as cnt FROM recommendation GROUP BY review_status")
     @Results(@Result(column = "cnt", property = "value"))
     List<Map<String, Object>> countByStatus();
+
+    @Select("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM recommendation GROUP BY DATE(created_at) ORDER BY day")
+    List<Map<String, Object>> countByDay();
+
+    @Select("SELECT result_data FROM recommendation WHERE result_data IS NOT NULL")
+    List<String> findAllResultData();
+
+    @Select("""
+        SELECT COUNT(*) as total,
+               SUM(CASE WHEN doctor_decision = 'confirm' THEN 1 ELSE 0 END) as confirmed
+        FROM review_log
+        """)
+    Map<String, Object> approvalStats();
 }

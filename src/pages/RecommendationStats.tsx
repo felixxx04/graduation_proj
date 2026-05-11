@@ -4,20 +4,44 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
 import { usePrivacyStore } from '@/lib/privacyStore'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { BarChart3, TrendingUp, Activity, Shield, Sparkles } from 'lucide-react'
 import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+  LineChart, Line, PieChart, Pie, Legend,
+} from 'recharts'
+import { BarChart3, TrendingUp, Activity, Shield, Sparkles, Pill } from 'lucide-react'
+
+interface StatsData {
+  totalRecommendations: number
+  statusDistribution: Record<string, number>
+  approvalRate: number
+  approvalTotal: number
+  approvalConfirmed: number
+  uniqueDrugCount: number
+  trend: { day: string; count: number }[]
+  topDrugs: { name: string; count: number }[]
+  categoryDistribution: { name: string; value: number }[]
+}
+
+const CATEGORY_COLORS = ['#38bdf8', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316']
 
 export default function RecommendationStats() {
   const { config, budget } = usePrivacyStore()
-  const [stats, setStats] = useState<{ totalRecommendations: number; statusDistribution: Record<string, number> } | null>(null)
+  const [stats, setStats] = useState<StatsData | null>(null)
   const [demoDisease, setDemoDisease] = useState('')
   const [demoResult, setDemoResult] = useState<any>(null)
   const [demoLoading, setDemoLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get<{ totalRecommendations: number; statusDistribution: Record<string, number> }>('/api/stats/recommendations')
-      .then(setStats).catch(() => {})
+    const fetchStats = async () => {
+      try {
+        const data = await api.get<StatsData>('/api/stats/recommendations')
+        setStats(data)
+      } catch { /* silent */ }
+      finally { setLoading(false) }
+    }
+    fetchStats()
   }, [])
 
   const handleDemo = async () => {
@@ -26,14 +50,17 @@ export default function RecommendationStats() {
     try {
       const result = await api.post('/api/recommendations/generate', { diseases: demoDisease, dpEnabled: false, topK: 4 })
       setDemoResult(result)
-    } catch {}
+    } catch { /* silent */ }
     finally { setDemoLoading(false) }
   }
 
-  const statusData = stats ? Object.entries(stats.statusDistribution).map(([k, v]) => {
-    const cfg = REVIEW_STATUS_CONFIG[k]
-    return { name: cfg?.label || k, value: v, color: cfg?.color || '#888' }
-  }) : []
+  const statusData = stats ? Object.entries(stats.statusDistribution).map(([k, v]) => ({
+    name: REVIEW_STATUS_CONFIG[k]?.label || k,
+    value: v,
+    color: REVIEW_STATUS_CONFIG[k]?.color || '#888',
+  })) : []
+
+  if (loading) return <div className="p-8 text-center text-muted-foreground">加载统计数据...</div>
 
   return (
     <div className="space-y-6">
@@ -42,57 +69,129 @@ export default function RecommendationStats() {
           <BarChart3 className="h-5 w-5 text-brand-sky" />
           <div>
             <h1 className="text-ia-tile font-display font-bold text-foreground">推荐统计</h1>
-            <p className="text-ia-body text-muted-foreground mt-1">推荐分布统计与实时路由演示</p>
+            <p className="text-ia-body text-muted-foreground mt-1">推荐分布统计 · 药物分析 · 审核概览</p>
           </div>
         </div>
       </section>
 
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card hover="none"><CardContent className="p-4 text-center">
+      {/* 指标卡片 */}
+      <div className="grid grid-cols-4 gap-4">
+        <Card hover="none"><CardContent className="p-5 text-center">
           <TrendingUp className="h-5 w-5 text-brand-sky mx-auto mb-2" />
-          <div className="text-2xl font-heading font-bold">{stats?.totalRecommendations || 0}</div>
+          <div className="text-2xl font-heading font-bold text-brand-sky">{stats?.totalRecommendations || 0}</div>
           <div className="text-sm text-muted-foreground">总推荐次数</div>
         </CardContent></Card>
-        <Card hover="none"><CardContent className="p-4 text-center">
-          <Activity className="h-5 w-5 text-secondary mx-auto mb-2" />
-          <div className="text-2xl font-heading font-bold">{stats?.statusDistribution?.pending || 0}</div>
+        <Card hover="none"><CardContent className="p-5 text-center">
+          <Activity className="h-5 w-5 text-amber-400 mx-auto mb-2" />
+          <div className="text-2xl font-heading font-bold text-amber-400">{stats?.statusDistribution?.pending || 0}</div>
           <div className="text-sm text-muted-foreground">待审核</div>
         </CardContent></Card>
-        <Card hover="none"><CardContent className="p-4 text-center">
+        <Card hover="none"><CardContent className="p-5 text-center">
           <Shield className="h-5 w-5 text-green-500 mx-auto mb-2" />
-          <div className="text-2xl font-heading font-bold">{budget.remaining.toFixed(1)} / {config.privacyBudget.toFixed(1)}</div>
-          <div className="text-sm text-muted-foreground">隐私预算剩余</div>
+          <div className="text-2xl font-heading font-bold text-green-500">{stats?.approvalRate || 0}%</div>
+          <div className="text-sm text-muted-foreground">审核通过率</div>
+        </CardContent></Card>
+        <Card hover="none"><CardContent className="p-5 text-center">
+          <Pill className="h-5 w-5 text-purple-400 mx-auto mb-2" />
+          <div className="text-2xl font-heading font-bold text-purple-400">{stats?.uniqueDrugCount || 0}</div>
+          <div className="text-sm text-muted-foreground">涉及药物数</div>
         </CardContent></Card>
       </div>
 
-      {statusData.length > 0 && (
+      {/* 2x2 图表 */}
+      <div className="grid grid-cols-2 gap-5">
+        {/* 推荐趋势 */}
+        <Card hover="none">
+          <CardHeader><CardTitle className="text-base">推荐趋势</CardTitle></CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={stats?.trend || []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="day" stroke="#64748b" tick={{ fontSize: 11 }} />
+                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} allowDecimals={false} />
+                <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} />
+                <Line type="monotone" dataKey="count" stroke="#38bdf8" strokeWidth={2} dot={{ fill: '#38bdf8', r: 3 }} name="推荐数" />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* 药物频次 Top 10 */}
+        <Card hover="none">
+          <CardHeader><CardTitle className="text-base">药物推荐频次 Top 10</CardTitle></CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={stats?.topDrugs || []} layout="vertical" margin={{ left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis type="number" stroke="#64748b" tick={{ fontSize: 11 }} allowDecimals={false} />
+                <YAxis dataKey="name" type="category" stroke="#64748b" tick={{ fontSize: 10 }} width={70} />
+                <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} />
+                <Bar dataKey="count" fill="#38bdf8" radius={[0, 3, 3, 0]} name="次数" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* 药物分类占比 */}
+        <Card hover="none">
+          <CardHeader><CardTitle className="text-base">药物分类占比</CardTitle></CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie data={stats?.categoryDistribution || []} cx="50%" cy="50%" innerRadius={40} outerRadius={80} paddingAngle={2} dataKey="value" nameKey="name">
+                  {(stats?.categoryDistribution || []).map((_, i) => <Cell key={i} fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]} />)}
+                </Pie>
+                <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} formatter={(v: number, n: string) => [`${v} 次`, n]} />
+                <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* 审核状态分布 */}
         <Card hover="none">
           <CardHeader><CardTitle className="text-base">审核状态分布</CardTitle></CardHeader>
           <CardContent>
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={statusData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                  <XAxis dataKey="name" stroke="#888" tick={{ fontSize: 12 }} />
-                  <YAxis stroke="#888" tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ background: '#1a1a2e', border: '1px solid #333', borderRadius: '4px', fontSize: '12px' }} />
-                  <Bar dataKey="value" name="数量">{statusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}</Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={statusData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} allowDecimals={false} />
+                <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} />
+                <Bar dataKey="value" name="数量" radius={[3, 3, 0, 0]}>
+                  {statusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
-      )}
+      </div>
 
+      {/* 隐私预算 + 实时路由演示 */}
       <Card hover="none">
-        <CardHeader><CardTitle className="text-base">实时路由演示</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
+        <CardHeader><CardTitle className="text-base">隐私预算 · 实时演示</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-3 gap-3 text-sm">
+            <div className="p-3 rounded-sm bg-surface border border-white/[0.06] text-center">
+              <div className="text-xs text-muted-foreground mb-1">当前 ε</div>
+              <div className="font-heading font-bold text-brand-sky">{config.epsilon.toFixed(3)}</div>
+            </div>
+            <div className="p-3 rounded-sm bg-surface border border-white/[0.06] text-center">
+              <div className="text-xs text-muted-foreground mb-1">预算剩余</div>
+              <div className="font-heading font-bold text-secondary">{budget.remaining.toFixed(2)} / {config.privacyBudget.toFixed(1)}</div>
+            </div>
+            <div className="p-3 rounded-sm bg-surface border border-white/[0.06] text-center">
+              <div className="text-xs text-muted-foreground mb-1">确认 / 总计</div>
+              <div className="font-heading font-bold text-green-400">{stats?.approvalConfirmed || 0} / {stats?.approvalTotal || 0}</div>
+            </div>
+          </div>
+
           <div className="flex gap-3">
-            <Input value={demoDisease} onChange={e => setDemoDisease(e.target.value)} placeholder="输入疾病名，如：高血压、感冒、腹泻..." className="flex-1" />
+            <Input value={demoDisease} onChange={e => setDemoDisease(e.target.value)} placeholder="输入疾病名查看路由过程，如：高血压" className="flex-1" />
             <Button onClick={handleDemo} loading={demoLoading} className="gap-2"><Sparkles className="h-4 w-4" /> 演示</Button>
           </div>
           {demoResult?.selected && (
-            <div className="space-y-2 mt-4">
+            <div className="space-y-2">
               {demoResult.selected.map((item: any, i: number) => (
                 <div key={i} className="p-3 rounded-sm bg-surface border border-white/[0.06]">
                   <div className="flex items-center gap-2">
