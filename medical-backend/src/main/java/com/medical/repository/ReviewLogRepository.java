@@ -51,4 +51,14 @@ public interface ReviewLogRepository {
 
     @Update("UPDATE recommendation SET review_status = #{status} WHERE id = #{recommendationId}")
     int updateRecommendationStatus(@Param("recommendationId") Long recommendationId, @Param("status") String status);
+
+    @Select("""
+        SELECT r.id as recommendationId, r.patient_id as patientId,
+               r.input_data as inputData, r.result_data as resultData,
+               r.review_status as reviewStatus, r.created_at as createdAt
+        FROM recommendation r
+        WHERE r.review_status = 'pending'
+        ORDER BY r.created_at DESC
+        """)
+    List<Map<String, Object>> findPendingRecommendations();
 }

@@ -40,8 +40,9 @@ public class ReviewController {
     }
 
     @GetMapping("/pending")
-    public ApiResponse<List<ReviewLog>> getPendingReviews() {
-        return ApiResponse.success(reviewLogRepository.findPending());
+    public ApiResponse<List<Map<String, Object>>> getPendingReviews() {
+        List<Map<String, Object>> pending = reviewLogRepository.findPendingRecommendations();
+        return ApiResponse.success(pending);
     }
 
     @GetMapping("/log/{recommendationId}")

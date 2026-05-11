@@ -2,18 +2,14 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { api } from '@/lib/api'
 import ReviewPanel from '../components/ReviewPanel'
-import { Shield, Clock, CheckCircle, XCircle, Edit } from 'lucide-react'
-import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
+import { Shield, Clock } from 'lucide-react'
 
 interface PendingReview {
-  id: number
   recommendationId: number
-  patientId: number
-  diseaseCn: string
-  diseaseStandardized: string
-  routingPath: string
-  systemDrugs: string
-  doctorDecision: string | null
+  patientId: number | null
+  inputData: string
+  resultData: string
+  reviewStatus: string
   createdAt: string
 }
 
@@ -25,20 +21,25 @@ interface DrugOption {
   score: number
 }
 
-const REVIEW_KEY_MAP: Record<string, string> = {
-  confirm: 'confirmed',
-  modify: 'modified',
-  reject: 'rejected',
+function parseInputDisease(inputData: string): string {
+  try {
+    const parsed = JSON.parse(inputData)
+    return parsed.diseases || parsed.disease || ''
+  } catch { return '' }
 }
 
-const STATUS_ICON: Record<string, JSX.Element> = {
-  confirm: <CheckCircle className="h-4 w-4" />,
-  modify:  <Edit className="h-4 w-4" />,
-  reject:  <XCircle className="h-4 w-4" />,
-}
-
-function parseDrugs(systemDrugs: string): DrugOption[] {
-  try { return JSON.parse(systemDrugs) } catch { return [] }
+function parseResultDrugs(resultData: string): DrugOption[] {
+  try {
+    const parsed = JSON.parse(resultData)
+    const selected = parsed.selected || []
+    return selected.map((item: any) => ({
+      drugName: item.drugName || '',
+      englishName: item.englishName || '',
+      category: item.category || '',
+      safetyType: item.safetyType || 'safe',
+      score: item.score || 0,
+    }))
+  } catch { return [] }
 }
 
 export default function ReviewDashboard() {
@@ -58,6 +59,9 @@ export default function ReviewDashboard() {
 
   useEffect(() => { fetchPending() }, [])
 
+  const diseaseCn = selectedReview ? parseInputDisease(selectedReview.inputData) : ''
+  const drugs = selectedReview ? parseResultDrugs(selectedReview.resultData) : []
+
   const handleSubmitReview = async (
     decision: 'confirm' | 'modify' | 'reject',
     selectedDrug?: string,
@@ -70,10 +74,10 @@ export default function ReviewDashboard() {
       await api.post('/api/review/log', {
         recommendationId: selectedReview.recommendationId,
         patientId: selectedReview.patientId,
-        diseaseCn: selectedReview.diseaseCn,
-        diseaseStandardized: selectedReview.diseaseStandardized,
-        routingPath: selectedReview.routingPath,
-        systemDrugs: selectedReview.systemDrugs,
+        diseaseCn,
+        diseaseStandardized: '',
+        routingPath: '',
+        systemDrugs: selectedReview.resultData,
         doctorDecision: decision,
         doctorSelectedDrug: selectedDrug || null,
         doctorReason: reason || null,
@@ -83,14 +87,6 @@ export default function ReviewDashboard() {
       setSelectedReview(null)
       fetchPending()
     } catch { setError('提交审核失败') }
-  }
-
-  const statusBadge = (decision: string | null) => {
-    if (!decision) return <Clock className="h-4 w-4 text-muted-foreground" />
-    const sharedKey = REVIEW_KEY_MAP[decision]
-    const sharedCfg = sharedKey ? REVIEW_STATUS_CONFIG[sharedKey] : null
-    if (!sharedCfg) return <Clock className="h-4 w-4 text-muted-foreground" />
-    return <span style={{ color: sharedCfg.color }}>{STATUS_ICON[decision]}</span>
   }
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">加载中...</div>
@@ -113,21 +109,23 @@ export default function ReviewDashboard() {
         <div className="lg:col-span-1 space-y-2">
           <h3 className="font-heading font-semibold text-sm text-muted-foreground mb-2">待审核 ({pendingReviews.length})</h3>
           {pendingReviews.length === 0 && <p className="text-sm text-muted-foreground">暂无待审核推荐</p>}
-          {pendingReviews.map(review => (
-            <div key={review.id} onClick={() => setSelectedReview(review)}
-              className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                selectedReview?.id === review.id ? 'border-brand-sky bg-brand-sky/5' : 'border-white/[0.06] bg-surface hover:bg-surface-elevated'
-              }`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-heading font-semibold text-sm">{review.diseaseCn}</span>
-                  {review.diseaseStandardized && <span className="text-xs text-muted-foreground ml-2">→ {review.diseaseStandardized}</span>}
+          {pendingReviews.map(review => {
+            const disease = parseInputDisease(review.inputData)
+            return (
+              <div key={review.recommendationId} onClick={() => setSelectedReview(review)}
+                className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  selectedReview?.recommendationId === review.recommendationId ? 'border-brand-sky bg-brand-sky/5' : 'border-white/[0.06] bg-surface hover:bg-surface-elevated'
+                }`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="font-heading font-semibold text-sm">{disease || '未知疾病'}</span>
+                  </div>
+                  <Clock className="h-4 w-4 text-muted-foreground" />
                 </div>
-                {statusBadge(review.doctorDecision)}
+                <div className="text-xs text-muted-foreground mt-1">{new Date(review.createdAt).toLocaleDateString('zh-CN')}</div>
               </div>
-              <div className="text-xs text-muted-foreground mt-1">{new Date(review.createdAt).toLocaleDateString('zh-CN')}</div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <div className="lg:col-span-2">
@@ -137,18 +135,12 @@ export default function ReviewDashboard() {
               <CardContent className="space-y-4">
                 <div className="p-3 rounded-sm bg-surface border border-white/[0.06]">
                   <div className="text-sm text-muted-foreground">患者症状</div>
-                  <div className="font-heading font-semibold mt-1">{selectedReview.diseaseCn}</div>
-                  {selectedReview.routingPath && (
-                    <>
-                      <div className="text-sm text-muted-foreground mt-3">路由路径</div>
-                      <div className="text-xs mt-1" style={{ color: '#00d4aa' }}>{selectedReview.routingPath}</div>
-                    </>
-                  )}
+                  <div className="font-heading font-semibold mt-1">{diseaseCn || '未提供'}</div>
                 </div>
                 <ReviewPanel
                   recommendationId={selectedReview.recommendationId}
-                  diseaseCn={selectedReview.diseaseCn}
-                  drugs={parseDrugs(selectedReview.systemDrugs)}
+                  diseaseCn={diseaseCn}
+                  drugs={drugs}
                   onSubmitReview={handleSubmitReview}
                 />
               </CardContent>
