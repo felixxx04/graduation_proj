@@ -31,13 +31,8 @@ public class RecommendationController {
     }
 
     @GetMapping("/my-history")
-    public ApiResponse<?> getMyHistory() {
-        try {
-            Long userId = securityUtils.getCurrentUserId();
-            List<RecommendationHistoryItem> history = recommendationService.getHistoryByUserId(userId);
-            return ApiResponse.success(history);
-        } catch (Exception e) {
-            return ApiResponse.error("my-history error: " + e.getClass().getSimpleName() + " - " + e.getMessage());
-        }
+    public ApiResponse<List<RecommendationHistoryItem>> getMyHistory() {
+        Long userId = securityUtils.getCurrentUserId();
+        return ApiResponse.success(recommendationService.getHistoryByUserId(userId));
     }
 }

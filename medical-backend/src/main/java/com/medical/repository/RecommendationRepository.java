@@ -25,7 +25,7 @@ public interface RecommendationRepository {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Recommendation recommendation);
 
-    @Select("SELECT * FROM recommendation WHERE user_id = #{userId} ORDER BY created_at DESC")
+    @Select("SELECT * FROM recommendation WHERE user_id = #{userId} ORDER BY id DESC LIMIT 50")
     List<Recommendation> findByUserId(Long userId);
 
     @Select("SELECT COUNT(*) FROM recommendation WHERE DATE(created_at) = CURDATE()")

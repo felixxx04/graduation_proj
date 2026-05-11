@@ -58,7 +58,8 @@ public interface ReviewLogRepository {
                r.review_status as reviewStatus, r.created_at as createdAt
         FROM recommendation r
         WHERE r.review_status = 'pending'
-        ORDER BY r.created_at DESC
+        ORDER BY r.id DESC
+        LIMIT 50
         """)
     List<Map<String, Object>> findPendingRecommendations();
 }
