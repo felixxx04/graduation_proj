@@ -937,6 +937,8 @@ class RecommendationPredictor:
         has_lost_diseases = len(lost_diseases) > 0
 
         for drug in safe_candidates:
+            drug_name = drug.get('generic_name', drug.get('name', ''))
+
             # 构建特征记录
             record = self._build_record(patient_data, drug)
 
@@ -1038,8 +1040,6 @@ class RecommendationPredictor:
             final_score, dp_noise, dp_anomaly, dp_confidence = _apply_dp_noise(
                 raw_score, dp_config, has_indication=has_indication
             )
-
-            drug_name = drug.get('generic_name', drug.get('name', ''))
 
             # 生成可解释性分析
             explanation = generate_explanation(
