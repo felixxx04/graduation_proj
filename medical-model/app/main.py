@@ -127,6 +127,10 @@ class PredictRequest(BaseModel):
     cholesterol_total: Optional[float] = None
     cholesterol_ldl: Optional[float] = None
     heart_rate: Optional[int] = None
+    # 患者输入增强（由 PatientInputEnhancer 在 predict 中填充）
+    enhanced_disease: Optional[str] = None
+    enhanced_diseases: Optional[List[str]] = None
+    input_confidence: Optional[str] = None
 
     @field_validator('topK')
     @classmethod
