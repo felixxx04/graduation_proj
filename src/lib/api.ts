@@ -139,17 +139,14 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     )
   }
 
-  if (
-    payload &&
-    typeof payload === 'object' &&
-    'success' in payload &&
-    'data' in payload
-  ) {
+  if (payload && typeof payload === 'object' && 'success' in payload) {
     const envelope = payload as ApiEnvelope<T>
     if (!envelope.success) {
       throw new ApiError(extractMessage(payload, '请求失败'), response.status, payload)
     }
-    return envelope.data
+    if ('data' in payload) {
+      return envelope.data
+    }
   }
 
   return payload as T
