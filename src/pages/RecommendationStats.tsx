@@ -58,6 +58,17 @@ export default function RecommendationStats() {
     color: REVIEW_STATUS_CONFIG[k]?.color || '#888',
   })) : []
 
+  // Merge small categories into "其他" for treemap readability
+  const mergedCategories = (stats?.categoryDistribution || []).length > 8
+    ? [
+        ...(stats?.categoryDistribution || []).slice(0, 6),
+        {
+          name: '其他',
+          value: (stats?.categoryDistribution || []).slice(6).reduce((s: number, c: {value: number}) => s + c.value, 0),
+        },
+      ]
+    : (stats?.categoryDistribution || [])
+
   if (loading) return <div className="p-8 text-center text-muted-foreground">加载统计数据...</div>
 
   return (
@@ -122,7 +133,7 @@ export default function RecommendationStats() {
               <BarChart data={stats?.topDrugs || []} layout="vertical" margin={{ left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis type="number" stroke="#64748b" tick={{ fontSize: 11 }} allowDecimals={false} />
-                <YAxis dataKey="name" type="category" stroke="#64748b" tick={{ fontSize: 10 }} width={70} />
+                <YAxis dataKey="name" type="category" stroke="#64748b" tick={{ fontSize: 11, fill: '#cbd5e1' }} width={90} />
                 <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} />
                 <Bar dataKey="count" fill="#38bdf8" radius={[0, 3, 3, 0]} name="次数" />
               </BarChart>
@@ -134,7 +145,7 @@ export default function RecommendationStats() {
         <Card hover="none">
           <CardHeader><CardTitle className="text-base">药物分类分布</CardTitle></CardHeader>
           <CardContent>
-            <TreemapChart data={stats?.categoryDistribution || []} />
+            <TreemapChart data={mergedCategories} />
           </CardContent>
         </Card>
 

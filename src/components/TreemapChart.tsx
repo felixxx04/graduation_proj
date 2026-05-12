@@ -11,7 +11,7 @@ interface TreemapChartProps {
   height?: number
 }
 
-const COLORS = ['#38bdf8', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316']
+const COLORS = ['#0284c7', '#16a34a', '#ca8a04', '#dc2626', '#7c3aed', '#db2777', '#0d9488']
 
 export default function TreemapChart({ data, width = 400, height = 220 }: TreemapChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -77,7 +77,7 @@ export default function TreemapChart({ data, width = 400, height = 220 }: Treema
       const d = sorted[i]
       ctx.fillStyle = COLORS[i % COLORS.length]
       ctx.fillRect(lx, ly, 8, 8)
-      ctx.fillStyle = '#94a3b8'
+      ctx.fillStyle = '#cbd5e1'
       ctx.font = '9px system-ui, -apple-system, sans-serif'
       ctx.textAlign = 'left'
       ctx.fillText(d.name + ' (' + d.value + ')', lx + 10, ly + 7)

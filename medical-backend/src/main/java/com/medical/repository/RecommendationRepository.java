@@ -35,7 +35,6 @@ public interface RecommendationRepository {
     int count();
 
     @Select("SELECT review_status, COUNT(*) as cnt FROM recommendation GROUP BY review_status")
-    @Results(@Result(column = "cnt", property = "value"))
     List<Map<String, Object>> countByStatus();
 
     @Select("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM recommendation GROUP BY DATE(created_at) ORDER BY day")
