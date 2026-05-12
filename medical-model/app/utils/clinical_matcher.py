@@ -116,6 +116,8 @@ def normalize_disease(name: str) -> str:
         标准化后的全称(小写)
     """
     key = name.strip().lower()
+    # Remove possessive apostrophes: "parkinson's" → "parkinson", "crohn's" → "crohn"
+    key = key.replace("'s ", " ").replace("'s", "")
     return DISEASE_NORMALIZE.get(key, key)
 
 

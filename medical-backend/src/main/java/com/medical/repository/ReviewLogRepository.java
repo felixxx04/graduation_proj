@@ -54,7 +54,7 @@ public interface ReviewLogRepository {
 
     @Select("""
         SELECT r.id as recommendationId, r.patient_id as patientId,
-               r.input_data as inputData, r.result_data as resultData,
+               r.input_data as inputData,
                r.review_status as reviewStatus, r.created_at as createdAt
         FROM recommendation r
         WHERE r.review_status = 'pending'
@@ -62,4 +62,13 @@ public interface ReviewLogRepository {
         LIMIT 50
         """)
     List<Map<String, Object>> findPendingRecommendations();
+
+    @Select("""
+        SELECT r.id as recommendationId, r.patient_id as patientId,
+               r.input_data as inputData, r.result_data as resultData,
+               r.review_status as reviewStatus, r.created_at as createdAt
+        FROM recommendation r
+        WHERE r.id = #{id}
+        """)
+    Map<String, Object> findRecommendationById(@Param("id") Long id);
 }

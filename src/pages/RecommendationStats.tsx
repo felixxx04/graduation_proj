@@ -1,73 +1,71 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
-import { usePrivacyStore } from '@/lib/privacyStore'
-import { REVIEW_STATUS_CONFIG } from '@/lib/statusConstants'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line,
+  LineChart, Line, PieChart, Pie, Cell, Legend,
 } from 'recharts'
-import TreemapChart from '../components/TreemapChart'
-import { BarChart3, TrendingUp, Activity, Shield, Sparkles, Pill } from 'lucide-react'
+import SankeyFlowChart from '../components/SankeyFlowChart'
+import { BarChart3, TrendingUp, Activity, Shield, Pill, Settings } from 'lucide-react'
 
 interface StatsData {
   totalRecommendations: number
   statusDistribution: Record<string, number>
   approvalRate: number
-  approvalTotal: number
-  approvalConfirmed: number
   uniqueDrugCount: number
   trend: { day: string; count: number }[]
   topDrugs: { name: string; count: number }[]
   categoryDistribution: { name: string; value: number }[]
 }
 export default function RecommendationStats() {
-  const { config, budget } = usePrivacyStore()
   const [stats, setStats] = useState<StatsData | null>(null)
-  const [demoDisease, setDemoDisease] = useState('')
-  const [demoResult, setDemoResult] = useState<any>(null)
-  const [demoLoading, setDemoLoading] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false)
+
+  // 默认选中 Top 8 分类
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const data = await api.get<StatsData>('/api/stats/recommendations')
         setStats(data)
+        // 默认选中 Top 8
+        const top8 = (data.categoryDistribution || []).slice(0, 8).map(c => c.name)
+        setSelectedCategories(new Set(top8))
       } catch { /* silent */ }
       finally { setLoading(false) }
     }
     fetchStats()
   }, [])
 
-  const handleDemo = async () => {
-    if (!demoDisease.trim()) return
-    setDemoLoading(true)
-    try {
-      const result = await api.post('/api/recommendations/generate', { diseases: demoDisease, dpEnabled: false, topK: 4 })
-      setDemoResult(result)
-    } catch { /* silent */ }
-    finally { setDemoLoading(false) }
+  // 根据用户选择生成饼图数据：所选分类 + 其余汇总为"其他"
+  const allCategories = stats?.categoryDistribution || []
+  const pieData = (() => {
+    const selected: { name: string; value: number }[] = []
+    let otherValue = 0
+    for (const c of allCategories) {
+      if (selectedCategories.has(c.name)) {
+        selected.push({ name: c.name, value: c.value })
+      } else {
+        otherValue += c.value
+      }
+    }
+    if (otherValue > 0) selected.push({ name: '其他', value: otherValue })
+    return selected
+  })()
+
+  const toggleCategory = (name: string) => {
+    setSelectedCategories(prev => {
+      const next = new Set(prev)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
   }
 
-  const statusData = stats ? Object.entries(stats.statusDistribution).map(([k, v]) => ({
-    name: REVIEW_STATUS_CONFIG[k]?.label || k,
-    value: v,
-    color: REVIEW_STATUS_CONFIG[k]?.color || '#888',
-  })) : []
-
-  // Merge small categories into "其他" for treemap readability
-  const mergedCategories = (stats?.categoryDistribution || []).length > 8
-    ? [
-        ...(stats?.categoryDistribution || []).slice(0, 6),
-        {
-          name: '其他',
-          value: (stats?.categoryDistribution || []).slice(6).reduce((s: number, c: {value: number}) => s + c.value, 0),
-        },
-      ]
-    : (stats?.categoryDistribution || [])
+  const PIE_COLORS = ['#0284c7', '#16a34a', '#ca8a04', '#dc2626', '#7c3aed', '#db2777', '#0d9488', '#ea580c', '#2563eb', '#9333ea', '#0891b2', '#65a30d']
+  const OTHER_COLOR = '#475569'
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">加载统计数据...</div>
 
@@ -113,7 +111,7 @@ export default function RecommendationStats() {
         <Card hover="none">
           <CardHeader><CardTitle className="text-base">推荐趋势</CardTitle></CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={300}>
               <LineChart data={stats?.trend || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis dataKey="day" stroke="#64748b" tick={{ fontSize: 11 }} />
@@ -129,11 +127,11 @@ export default function RecommendationStats() {
         <Card hover="none">
           <CardHeader><CardTitle className="text-base">药物推荐频次 Top 10</CardTitle></CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={stats?.topDrugs || []} layout="vertical" margin={{ left: 10 }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={stats?.topDrugs || []} layout="vertical" margin={{ left: 0, top: 5, right: 10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis type="number" stroke="#64748b" tick={{ fontSize: 11 }} allowDecimals={false} />
-                <YAxis dataKey="name" type="category" stroke="#64748b" tick={{ fontSize: 11, fill: '#cbd5e1' }} width={90} />
+                <YAxis dataKey="name" type="category" stroke="#64748b" tick={{ fontSize: 11, fill: '#cbd5e1' }} width={130} />
                 <Tooltip contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }} />
                 <Bar dataKey="count" fill="#38bdf8" radius={[0, 3, 3, 0]} name="次数" />
               </BarChart>
@@ -141,80 +139,84 @@ export default function RecommendationStats() {
           </CardContent>
         </Card>
 
-        {/* 药物分类占比 — Treemap */}
+        {/* 药物分类占比 — 饼图 + 分类选择 */}
         <Card hover="none">
-          <CardHeader><CardTitle className="text-base">药物分类分布</CardTitle></CardHeader>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">药物分类分布</CardTitle>
+              <button
+                onClick={() => setShowCategoryPicker(!showCategoryPicker)}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-brand-sky transition-colors"
+              >
+                <Settings className="h-3.5 w-3.5" />
+                选择分类
+              </button>
+            </div>
+            {showCategoryPicker && (
+              <div className="mt-2 flex flex-wrap gap-1 max-h-24 overflow-y-auto">
+                {allCategories.map((c, i) => (
+                  <button
+                    key={c.name}
+                    onClick={() => toggleCategory(c.name)}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs transition-colors"
+                    style={{
+                      background: selectedCategories.has(c.name) ? PIE_COLORS[i % PIE_COLORS.length] : '#1e293b',
+                      color: selectedCategories.has(c.name) ? '#fff' : '#94a3b8',
+                      border: `1px solid ${selectedCategories.has(c.name) ? PIE_COLORS[i % PIE_COLORS.length] : '#334155'}`,
+                    }}
+                  >
+                    {c.name} ({c.value})
+                  </button>
+                ))}
+              </div>
+            )}
+          </CardHeader>
           <CardContent>
-            <TreemapChart data={mergedCategories} />
+            <ResponsiveContainer width="100%" height={260}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={45}
+                  outerRadius={95}
+                  paddingAngle={1}
+                  dataKey="value"
+                >
+                  {pieData.map((entry) => (
+                    <Cell
+                      key={entry.name}
+                      fill={entry.name === '其他' ? OTHER_COLOR : PIE_COLORS[allCategories.findIndex(c => c.name === entry.name) % PIE_COLORS.length]}
+                      stroke="transparent"
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ background: '#0f1d32', border: '1px solid #334155', borderRadius: 4, fontSize: 12, color: '#e2e8f0' }}
+                  formatter={(value: number, name: string) => [`${value} 次`, name]}
+                />
+                <Legend
+                  layout="vertical"
+                  align="right"
+                  verticalAlign="middle"
+                  iconType="circle"
+                  iconSize={6}
+                  formatter={(value: string) => <span style={{ color: '#cbd5e1', fontSize: 11 }}>{value}</span>}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* 审核状态分布 — 进度条 */}
+        {/* 推荐流向 — 桑基图：疾病 → 药物分类 → 具体药物 */}
         <Card hover="none">
-          <CardHeader><CardTitle className="text-base">审核状态分布</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">推荐流向 · 疾病→分类→药物</CardTitle></CardHeader>
           <CardContent>
-            <div className="space-y-3 pt-1">
-              {statusData.map((item) => {
-                const maxVal = Math.max(...statusData.map(d => d.value), 1)
-                return (
-                  <div key={item.name}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span style={{ color: item.color }}>{item.name}</span>
-                      <span className="text-muted-foreground">{item.value}</span>
-                    </div>
-                    <div className="h-5 rounded-sm overflow-hidden" style={{ background: '#1e293b' }}>
-                      <div
-                        className="h-full rounded-sm transition-all duration-500"
-                        style={{ width: `${(item.value / maxVal) * 100}%`, background: item.color }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <SankeyFlowChart />
           </CardContent>
         </Card>
       </div>
 
-      {/* 隐私预算 + 实时路由演示 */}
-      <Card hover="none">
-        <CardHeader><CardTitle className="text-base">隐私预算 · 实时演示</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-3 gap-3 text-sm">
-            <div className="p-3 rounded-sm bg-surface border border-white/[0.06] text-center">
-              <div className="text-xs text-muted-foreground mb-1">当前 ε</div>
-              <div className="font-heading font-bold text-brand-sky">{config.epsilon.toFixed(3)}</div>
-            </div>
-            <div className="p-3 rounded-sm bg-surface border border-white/[0.06] text-center">
-              <div className="text-xs text-muted-foreground mb-1">预算剩余</div>
-              <div className="font-heading font-bold text-secondary">{budget.remaining.toFixed(2)} / {config.privacyBudget.toFixed(1)}</div>
-            </div>
-            <div className="p-3 rounded-sm bg-surface border border-white/[0.06] text-center">
-              <div className="text-xs text-muted-foreground mb-1">确认 / 总计</div>
-              <div className="font-heading font-bold text-green-400">{stats?.approvalConfirmed || 0} / {stats?.approvalTotal || 0}</div>
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <Input value={demoDisease} onChange={e => setDemoDisease(e.target.value)} placeholder="输入疾病名查看路由过程，如：高血压" className="flex-1" />
-            <Button onClick={handleDemo} loading={demoLoading} className="gap-2"><Sparkles className="h-4 w-4" /> 演示</Button>
-          </div>
-          {demoResult?.selected && (
-            <div className="space-y-2">
-              {demoResult.selected.map((item: any, i: number) => (
-                <div key={i} className="p-3 rounded-sm bg-surface border border-white/[0.06]">
-                  <div className="flex items-center gap-2">
-                    <span className="font-heading font-semibold">{item.drugName}</span>
-                    <span className="ia-badge ia-badge-primary text-[10px]">{item.category}</span>
-                    <span className="text-xs text-muted-foreground">score: {item.score?.toFixed(3)}</span>
-                  </div>
-                  {item.routingPath && <div className="text-xs mt-1" style={{ color: '#00d4aa' }}>{item.routingPath}</div>}
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   )
 }

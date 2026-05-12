@@ -66,7 +66,8 @@ public class StatsController {
                 if (selected instanceof List) {
                     for (Object item : (List<?>) selected) {
                         if (item instanceof Map) {
-                            Map<?, ?> drug = (Map<?, ?>) item;
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> drug = (Map<String, Object>) item;
                             String name = String.valueOf(drug.getOrDefault("drugName", ""));
                             String category = String.valueOf(drug.getOrDefault("category", ""));
                             if (!name.isEmpty() && !"null".equals(name)) {
@@ -111,6 +112,77 @@ public class StatsController {
         stats.put("uniqueDrugCount", uniqueDrugs.size());
 
         return ApiResponse.success(stats);
+    }
+
+    @GetMapping("/recommendation-flow")
+    public ApiResponse<Map<String, Object>> getRecommendationFlow() {
+        List<Map<String, Object>> rows = recommendationRepository.findAllForFlow();
+        Map<String, Map<String, Integer>> diseaseToCat = new LinkedHashMap<>();
+        Map<String, Map<String, Integer>> catToDrug = new LinkedHashMap<>();
+        Map<String, Integer> diseaseFreq = new LinkedHashMap<>();
+
+        for (Map<String, Object> row : rows) {
+            try {
+                String inputJson = String.valueOf(row.getOrDefault("input_data", ""));
+                String resultJson = String.valueOf(row.getOrDefault("result_data", ""));
+                if (inputJson.isEmpty() || resultJson.isEmpty()) continue;
+                Map<String, Object> input = objectMapper.readValue(inputJson, Map.class);
+                Map<String, Object> result = objectMapper.readValue(resultJson, Map.class);
+                String diseasesStr = String.valueOf(input.getOrDefault("diseases", ""));
+                Object selected = result.get("selected");
+                if (diseasesStr.isEmpty() || !(selected instanceof List)) continue;
+
+                for (String disease : diseasesStr.split("[,，]")) {
+                    disease = disease.trim();
+                    if (disease.isEmpty()) continue;
+                    diseaseFreq.merge(disease, 1, Integer::sum);
+                    for (Object item : (List<?>) selected) {
+                        if (item instanceof Map) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> drug = (Map<String, Object>) item;
+                            String cat = String.valueOf(drug.getOrDefault("category", ""));
+                            String name = String.valueOf(drug.getOrDefault("drugName", ""));
+                            if (cat.isEmpty() || "null".equals(cat) || name.isEmpty() || "null".equals(name)) continue;
+                            diseaseToCat.computeIfAbsent(disease, k -> new LinkedHashMap<>()).merge(cat, 1, Integer::sum);
+                            catToDrug.computeIfAbsent(cat, k -> new LinkedHashMap<>()).merge(name, 1, Integer::sum);
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        List<Map<String, Object>> nodes = new ArrayList<>();
+        Map<String, Integer> idx = new HashMap<>();
+        diseaseFreq.entrySet().stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .forEach(e -> { idx.put(e.getKey(), nodes.size()); nodes.add(Map.of("name", e.getKey())); });
+        Set<String> cats = new LinkedHashSet<>();
+        diseaseToCat.values().forEach(m -> cats.addAll(m.keySet()));
+        for (String c : cats) { idx.put(c, nodes.size()); nodes.add(Map.of("name", c)); }
+        Set<String> drugs = new LinkedHashSet<>();
+        catToDrug.values().forEach(m -> drugs.addAll(m.keySet()));
+        for (String d : drugs) { idx.put(d, nodes.size()); nodes.add(Map.of("name", d)); }
+
+        List<Map<String, Object>> links = new ArrayList<>();
+        diseaseToCat.forEach((d, cm) -> {
+            int src = idx.get(d);
+            cm.forEach((c, v) -> links.add(Map.of("source", src, "target", idx.get(c), "value", v)));
+        });
+        catToDrug.forEach((c, dm) -> {
+            int src = idx.get(c);
+            dm.forEach((d, v) -> links.add(Map.of("source", src, "target", idx.get(d), "value", v)));
+        });
+
+        List<Map<String, Object>> diseaseList = diseaseFreq.entrySet().stream()
+            .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+            .map(e -> Map.<String, Object>of("name", e.getKey(), "count", e.getValue()))
+            .collect(Collectors.toList());
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("nodes", nodes);
+        result.put("links", links);
+        result.put("diseases", diseaseList);
+        return ApiResponse.success(result);
     }
 
     private long toLong(Object obj) {

@@ -45,6 +45,15 @@ public class ReviewController {
         return ApiResponse.success(pending);
     }
 
+    @GetMapping("/recommendation/{id}")
+    public ApiResponse<Map<String, Object>> getRecommendationDetail(@PathVariable Long id) {
+        Map<String, Object> detail = reviewLogRepository.findRecommendationById(id);
+        if (detail == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "推荐记录不存在");
+        }
+        return ApiResponse.success(detail);
+    }
+
     @GetMapping("/log/{recommendationId}")
     public ApiResponse<List<ReviewLog>> getReview(@PathVariable Long recommendationId) {
         List<ReviewLog> logs = reviewLogRepository.findByRecommendationId(recommendationId);

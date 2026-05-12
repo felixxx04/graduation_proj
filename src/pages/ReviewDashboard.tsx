@@ -8,7 +8,7 @@ interface PendingReview {
   recommendationId: number
   patientId: number | null
   inputData: string
-  resultData: string
+  resultData?: string
   reviewStatus: string
   createdAt: string
 }
@@ -28,7 +28,8 @@ function parseInputDisease(inputData: string): string {
   } catch { return '' }
 }
 
-function parseResultDrugs(resultData: string): DrugOption[] {
+function parseResultDrugs(resultData?: string): DrugOption[] {
+  if (!resultData) return []
   try {
     const parsed = JSON.parse(resultData)
     const selected = parsed.selected || []
@@ -45,6 +46,7 @@ function parseResultDrugs(resultData: string): DrugOption[] {
 export default function ReviewDashboard() {
   const [pendingReviews, setPendingReviews] = useState<PendingReview[]>([])
   const [selectedReview, setSelectedReview] = useState<PendingReview | null>(null)
+  const [detailLoading, setDetailLoading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -53,11 +55,38 @@ export default function ReviewDashboard() {
     try {
       const data = await api.get<PendingReview[]>('/api/review/pending')
       setPendingReviews(data)
+      setError(null)
     } catch { setError('获取待审核列表失败') }
     finally { setLoading(false) }
   }
 
   useEffect(() => { fetchPending() }, [])
+
+  const selectReview = async (review: PendingReview) => {
+    if (review.resultData) {
+      setSelectedReview(review)
+      return
+    }
+    setDetailLoading(true)
+    try {
+      const detail = await api.get<{
+        recommendationId: number
+        patientId: number | null
+        inputData: string
+        resultData: string
+        reviewStatus: string
+        createdAt: string
+      }>(`/api/review/recommendation/${review.recommendationId}`)
+      setSelectedReview({
+        ...review,
+        resultData: detail.resultData,
+      })
+    } catch {
+      setError('获取推荐详情失败')
+    } finally {
+      setDetailLoading(false)
+    }
+  }
 
   const diseaseCn = selectedReview ? parseInputDisease(selectedReview.inputData) : ''
   const drugs = selectedReview ? parseResultDrugs(selectedReview.resultData) : []
@@ -112,7 +141,7 @@ export default function ReviewDashboard() {
           {pendingReviews.map(review => {
             const disease = parseInputDisease(review.inputData)
             return (
-              <div key={review.recommendationId} onClick={() => setSelectedReview(review)}
+              <div key={review.recommendationId} onClick={() => selectReview(review)}
                 className={`p-3 rounded-lg border cursor-pointer transition-colors ${
                   selectedReview?.recommendationId === review.recommendationId ? 'border-brand-sky bg-brand-sky/5' : 'border-white/[0.06] bg-surface hover:bg-surface-elevated'
                 }`}>
@@ -129,7 +158,11 @@ export default function ReviewDashboard() {
         </div>
 
         <div className="lg:col-span-2">
-          {selectedReview ? (
+          {detailLoading ? (
+            <div className="p-8 text-center text-muted-foreground border border-dashed border-white/[0.06] rounded-lg">
+              加载推荐详情...
+            </div>
+          ) : selectedReview ? (
             <Card hover="none">
               <CardHeader><CardTitle className="text-base">审核详情</CardTitle></CardHeader>
               <CardContent className="space-y-4">

@@ -43,6 +43,9 @@ public interface RecommendationRepository {
     @Select("SELECT result_data FROM recommendation WHERE result_data IS NOT NULL")
     List<String> findAllResultData();
 
+    @Select("SELECT input_data, result_data FROM recommendation WHERE result_data IS NOT NULL AND input_data IS NOT NULL")
+    List<Map<String, Object>> findAllForFlow();
+
     @Select("""
         SELECT COUNT(*) as total,
                SUM(CASE WHEN doctor_decision = 'confirm' THEN 1 ELSE 0 END) as confirmed
